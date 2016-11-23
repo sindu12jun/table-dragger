@@ -18,7 +18,7 @@ export const insertBeforeSibling = ({ target, origin }) => {
 export const handleTr = (table, cb) =>
   Array.from(table.children).forEach(organ =>
     Array.from(organ.children)
-      .forEach(tr => cb.call(this, tr))
+      .forEach(tr => cb.call(this, tr, organ))
   );
 
 // export const getNodeByPath = (node, paths) => {

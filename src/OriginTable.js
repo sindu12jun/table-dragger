@@ -34,23 +34,28 @@ export default class OriginTable extends Table {
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
 
-    // const cellPadding = +table.getAttribute('cellspacing');
-    // if (cellPadding) {
-    //   table.removeAttribute('cellspacing');
-    //   const length = this.getLength();
-    //   const padCount = length * 2;
-    //   const allPadding = cellPadding * (length - 1);
-    //   const onePad = `${allPadding / padCount}px`;
-    //   table.style.marginLeft = index ? onePad : 0;
-    //   table.style.marginRight = (index === (length - 1)) ? 0 : onePad;
-    // }
-
     const oneTd = this.el.children[0].children[0].children[index];
     table.style.width = `${oneTd.getBoundingClientRect().width}px`;
     handleTr(table, (tr) => {
       const target = tr.children[index];
       empty(tr);
       tr.appendChild(target);
+    });
+    return new Table(table);
+  }
+
+  getRowAsTable(index) {
+    const table = this.el.cloneNode();
+    table.style.width = `${oneTd.getBoundingClientRect().width}px`;
+
+    let now = 0;
+    handleTr(table, (tr, organ) => {
+      if (index === now) {
+        const shadowOrgan = organ.cloneNode();
+        shadowOrgan.appendChild(tr);
+        table.appendChild(shadowOrgan);
+      }
+      now += 1;
     });
     return new Table(table);
   }
