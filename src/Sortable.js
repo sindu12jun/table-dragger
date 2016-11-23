@@ -296,7 +296,6 @@
     constructor: Sortable,
 
     _onTapStart: function (/** Event|TouchEvent */evt) {
-      console.log('进来sortable');
       var _this = this,
         el = this.el,
         options = this.options,
@@ -306,6 +305,7 @@
         originalTarget = evt.target.shadowRoot && evt.path[0] || target,
         filter = options.filter,
         startIndex;
+
 
       // Don't trigger start event when an element is been dragged, otherwise the evt.oldindex always wrong when set option.group.
       if (dragEl) {
@@ -1185,7 +1185,7 @@
 
     evt.oldIndex = startIndex;
     evt.newIndex = newIndex;
-
+    console.log(evt);
     rootEl.dispatchEvent(evt);
 
     if (options[onName]) {

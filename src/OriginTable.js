@@ -27,8 +27,24 @@ export default class OriginTable extends Table {
     this.bindEvents();
   }
 
+  getLength() { // 获得横向长度
+    return this.el.children[0].children[0].children.length;
+  }
+
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
+
+    // const cellPadding = +table.getAttribute('cellspacing');
+    // if (cellPadding) {
+    //   table.removeAttribute('cellspacing');
+    //   const length = this.getLength();
+    //   const padCount = length * 2;
+    //   const allPadding = cellPadding * (length - 1);
+    //   const onePad = `${allPadding / padCount}px`;
+    //   table.style.marginLeft = index ? onePad : 0;
+    //   table.style.marginRight = (index === (length - 1)) ? 0 : onePad;
+    // }
+
     const oneTd = this.el.children[0].children[0].children[index];
     table.style.width = `${oneTd.getBoundingClientRect().width}px`;
     handleTr(table, (tr) => {
@@ -74,7 +90,7 @@ export default class OriginTable extends Table {
     const { movingRow } = this;
     const startEvents = ['mousedown', 'touchstart', 'pointerdown'];
     for (const e of startEvents) {
-      movingRow.addEventListener(e, this._onDrag);
+      movingRow.addEventListener(e, this._onDrag, true);
     }
   }
 }
