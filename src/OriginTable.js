@@ -13,6 +13,7 @@ class Table {
   }
 }
 
+// TODO resize 重新计算table宽度
 // 注意class中所有的方法都是不可枚举的
 export default class OriginTable extends Table {
   constructor(table = null) {
@@ -24,6 +25,7 @@ export default class OriginTable extends Table {
     }
     this.mouseDownIndex = -1;
     this.sortTable = null;
+    this.buildSortable();
     this.bindEvents();
   }
 
@@ -44,22 +46,6 @@ export default class OriginTable extends Table {
     return new Table(table);
   }
 
-  getRowAsTable(index) {
-    const table = this.el.cloneNode();
-    table.style.width = `${oneTd.getBoundingClientRect().width}px`;
-
-    let now = 0;
-    handleTr(table, (tr, organ) => {
-      if (index === now) {
-        const shadowOrgan = organ.cloneNode();
-        shadowOrgan.appendChild(tr);
-        table.appendChild(shadowOrgan);
-      }
-      now += 1;
-    });
-    return new Table(table);
-  }
-
   sortColumn({ from, to }) {
     if (from === to) {
       return;
@@ -76,26 +62,25 @@ export default class OriginTable extends Table {
     });
   }
 
-  _onDrag(event) {
+  buildSortable() {
     const { movingRow } = this;
-    this.mouseDownIndex = Array.from(movingRow.children).indexOf(event.target);
+    this.mouseDownIndex = 1;
     const tables = Array.from(movingRow.children).map((td, index) =>
       this.getColumnAsTable(index));
     this.sortTable = new SortTableList({ tables, originTable: this });
-    this.el.style.visibility = 'hidden';
   }
 
   onSortTableDrop({ from: oldIndex, to: newIndex }) {
     this.sortColumn({ from: oldIndex, to: newIndex });
-    this.el.style.visibility = this.visibility;
-    this.sortTable = null;
+    this.el.style.opacity = '1';
   }
-
-  bindEvents() {
-    const { movingRow } = this;
-    const startEvents = ['mousedown', 'touchstart', 'pointerdown'];
-    for (const e of startEvents) {
-      movingRow.addEventListener(e, this._onDrag, true);
-    }
-  }
+  //
+  // bindEvents() {
+  //   const { movingRow } = this;
+  //   const startEvents = ['mousedown', 'touchstart', 'pointerdown'];
+  //   for (const e of startEvents) {
+  //     movingRow.addEventListener(e, () => {
+  //     }, true);
+  //   }
+  // }
 }

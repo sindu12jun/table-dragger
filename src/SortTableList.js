@@ -19,8 +19,15 @@ export default class SortTableList {
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
 
+    this.el.style.opacity = '0';
+    this.el.style.zIndex = '9999';
+
     Sortable.create(this.el, {
       animation: 150,
+      onStart: () => {
+        this.el.style.opacity = '1';
+        this.originTable.el.style.opacity = '0';
+      },
       onUpdate: (evt) => {
         this._onDrop({ from: evt.oldIndex, to: evt.newIndex });
       },
@@ -28,18 +35,17 @@ export default class SortTableList {
 
     this.originTable = originTable;
     this.render();
-    const event = new MouseEvent('mousedown',
-      {
-        cancelable: true,
-        bubbles: true,
-        view: window,
-      });
-    this.el.children[originTable.mouseDownIndex].dispatchEvent(event);
+    // const event = new MouseEvent('mousedown',
+    //   {
+    //     cancelable: true,
+    //     bubbles: true,
+    //     view: window,
+    //   });
+    // this.el.children[originTable.mouseDownIndex].dispatchEvent(event);
   }
 
   _onDrop({ from, to }) {
-    this.el.parentNode.removeChild(this.el);
-    this.el = null;
+    this.el.style.opacity = '0';
     this.originTable.onSortTableDrop({ from, to });
   }
 
