@@ -4,6 +4,31 @@
   <meta charset="utf-8">
   <title>vue-table-drag</title>
   <style>
+    .sindu_sortable_table {
+      opacity: 0;
+    }
+
+    .sindu_sortable_table tr {
+      display: none;
+    }
+
+    .sindu_sortable_table tr.draggable {
+      display: table-row;
+    }
+
+    .sindu_dragging .sindu_sortable_table {
+      z-index: 1;
+      opacity: 1;
+    }
+
+    .sindu_dragging .sindu_sortable_table tr{
+      display: table-row;
+    }
+
+    .sindu_dragging .sindu_origin_table {
+      opacity: 0;
+    }
+
     ul {
       padding: 0;
       margin: 0;
@@ -140,7 +165,7 @@
 <section>
   <!--for demo wrap-->
   <h1>Fixed Table header</h1>
-  <table id="table1">
+  <table id="table1" cellpadding="0" cellspacing="0">
     <thead class="tbl-header">
     <tr>
       <th>
@@ -153,7 +178,7 @@
     </thead>
     <tbody>
     <tr>
-      <td>A1</td>
+      <td>AA1A1A1A1A1A1A 1A1A1A1A1A1A1A1A11</td>
       <td>A2</td>
     </tr>
     <tr>
@@ -165,7 +190,7 @@
   <div>
     <table id="table2" cellpadding="0" cellspacing="0">
       <thead class="tbl-header">
-      <tr>
+      <tr class="draggable">
         <th>1</th>
         <th>2</th>
         <th>3</th>
@@ -288,7 +313,7 @@
 <div class="made-with-love">
   Made with
   <i>♥</i> by
-  <a target="_blank" href="http://codepen.io/nikhil8krishnan">Nikhil Krishnan</a>
+  <a>sindu12jun</a>
 </div>
 </body>
 </html>
