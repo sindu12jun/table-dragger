@@ -15,11 +15,27 @@ export const insertBeforeSibling = ({ target, origin }) => {
   origin.parentNode.insertBefore(target, origin);
 };
 
-export const handleTr = (table, cb) =>
+export const handleTr = (table, cb) => {
+  let trIndex = 0;
   Array.from(table.children).forEach(organ =>
-    Array.from(organ.children)
-      .forEach(tr => cb.call(this, tr, organ))
-  );
+    Array.from(organ.children).forEach(
+      (tr) => {
+        cb.call(this, { tr, organ, trIndex });
+        trIndex += 1;
+      }));
+};
+
+export const throttlerTimeoutFunc = (cb) => {
+  let resizeTimeout;
+  return () => {
+    if (!resizeTimeout) {
+      resizeTimeout = setTimeout(() => {
+        resizeTimeout = null;
+        cb();
+      }, 66);
+    }
+  };
+};
 
 // export const getNodeByPath = (node, paths) => {
 //   let current = node;

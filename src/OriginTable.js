@@ -13,20 +13,27 @@ class Table {
   }
 }
 
-// TODO resize 重新计算table宽度
+// TODO 抛出异常、检查变量，防止js报错
+// TODO 单元测试
+// TODO 浏览器兼容
 // 注意class中所有的方法都是不可枚举的
 export default class OriginTable extends Table {
-  constructor(table = null) {
+  constructor(table = null, userOptions) {
     super(table);
+
+    const defaults = {};
+    const options = Object.assign({}, defaults, userOptions);
+    console.log(options);
+
     for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
       if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
         this[fn] = this[fn].bind(this);
       }
     }
+    this.el.classList.add('sindu_origin_table');
     this.mouseDownIndex = -1;
     this.sortTable = null;
     this.buildSortable();
-    this.bindEvents();
   }
 
   getLength() { // 获得横向长度
@@ -35,10 +42,8 @@ export default class OriginTable extends Table {
 
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
-
-    const oneTd = this.el.children[0].children[0].children[index];
-    table.style.width = `${oneTd.getBoundingClientRect().width}px`;
-    handleTr(table, (tr) => {
+    table.classList.remove('sindu_origin_table');
+    handleTr(table, ({ tr }) => {
       const target = tr.children[index];
       empty(tr);
       tr.appendChild(target);
@@ -50,7 +55,7 @@ export default class OriginTable extends Table {
     if (from === to) {
       return;
     }
-    handleTr(this.el, (tr) => {
+    handleTr(this.el, ({ tr }) => {
       const { children } = tr;
       const target = children[from]; // 移动的元素
       const origin = children[to]; // 被动交换的元素
@@ -64,7 +69,6 @@ export default class OriginTable extends Table {
 
   buildSortable() {
     const { movingRow } = this;
-    this.mouseDownIndex = 1;
     const tables = Array.from(movingRow.children).map((td, index) =>
       this.getColumnAsTable(index));
     this.sortTable = new SortTableList({ tables, originTable: this });
@@ -72,15 +76,5 @@ export default class OriginTable extends Table {
 
   onSortTableDrop({ from: oldIndex, to: newIndex }) {
     this.sortColumn({ from: oldIndex, to: newIndex });
-    this.el.style.opacity = '1';
   }
-  //
-  // bindEvents() {
-  //   const { movingRow } = this;
-  //   const startEvents = ['mousedown', 'touchstart', 'pointerdown'];
-  //   for (const e of startEvents) {
-  //     movingRow.addEventListener(e, () => {
-  //     }, true);
-  //   }
-  // }
 }
