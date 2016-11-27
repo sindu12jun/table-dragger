@@ -25,17 +25,29 @@ export const handleTr = (table, cb) => {
       }));
 };
 
-export const throttlerTimeoutFunc = (cb) => {
+export const timeout = (time) => {
   let resizeTimeout;
-  return () => {
+  return new Promise((resolve) => {
     if (!resizeTimeout) {
       resizeTimeout = setTimeout(() => {
         resizeTimeout = null;
-        cb();
-      }, 66);
+        resolve();
+      }, time);
     }
-  };
+  });
 };
+//
+// export const throttlerTimeoutFunc = (cb) => {
+//   let resizeTimeout;
+//   return () => {
+//     if (!resizeTimeout) {
+//       resizeTimeout = setTimeout(() => {
+//         resizeTimeout = null;
+//         cb();
+//       }, 66);
+//     }
+//   };
+// };
 
 // export const getNodeByPath = (node, paths) => {
 //   let current = node;

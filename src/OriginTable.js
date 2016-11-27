@@ -22,8 +22,7 @@ export default class OriginTable extends Table {
     super(table);
 
     const defaults = {};
-    const options = Object.assign({}, defaults, userOptions);
-    console.log(options);
+    this.options = Object.assign({}, defaults, userOptions);
 
     for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
       if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
@@ -43,7 +42,10 @@ export default class OriginTable extends Table {
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
     table.classList.remove('sindu_origin_table');
-    handleTr(table, ({ tr }) => {
+    handleTr(table, ({ tr, trIndex }) => {
+      if (trIndex === 0) {
+        tr.classList.add('sindu_draggable');
+      }
       const target = tr.children[index];
       empty(tr);
       tr.appendChild(target);

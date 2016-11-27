@@ -3,7 +3,7 @@
  */
 // import Sortable from 'sortablejs';
 import Sortable from './Sortable';
-import { insertBeforeSibling, throttlerTimeoutFunc, handleTr } from './util';
+import { insertBeforeSibling, timeout, handleTr } from './util';
 
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
@@ -28,7 +28,7 @@ export default class SortTableList {
 
     Sortable.create(this.el, {
       animation: 150,
-      onStart: () => {
+      onChoose: () => {
         this.el.parentNode.classList.add('sindu_dragging');
       },
       onEnd: (evt) => {
@@ -38,7 +38,12 @@ export default class SortTableList {
 
     this.originTable = originTable;
     this._renderTables();
-    window.addEventListener('resize', throttlerTimeoutFunc(this._renderTables), false);
+    window.addEventListener('resize', () => {
+      (async() => {
+        await timeout(66);
+        this._renderTables();
+      })();
+    }, false);
   }
 
   _onDrop({ from, to }) {
@@ -48,6 +53,7 @@ export default class SortTableList {
 
 
   _renderTables() {
+    console.log('render');
     // 重新计算每一列的宽度
     Array.from(this.originTable.el.children[0].children[0].children).forEach(
       (td, index) => {

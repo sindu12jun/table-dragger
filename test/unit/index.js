@@ -1,5 +1,5 @@
 // Polyfill fn.bind() for PhantomJS
-/* eslint-disable no-extend-native */
+/* eslint-disable */
 Function.prototype.bind = require('function-bind');
 
 // require all test files (files that ends with .spec.js)

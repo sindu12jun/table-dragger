@@ -12,7 +12,7 @@
       display: none;
     }
 
-    .sindu_sortable_table tr.draggable {
+    .sindu_sortable_table tr.sindu_draggable {
       display: table-row;
     }
 
@@ -21,7 +21,7 @@
       opacity: 1;
     }
 
-    .sindu_dragging .sindu_sortable_table tr{
+    .sindu_dragging .sindu_sortable_table tr {
       display: table-row;
     }
 
@@ -164,33 +164,11 @@
 <body>
 <section>
   <!--for demo wrap-->
-  <h1>Fixed Table header</h1>
-  <table id="table1" cellpadding="0" cellspacing="0">
-    <thead class="tbl-header">
-    <tr>
-      <th>
-        header1
-      </th>
-      <th>
-        header1
-      </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td>AA1A1A1A1A1A1A 1A1A1A1A1A1A1A1A11</td>
-      <td>A2</td>
-    </tr>
-    <tr>
-      <td>B1</td>
-      <td>B2</td>
-    </tr>
-    </tbody>
-  </table>
+  <h1>Draggable Table</h1>
   <div>
     <table id="table2" cellpadding="0" cellspacing="0">
       <thead class="tbl-header">
-      <tr class="draggable">
+      <tr>
         <th>1</th>
         <th>2</th>
         <th>3</th>
