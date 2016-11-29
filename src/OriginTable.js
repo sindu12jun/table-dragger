@@ -41,6 +41,7 @@ export default class OriginTable extends Table {
 
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
+    table.removeAttribute('id');
     table.classList.remove('sindu_origin_table');
     handleTr(table, ({ tr, trIndex }) => {
       if (trIndex === 0) {

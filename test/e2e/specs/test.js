@@ -8,12 +8,15 @@ module.exports = {
     // see nightwatch.conf.js
     const devServer = browser.globals.devServerURL;
 
+    // drag and drop 不能被测试
     browser
       .url(devServer)
-      .waitForElementVisible('#app', 5000)
-      .assert.elementPresent('.hello')
-      .assert.containsText('h1', 'Welcome to Your Vue.js App')
-      .assert.elementCount('img', 1)
-      .end();
+    browser.waitForElementVisible('#table2', 5000)
+      .moveToElement('ul.sindu_sortable_table > li:nth-child(1)', 10, 10)
+      .mouseButtonDown(0)
+      .moveToElement('ul.sindu_sortable_table > li:nth-child(3)', 10, 10)
+      .mouseButtonUp(0)
+      .pause(5000)
+      .end()
   },
 };

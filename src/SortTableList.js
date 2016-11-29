@@ -53,7 +53,6 @@ export default class SortTableList {
 
 
   _renderTables() {
-    console.log('render');
     // 重新计算每一列的宽度
     Array.from(this.originTable.el.children[0].children[0].children).forEach(
       (td, index) => {
