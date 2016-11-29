@@ -8,7 +8,9 @@ class Table {
   constructor(table = null) {
     this.el = table;
     this.visibility = table.style.visibility;
-    this.movingRow = this.el.children[0].children[0];
+    this.movingRow = Array.from(this.el.children).find(el =>
+      ((el.nodeName !== 'COL') && (el.nodeName !== 'COLGROUP'))).children[0];
+    // console.log(Array.from(this.el.children)[0].nodeName);
     this.movingRow.style.cursor = 'move';
   }
 }
@@ -36,22 +38,31 @@ export default class OriginTable extends Table {
   }
 
   getLength() { // 获得横向长度
-    return this.el.children[0].children[0].children.length;
+    return this.movingRow.children.length;
   }
 
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
+
+    const colgroup = table.querySelector('colgroup');
+    // const cols = table.querySelectorAll('col') || (colgroup && colgroup.children);
+    if (colgroup) {
+      const targetCol = colgroup.children[index];
+      targetCol.style.width = '';
+      colgroup.innerHTML = '';
+      colgroup.appendChild(targetCol);
+    }
+
     table.removeAttribute('id');
     table.classList.remove('sindu_origin_table');
-    handleTr(table, ({ tr, trIndex }) => {
-      if (trIndex === 0) {
-        tr.classList.add('sindu_draggable');
-      }
+    handleTr(table, ({ tr }) => {
       const target = tr.children[index];
       empty(tr);
       tr.appendChild(target);
     });
-    return new Table(table);
+    const result = new Table(table);
+    result.movingRow.classList.add('sindu_draggable');
+    return result;
   }
 
   sortColumn({ from, to }) {
@@ -66,6 +77,17 @@ export default class OriginTable extends Table {
         appendSibling({ target, origin });
       } else {
         insertBeforeSibling({ target, origin });
+      }
+    }, ({ likeTr }) => {
+      if (likeTr.nodeName === 'COL') {
+        const cols = likeTr.parentNode.children;
+        const target = cols[from]; // 移动的元素
+        const origin = cols[to]; // 被动交换的元素
+        if (from < to) {
+          appendSibling({ target, origin });
+        } else {
+          insertBeforeSibling({ target, origin });
+        }
       }
     });
   }

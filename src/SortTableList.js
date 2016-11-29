@@ -54,7 +54,7 @@ export default class SortTableList {
 
   _renderTables() {
     // 重新计算每一列的宽度
-    Array.from(this.originTable.el.children[0].children[0].children).forEach(
+    Array.from(this.originTable.movingRow.children).forEach(
       (td, index) => {
         this.tables[index].el.style.width = `${td.getBoundingClientRect().width}px`;
       }

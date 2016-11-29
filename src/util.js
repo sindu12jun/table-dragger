@@ -15,13 +15,28 @@ export const insertBeforeSibling = ({ target, origin }) => {
   origin.parentNode.insertBefore(target, origin);
 };
 
-export const handleTr = (table, cb) => {
+// export const handleTr = (table, cb) => {
+//   let trIndex = 0;
+//   Array.from(table.children).forEach(organ =>
+//     Array.from(organ.children).forEach(
+//       (tr) => {
+//         cb.call(this, { tr, organ, trIndex });
+//         trIndex += 1;
+//       }));
+// };
+
+// if node.Name==='TR',call cb;else,call fail
+export const handleTr = (table, cb, fail) => {
   let trIndex = 0;
   Array.from(table.children).forEach(organ =>
     Array.from(organ.children).forEach(
-      (tr) => {
-        cb.call(this, { tr, organ, trIndex });
-        trIndex += 1;
+      (likeTr) => {
+        if (likeTr && likeTr.nodeName === 'TR') {
+          cb.call(this, { tr: likeTr, organ, trIndex });
+          trIndex += 1;
+        } else if (fail) {
+          fail.call(this, { likeTr });
+        }
       }));
 };
 
@@ -36,18 +51,6 @@ export const timeout = (time) => {
     }
   });
 };
-//
-// export const throttlerTimeoutFunc = (cb) => {
-//   let resizeTimeout;
-//   return () => {
-//     if (!resizeTimeout) {
-//       resizeTimeout = setTimeout(() => {
-//         resizeTimeout = null;
-//         cb();
-//       }, 66);
-//     }
-//   };
-// };
 
 // export const getNodeByPath = (node, paths) => {
 //   let current = node;
