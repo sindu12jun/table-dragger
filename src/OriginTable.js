@@ -11,6 +11,7 @@ class Table {
     this.movingRow = Array.from(this.el.children).find(el =>
       ((el.nodeName !== 'COL') && (el.nodeName !== 'COLGROUP'))).children[0];
     // console.log(Array.from(this.el.children)[0].nodeName);
+    this.colGroup = document.querySelector('colgroup');
     this.movingRow.style.cursor = 'move';
   }
 }
@@ -44,13 +45,13 @@ export default class OriginTable extends Table {
   getColumnAsTable(index) {
     const table = this.el.cloneNode(true);
 
-    const colgroup = table.querySelector('colgroup');
+    const colGroup = table.querySelector('colgroup');
     // const cols = table.querySelectorAll('col') || (colgroup && colgroup.children);
-    if (colgroup) {
-      const targetCol = colgroup.children[index];
+    if (colGroup) {
+      const targetCol = colGroup.children[index];
       targetCol.style.width = '';
-      colgroup.innerHTML = '';
-      colgroup.appendChild(targetCol);
+      colGroup.innerHTML = '';
+      colGroup.appendChild(targetCol);
     }
 
     table.removeAttribute('id');
@@ -78,18 +79,17 @@ export default class OriginTable extends Table {
       } else {
         insertBeforeSibling({ target, origin });
       }
-    }, ({ likeTr }) => {
-      if (likeTr.nodeName === 'COL') {
-        const cols = likeTr.parentNode.children;
-        const target = cols[from]; // 移动的元素
-        const origin = cols[to]; // 被动交换的元素
-        if (from < to) {
-          appendSibling({ target, origin });
-        } else {
-          insertBeforeSibling({ target, origin });
-        }
-      }
     });
+    if (this.colGroup) {
+      const cols = this.colGroup.children;
+      const target = cols[from]; // 移动的元素
+      const origin = cols[to]; // 被动交换的元素
+      if (from < to) {
+        appendSibling({ target, origin });
+      } else {
+        insertBeforeSibling({ target, origin });
+      }
+    }
   }
 
   buildSortable() {
