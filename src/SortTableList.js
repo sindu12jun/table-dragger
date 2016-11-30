@@ -4,7 +4,6 @@
 // import Sortable from 'sortablejs';
 import Sortable from './Sortable';
 import { insertBeforeSibling, timeout, handleTr } from './util';
-
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
 export default class SortTableList {

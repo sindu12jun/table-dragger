@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import OriginTable from './OriginTable';
 
 const table2 = window.document.querySelector('#table2');
