@@ -17,8 +17,8 @@ class Table {
 }
 
 // TODO 抛出异常、检查变量，防止js报错
-// TODO 单元测试
 // TODO 浏览器兼容
+// TODO 保证li的padding和margin都为0
 // 注意class中所有的方法都是不可枚举的
 export default class OriginTable extends Table {
   constructor(table = null, userOptions) {

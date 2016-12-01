@@ -1,8 +1,7 @@
 /**
  * Created by lijun on 2016/11/16.
  */
-// import Sortable from 'sortablejs';
-import Sortable from './Sortable';
+import Sortable from 'sortablejs';
 import { insertBeforeSibling, timeout, handleTr } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
@@ -13,8 +12,6 @@ export default class SortTableList {
         this[fn] = this[fn].bind(this);
       }
     }
-
-    this.tables = tables;
 
     this.el = tables.reduce((previous, current) => {
       const li = document.createElement('li');
@@ -45,8 +42,15 @@ export default class SortTableList {
     }, false);
   }
 
+  getTables() {
+    return Array.from(this.el.children).map(li => li.querySelector('table'));
+  }
+
   _onDrop({ from, to }) {
     this.el.parentNode.classList.remove('sindu_dragging');
+    // swap table
+    // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
+
     this.originTable.onSortTableDrop({ from, to });
   }
 
@@ -55,7 +59,7 @@ export default class SortTableList {
     // 重新计算每一列的宽度
     Array.from(this.originTable.movingRow.children).forEach(
       (td, index) => {
-        this.tables[index].el.style.width = `${td.getBoundingClientRect().width}px`;
+        this.getTables()[index].style.width = `${td.getBoundingClientRect().width}px`;
       }
     );
 
@@ -64,9 +68,9 @@ export default class SortTableList {
     handleTr(this.originTable.el, ({ tr }) => {
       rowHeights.push(tr.children[0].getBoundingClientRect().height);
     });
-    this.tables.forEach((table) => {
+    this.getTables().forEach((table) => {
       /* eslint-disable no-param-reassign*/
-      handleTr(table.el, ({ tr, trIndex }) => {
+      handleTr(table, ({ tr, trIndex }) => {
         tr.style.height = `${rowHeights[trIndex]}px`;
       });
     });
