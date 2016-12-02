@@ -3,10 +3,11 @@
  */
 import Sortable from 'sortablejs';
 import { insertBeforeSibling, timeout, handleTr } from './util';
+// import { insertBeforeSibling, timeout } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
 export default class SortTableList {
-  constructor({ tables = [], originTable }) {
+  constructor ({ tables = [], originTable }) {
     for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
       if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
         this[fn] = this[fn].bind(this);
@@ -35,45 +36,55 @@ export default class SortTableList {
     this.originTable = originTable;
     this._renderTables();
     window.addEventListener('resize', () => {
-      (async() => {
+      (async () => {
         await timeout(66);
         this._renderTables();
       })();
     }, false);
   }
 
-  getTables() {
+  getTables () {
     return Array.from(this.el.children).map(li => li.querySelector('table'));
   }
 
-  _onDrop({ from, to }) {
+  _onDrop ({ from, to }) {
     this.el.parentNode.classList.remove('sindu_dragging');
     // swap table
     // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
-
     this.originTable.onSortTableDrop({ from, to });
   }
 
-
-  _renderTables() {
-    // 重新计算每一列的宽度
-    Array.from(this.originTable.movingRow.children).forEach(
-      (td, index) => {
-        this.getTables()[index].style.width = `${td.getBoundingClientRect().width}px`;
-      }
-    );
-
-    // 重新计算每一行的高度
-    const rowHeights = [];
-    handleTr(this.originTable.el, ({ tr }) => {
-      rowHeights.push(tr.children[0].getBoundingClientRect().height);
-    });
-    this.getTables().forEach((table) => {
-      /* eslint-disable no-param-reassign*/
-      handleTr(table, ({ tr, trIndex }) => {
-        tr.style.height = `${rowHeights[trIndex]}px`;
+  _renderTables () {
+    if (this.originTable.options.mode === 'row') {
+      this.el.style.height = `${this.originTable.el.getBoundingClientRect().height}px`;
+      const rowHeights = [];
+      handleTr(this.originTable.el, ({ tr }) => {
+        rowHeights.push(tr.children[0].getBoundingClientRect().height);
       });
-    });
+      Array.from(this.el.children).forEach((li, index) => {
+        /* eslint-disable */
+        li.style.height = `${rowHeights[index]}px`;
+      });
+    } else {
+      // 列排列时重新计算每一列的宽度
+      Array.from(this.originTable.movingRow.children).forEach(
+        (td, index) => {
+          this.getTables()[index].style.width = `${td.getBoundingClientRect().width}px`;
+        }
+      );
+      // 列排列时重新计算每一行的高度
+      const rowHeights = [];
+      handleTr(this.originTable.el, ({ tr }) => {
+        rowHeights.push(tr.children[0].getBoundingClientRect().height);
+      });
+      this.getTables().forEach((table) => {
+        /* eslint-disable no-param-reassign*/
+        handleTr(table, ({ tr, trIndex }) => {
+          tr.style.height = `${rowHeights[trIndex]}px`;
+        });
+      });
+    }
+
 
     // 计算ul相对于视窗的位置
     // 考虑到和父元素class联动等，必须放在目标元素sibling的位置

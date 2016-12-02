@@ -28,6 +28,7 @@ module.exports = {
       'js': 'never',
       'vue': 'never'
     }],
+    "space-before-function-paren": 0,
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
