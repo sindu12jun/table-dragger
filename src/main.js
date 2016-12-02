@@ -4,4 +4,5 @@ import OriginTable from './OriginTable';
 const table2 = window.document.querySelector('#table2');
 
 /* eslint-disable no-new */
-new OriginTable(table2);
+new OriginTable(table2, { mode: 'row' });
+// new OriginTable(table2, { mode: 'column' });

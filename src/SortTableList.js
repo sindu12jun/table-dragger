@@ -56,6 +56,9 @@ export default class SortTableList {
 
   _renderTables () {
     if (this.originTable.options.mode === 'row') {
+      // 行排列时重新计算总宽度
+      this.el.style.width = `${this.originTable.el.getBoundingClientRect().width}px`;
+      // 行排列时重新计算每一行的高度
       this.el.style.height = `${this.originTable.el.getBoundingClientRect().height}px`;
       const rowHeights = [];
       handleTr(this.originTable.el, ({ tr }) => {
