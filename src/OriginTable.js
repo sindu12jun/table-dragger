@@ -35,11 +35,14 @@ export default class OriginTable extends Table {
       }
     }
     this.el.classList.add('sindu_origin_table');
-    this.mouseDownIndex = -1;
-    this.sortTable = null;
-    this.buildSortable({ mode: this.options.mode });
-    // this.buildSortable({ mode: 'column' });
+    this.sortTable = this.buildSortable({ mode: this.options.mode });
   }
+
+  static create (el, options) {
+    return new OriginTable(el, options);
+  }
+
+  static version = '1.0';
 
   getRows () {
     const rows = [];
@@ -91,9 +94,6 @@ export default class OriginTable extends Table {
   }
 
   sortColumn ({ from, to }) {
-    if (from === to) {
-      return;
-    }
     handleTr(this.el, ({ tr }) => {
       const { children } = tr;
       const target = children[from]; // 移动的元素
@@ -142,7 +142,7 @@ export default class OriginTable extends Table {
         this.getColumnAsTable(index));
     }
 
-    this.sortTable = new SortTableList({ tables, originTable: this });
+    return new SortTableList({ tables, originTable: this });
   }
 
   onSortTableDrop ({ from: oldIndex, to: newIndex }) {
