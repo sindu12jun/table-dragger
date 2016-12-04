@@ -20,7 +20,7 @@ class Table {
 // TODO 浏览器兼容
 // TODO 保证li的padding和margin都为0
 // 注意class中所有的方法都是不可枚举的
-export default class OriginTable extends Table {
+export default class SortableTable extends Table {
   constructor (table = null, userOptions) {
     super(table);
 
@@ -39,7 +39,7 @@ export default class OriginTable extends Table {
   }
 
   static create (el, options) {
-    return new OriginTable(el, options);
+    return new SortableTable(el, options);
   }
 
   static version = '1.0';
