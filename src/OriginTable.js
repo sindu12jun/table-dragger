@@ -26,6 +26,7 @@ export default class SortableTable extends Table {
 
     const defaults = {
       mode: 'column',
+      excludeFooter: false,
     };
     this.options = Object.assign({}, defaults, userOptions);
 
@@ -34,6 +35,12 @@ export default class SortableTable extends Table {
         this[fn] = this[fn].bind(this);
       }
     }
+
+    const footer = table.querySelector('tfoot');
+    if (this.options.excludeFooter && footer) {
+      footer.classList.add('sindu_exclude');
+    }
+
     this.el.classList.add('sindu_origin_table');
     this.sortTable = this.buildSortable({ mode: this.options.mode });
   }
@@ -58,6 +65,11 @@ export default class SortableTable extends Table {
 
   getColumnAsTable (index) {
     const table = this.el.cloneNode(true);
+
+    const footer = table.querySelector('tfoot');
+    if (this.options.excludeFooter && footer) {
+      table.removeChild(footer);
+    }
 
     const colGroup = table.querySelector('colgroup');
     // const cols = table.querySelectorAll('col') || (colgroup && colgroup.children);
@@ -95,6 +107,10 @@ export default class SortableTable extends Table {
 
   sortColumn ({ from, to }) {
     handleTr(this.el, ({ tr }) => {
+      if (tr.parentNode.nodeName === 'TFOOT' && this.options.excludeFooter) {
+        return;
+      }
+
       const { children } = tr;
       const target = children[from]; // 移动的元素
       const origin = children[to]; // 被动交换的元素

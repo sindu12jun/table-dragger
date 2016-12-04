@@ -25,8 +25,16 @@
       display: table-row;
     }
 
-    .sindu_dragging .sindu_origin_table {
+    .sindu_dragging .sindu_origin_table * {
       opacity: 0;
+    }
+
+    .sindu_dragging .sindu_origin_table .sindu_exclude {
+      opacity: 1;
+    }
+
+    .sindu_dragging .sindu_origin_table .sindu_exclude * {
+      opacity: 1;
     }
 
     ul {
@@ -206,6 +214,15 @@
         <td>+1.36%</td>
       </tr>
       </tbody>
+      <tfoot>
+      <tr>
+        <td>foot1</td>
+        <td>foot2</td>
+        <td>foot3</td>
+        <td>foot4</td>
+        <td>foot5</td>
+      </tr>
+      </tfoot>
     </table>
   </div>
 </section>
