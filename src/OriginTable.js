@@ -27,29 +27,6 @@ export default class SortableTable extends Table {
       mode: 'column',
       excludeFooter: false,
       animation: 150,
-      // sort: true,
-      // delay: 0, // time in milliseconds to define when the sorting should start
-      // disabled: false, // Disables the sortable if set to true.
-      // store: null,  // @see Store
-      // animation: 150,  // ms, animation speed moving items when sorting, `0` — without animation
-      // ghostClass: 'sortable-ghost',  // Class name for the drop placeholder
-      // chosenClass: 'sortable-chosen',  // Class name for the chosen item
-      // dragClass: 'sortable-drag',  // Class name for the dragging item
-      // Element is chosen
-      // onChoose: function (/**Event*/evt) {
-      //   evt.oldIndex;  // element index within parent
-      // },
-      //
-      // // Element dragging started
-      // onStart: function (/**Event*/evt) {
-      //   evt.oldIndex;  // element index within parent
-      // },
-      //
-      // // Element dragging ended
-      // onEnd: function (/**Event*/evt) {
-      //   evt.oldIndex;  // element's old index within parent
-      //   evt.newIndex;  // element's new index within parent
-      // },
     };
     this.options = Object.assign({}, defaults, userOptions);
 

@@ -24,7 +24,7 @@ export default class SortTableList {
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
 
-    // 装试者模式
+    // 装饰者模式
     const options = originTable.options;
     options.onStart = before(options.onStart,
       () => {
