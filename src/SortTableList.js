@@ -2,7 +2,8 @@
  * Created by lijun on 2016/11/16.
  */
 import Sortable from 'sortablejs';
-import { insertBeforeSibling, timeout, handleTr } from './util';
+// import Sortable from './Sortable';
+import { insertBeforeSibling, timeout, handleTr, before } from './util';
 // import { insertBeforeSibling, timeout } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
@@ -23,15 +24,20 @@ export default class SortTableList {
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
 
-    Sortable.create(this.el, {
-      animation: 150,
-      onChoose: () => {
+    // 装试者模式
+    const options = originTable.options;
+    options.onStart = before(options.onStart,
+      () => {
         this.el.parentNode.classList.add('sindu_dragging');
-      },
-      onEnd: (evt) => {
+      }
+    );
+    options.onEnd = before(options.onEnd,
+      (evt) => {
+        console.log(evt);
         this._onDrop({ from: evt.oldIndex, to: evt.newIndex });
-      },
-    });
+      }
+    );
+    Sortable.create(this.el, options);
 
     this.originTable = originTable;
     this._renderTables();
@@ -39,6 +45,13 @@ export default class SortTableList {
       (async () => {
         await timeout(66);
         this._renderTables();
+      })();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+      (async () => {
+        await timeout(66);
+        this._renderPosition();
       })();
     }, false);
   }
@@ -52,6 +65,17 @@ export default class SortTableList {
     // swap table
     // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
     this.originTable.onSortTableDrop({ from, to });
+  }
+
+  _renderPosition () {
+    // 计算ul相对于视窗的位置
+    // 考虑到和父元素class联动等，必须放在目标元素sibling的位置
+    // 考虑到table 相对移动或者transform时ul会错位，必须用绝对定位
+    // 所以选择position 为fixed,相对视窗定位，所以不需要加window.pageYoffset了
+    const originRect = this.originTable.el.getBoundingClientRect();
+    // http://stackoverflow.com/questions/20514596/document-documentelement-scrolltop-return-value-differs-in-chrome
+    this.el.style.top = `${originRect.top}px`;
+    this.el.style.left = `${originRect.left}px`;
   }
 
   _renderTables () {
@@ -87,15 +111,6 @@ export default class SortTableList {
         });
       });
     }
-
-
-    // 计算ul相对于视窗的位置
-    // 考虑到和父元素class联动等，必须放在目标元素sibling的位置
-    // 考虑到table 相对移动或者transform时ul会错位，必须用绝对定位
-    // 所以选择position 为fixed,相对视窗定位，所以不需要加window.pageYoffset了
-    const originRect = this.originTable.el.getBoundingClientRect();
-    // http://stackoverflow.com/questions/20514596/document-documentelement-scrolltop-return-value-differs-in-chrome
-    this.el.style.top = `${originRect.top}px`;
-    this.el.style.left = `${originRect.left}px`;
+    this._renderPosition();
   }
 }

@@ -17,7 +17,6 @@ class Table {
 }
 
 // TODO 抛出异常、检查变量，防止js报错
-// TODO 浏览器兼容
 // TODO 保证li的padding和margin都为0
 // 注意class中所有的方法都是不可枚举的
 export default class SortableTable extends Table {
@@ -26,6 +25,31 @@ export default class SortableTable extends Table {
 
     const defaults = {
       mode: 'column',
+      excludeFooter: false,
+      animation: 150,
+      // sort: true,
+      // delay: 0, // time in milliseconds to define when the sorting should start
+      // disabled: false, // Disables the sortable if set to true.
+      // store: null,  // @see Store
+      // animation: 150,  // ms, animation speed moving items when sorting, `0` — without animation
+      // ghostClass: 'sortable-ghost',  // Class name for the drop placeholder
+      // chosenClass: 'sortable-chosen',  // Class name for the chosen item
+      // dragClass: 'sortable-drag',  // Class name for the dragging item
+      // Element is chosen
+      // onChoose: function (/**Event*/evt) {
+      //   evt.oldIndex;  // element index within parent
+      // },
+      //
+      // // Element dragging started
+      // onStart: function (/**Event*/evt) {
+      //   evt.oldIndex;  // element index within parent
+      // },
+      //
+      // // Element dragging ended
+      // onEnd: function (/**Event*/evt) {
+      //   evt.oldIndex;  // element's old index within parent
+      //   evt.newIndex;  // element's new index within parent
+      // },
     };
     this.options = Object.assign({}, defaults, userOptions);
 
@@ -34,6 +58,12 @@ export default class SortableTable extends Table {
         this[fn] = this[fn].bind(this);
       }
     }
+
+    const footer = table.querySelector('tfoot');
+    if (this.options.excludeFooter && footer) {
+      footer.classList.add('sindu_exclude');
+    }
+
     this.el.classList.add('sindu_origin_table');
     this.sortTable = this.buildSortable({ mode: this.options.mode });
   }
@@ -58,6 +88,11 @@ export default class SortableTable extends Table {
 
   getColumnAsTable (index) {
     const table = this.el.cloneNode(true);
+
+    const footer = table.querySelector('tfoot');
+    if (this.options.excludeFooter && footer) {
+      table.removeChild(footer);
+    }
 
     const colGroup = table.querySelector('colgroup');
     // const cols = table.querySelectorAll('col') || (colgroup && colgroup.children);
@@ -95,6 +130,10 @@ export default class SortableTable extends Table {
 
   sortColumn ({ from, to }) {
     handleTr(this.el, ({ tr }) => {
+      if (tr.parentNode.nodeName === 'TFOOT' && this.options.excludeFooter) {
+        return;
+      }
+
       const { children } = tr;
       const target = children[from]; // 移动的元素
       const origin = children[to]; // 被动交换的元素

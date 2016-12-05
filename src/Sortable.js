@@ -1,5 +1,5 @@
 /* eslint-disable */
-(function sortableModule(factory) {
+(function sortableModule (factory) {
   "use strict";
 
   if (typeof define === "function" && define.amd) {
@@ -16,11 +16,11 @@
     /* jshint sub:true */
     window["Sortable"] = factory();
   }
-})(function sortableFactory() {
+})(function sortableFactory () {
   "use strict";
 
   if (typeof window == "undefined" || !window.document) {
-    return function sortableError() {
+    return function sortableError () {
       throw new Error("Sortable.js requires a window with a document");
     };
   }
@@ -171,7 +171,7 @@
     }, 30),
 
     _prepareGroup = function (options) {
-      function toFn(value, pull) {
+      function toFn (value, pull) {
         if (value === void 0 || value === true) {
           value = group.name;
         }
@@ -213,7 +213,7 @@
    * @param  {HTMLElement}  el
    * @param  {Object}       [options]
    */
-  function Sortable(el, options) {
+  function Sortable (el, options) {
     if (!(el && el.nodeType && el.nodeType === 1)) {
       throw 'Sortable: `el` must be HTMLElement, and not ' + {}.toString.call(el);
     }
@@ -1064,7 +1064,7 @@
   };
 
 
-  function _cloneHide(state) {
+  function _cloneHide (state) {
     if (cloneEl && (cloneEl.state !== state)) {
       _css(cloneEl, 'display', state ? 'none' : '');
       !state && cloneEl.state && rootEl.insertBefore(cloneEl, dragEl);
@@ -1073,7 +1073,7 @@
   }
 
 
-  function _closest(/**HTMLElement*/el, /**String*/selector, /**HTMLElement*/ctx) {
+  function _closest (/**HTMLElement*/el, /**String*/selector, /**HTMLElement*/ctx) {
     if (el) {
       ctx = ctx || document;
 
@@ -1089,14 +1089,14 @@
   }
 
 
-  function _getParentOrHost(el) {
+  function _getParentOrHost (el) {
     var parent = el.host;
 
     return (parent && parent.nodeType) ? parent : el.parentNode;
   }
 
 
-  function _globalDragOver(/**Event*/evt) {
+  function _globalDragOver (/**Event*/evt) {
     if (evt.dataTransfer) {
       evt.dataTransfer.dropEffect = 'move';
     }
@@ -1104,17 +1104,17 @@
   }
 
 
-  function _on(el, event, fn) {
+  function _on (el, event, fn) {
     el.addEventListener(event, fn, false);
   }
 
 
-  function _off(el, event, fn) {
+  function _off (el, event, fn) {
     el.removeEventListener(event, fn, false);
   }
 
 
-  function _toggleClass(el, name, state) {
+  function _toggleClass (el, name, state) {
     if (el) {
       if (el.classList) {
         el.classList[state ? 'add' : 'remove'](name);
@@ -1127,7 +1127,7 @@
   }
 
 
-  function _css(el, prop, val) {
+  function _css (el, prop, val) {
     var style = el && el.style;
 
     if (style) {
@@ -1152,7 +1152,7 @@
   }
 
 
-  function _find(ctx, tagName, iterator) {
+  function _find (ctx, tagName, iterator) {
     if (ctx) {
       var list = ctx.getElementsByTagName(tagName), i = 0, n = list.length;
 
@@ -1169,9 +1169,9 @@
   }
 
 
-  function _dispatchEvent(sortable, rootEl, name, targetEl, fromEl, startIndex, newIndex) {
+  function _dispatchEvent (sortable, rootEl, name, targetEl, fromEl, startIndex, newIndex) {
     sortable = (sortable || rootEl[expando]);
-
+    console.log(rootEl);
     var evt = document.createEvent('Event'),
       options = sortable.options,
       onName = 'on' + name.charAt(0).toUpperCase() + name.substr(1);
@@ -1194,7 +1194,7 @@
   }
 
 
-  function _onMove(fromEl, toEl, dragEl, dragRect, targetEl, targetRect, originalEvt) {
+  function _onMove (fromEl, toEl, dragEl, dragRect, targetEl, targetRect, originalEvt) {
     var evt,
       sortable = fromEl[expando],
       onMoveFn = sortable.options.onMove,
@@ -1220,18 +1220,18 @@
   }
 
 
-  function _disableDraggable(el) {
+  function _disableDraggable (el) {
     el.draggable = false;
   }
 
 
-  function _unsilent() {
+  function _unsilent () {
     _silent = false;
   }
 
 
   /** @returns {HTMLElement|false} */
-  function _ghostIsLast(el, evt) {
+  function _ghostIsLast (el, evt) {
     var lastEl = el.lastElementChild,
       rect = lastEl.getBoundingClientRect();
 
@@ -1250,7 +1250,7 @@
    * @returns {String}
    * @private
    */
-  function _generateId(el) {
+  function _generateId (el) {
     var str = el.tagName + el.className + el.src + el.href + el.textContent,
       i = str.length,
       sum = 0;
@@ -1269,7 +1269,7 @@
    * @param  {selector} selector
    * @return {number}
    */
-  function _index(el, selector) {
+  function _index (el, selector) {
     var index = 0;
 
     if (!el || !el.parentNode) {
@@ -1285,7 +1285,7 @@
     return index;
   }
 
-  function _matches(/**HTMLElement*/el, /**String*/selector) {
+  function _matches (/**HTMLElement*/el, /**String*/selector) {
     if (el) {
       selector = selector.split('.');
 
@@ -1301,7 +1301,7 @@
     return false;
   }
 
-  function _throttle(callback, ms) {
+  function _throttle (callback, ms) {
     var args, _this;
 
     return function () {
@@ -1322,7 +1322,7 @@
     };
   }
 
-  function _extend(dst, src) {
+  function _extend (dst, src) {
     if (dst && src) {
       for (var key in src) {
         if (src.hasOwnProperty(key)) {
@@ -1334,7 +1334,7 @@
     return dst;
   }
 
-  function _clone(el) {
+  function _clone (el) {
     return $
       ? $(el).clone(true)[0]
       : (Polymer && Polymer.dom

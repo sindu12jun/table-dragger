@@ -52,6 +52,23 @@ export const timeout = (time) => {
   });
 };
 
+
+// export const dispatchEvent =
+//   ({ table, evt, eventName }) => {
+//     const options = table.options;
+//     const originEl = table.el;
+//
+//     if (options[eventName]) {
+//       options[eventName].call(originEl, Object.assign({}, evt, { table: originEl }));
+//     }
+//   };
+
+export const before = (fn, beforeFunc) => (...args) => {
+  beforeFunc.apply(this, args);
+  return fn && fn.apply(this, args);
+};
+
+
 // export const getNodeByPath = (node, paths) => {
 //   let current = node;
 //   paths.forEach(path => {
