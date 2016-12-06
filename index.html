@@ -6,7 +6,6 @@
   <style>
     .sindu_sortable_table {
       opacity: 0;
-      position: fixed;
     }
 
     .sindu_sortable_table tr {
@@ -26,8 +25,16 @@
       display: table-row;
     }
 
-    .sindu_dragging .sindu_origin_table {
+    .sindu_dragging .sindu_origin_table * {
       opacity: 0;
+    }
+
+    .sindu_dragging .sindu_origin_table .sindu_exclude {
+      opacity: 1;
+    }
+
+    .sindu_dragging .sindu_origin_table .sindu_exclude * {
+      opacity: 1;
     }
 
     ul {
@@ -209,11 +216,11 @@
       </tbody>
       <tfoot>
       <tr>
-        <td>123</td>
-        <td>123</td>
-        <td>123</td>
-        <td>123</td>
-        <td>123</td>
+        <td>foot1</td>
+        <td>foot2</td>
+        <td>foot3</td>
+        <td>foot4</td>
+        <td>foot5</td>
       </tr>
       </tfoot>
     </table>
