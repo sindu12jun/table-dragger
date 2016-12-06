@@ -2,13 +2,9 @@
  * Created by lijun on 2016/12/4.
  */
 import 'babel-polyfill';
+import './main.css';
 import SortableTable from './OriginTable';
 
-// const table2 = window.document.querySelector('#table2');
-
-/* eslint-disable no-new */
-// new SortableTable(table2, { mode: 'row' });
-// new SortableTable(table2, { mode: 'column' });
 (function sortableModule (factory) {
   /* eslint-disable no-undef */
   if (typeof define === 'function' && define.amd) {

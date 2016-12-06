@@ -4,8 +4,16 @@
 import { empty, appendSibling, insertBeforeSibling, handleTr } from './util';
 import SortTableList from './SortTableList';
 
+const checkIsTable = ele =>
+typeof ele === 'object' && 'nodeType' in ele &&
+ele.nodeType === 1 && ele.cloneNode && ele.nodeName === 'TABLE';
+
 class Table {
   constructor (table = null) {
+    if (!checkIsTable(table)) {
+      throw new Error(`TableSortable: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
+    }
+
     this.el = table;
     this.visibility = table.style.visibility;
     this.movingRow = Array.from(this.el.children).find(el =>
@@ -16,9 +24,6 @@ class Table {
   }
 }
 
-// TODO 抛出异常、检查变量，防止js报错
-// TODO 保证li的padding和margin都为0
-// 注意class中所有的方法都是不可枚举的
 export default class SortableTable extends Table {
   constructor (table = null, userOptions) {
     super(table);
