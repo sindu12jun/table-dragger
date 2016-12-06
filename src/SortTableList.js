@@ -26,7 +26,7 @@ export default class SortTableList {
 
     // 装饰者模式
     const options = originTable.options;
-    options.onStart = before(options.onStart,
+    options.onChoose = before(options.onChoose,
       () => {
         this.el.parentNode.classList.add('sindu_dragging');
       }
