@@ -1,6 +1,7 @@
 /**
  * Created by lijun on 2016/11/16.
  */
+import './main.css';
 import { empty, appendSibling, insertBeforeSibling, handleTr } from './util';
 import SortTableList from './SortTableList';
 
@@ -70,6 +71,8 @@ export default class SortableTable extends Table {
 
   getColumnAsTable (index) {
     const table = this.el.cloneNode(true);
+
+    // table.style.borderCollapse = 'collapse';
 
     const footer = table.querySelector('tfoot');
     if (this.options.excludeFooter && footer) {

@@ -15,18 +15,20 @@ export default class SortTableList {
       }
     }
 
+    const options = originTable.options;
+    const mode = options.mode;
+
     this.el = tables.reduce((previous, current) => {
       const li = document.createElement('li');
       li.appendChild(current.el);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
     this.el.classList.add('sindu_sortable_table');
+    this.el.classList.add(`sindu_${mode}`);
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
-
     // 装饰者模式
-    const options = originTable.options;
-    options.onChoose = before(options.onChoose,
+    options.onStart = before(options.onStart,
       () => {
         this.el.parentNode.classList.add('sindu_dragging');
       }
@@ -41,6 +43,7 @@ export default class SortTableList {
 
     this.originTable = originTable;
     this._renderTables();
+
     window.addEventListener('resize', () => {
       (async () => {
         await timeout(66);
@@ -78,10 +81,13 @@ export default class SortTableList {
     this.el.style.left = `${originRect.left}px`;
   }
 
+  // TODO li设定宽度，ul overflow-hidden
   _renderTables () {
     if (this.originTable.options.mode === 'row') {
+      const firstTdWidth = this.originTable.movingRow.children[0].getBoundingClientRect().width;
+      this.el.style.width = `${firstTdWidth}px`;
       // 行排列时重新计算总宽度
-      this.el.style.width = `${this.originTable.el.getBoundingClientRect().width}px`;
+      // this.el.style.width = `${this.originTable.el.getBoundingClientRect().width}px`;
       // 行排列时重新计算每一行的高度
       this.el.style.height = `${this.originTable.el.getBoundingClientRect().height}px`;
       const rowHeights = [];
