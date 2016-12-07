@@ -1,6 +1,7 @@
 /**
  * Created by lijun on 2016/11/16.
  */
+import $ from 'jquery';
 import './main.css';
 import { empty, appendSibling, insertBeforeSibling, handleTr } from './util';
 import SortTableList from './SortTableList';
@@ -49,6 +50,10 @@ export default class SortableTable extends Table {
 
     this.el.classList.add('sindu_origin_table');
     this.sortTable = this.buildSortable({ mode: this.options.mode });
+    $(this.el).on('mousedown', (e) => {
+      /* eslint-disable */
+      e.target = document.createElement('div');
+    });
   }
 
   static create (el, options) {
