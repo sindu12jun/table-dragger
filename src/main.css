@@ -1,9 +1,11 @@
 ul.sindu_sortable_table {
   list-style: none;
-  opacity: 0;
+  /*opacity: 0;*/
   margin: 0;
   padding: 0;
   overflow: hidden;
+  z-index: 1;
+  background: red;
 }
 
 .sindu_sortable_table li {
@@ -16,17 +18,17 @@ ul.sindu_sortable_table {
   float: left;
 }
 
-.sindu_sortable_table.sindu_column tr {
-  display: none;
-}
+/*.sindu_sortable_table.sindu_column tr {*/
+  /*display: none;*/
+/*}*/
 
-.sindu_sortable_table.sindu_column .sindu_draggable {
-  display: table-row;
-}
+/*.sindu_sortable_table.sindu_column .sindu_draggable {*/
+  /*display: table-row;*/
+/*}*/
 
-.sindu_dragging .sindu_sortable_table.sindu_column tr {
-  display: table-row;
-}
+/*.sindu_dragging .sindu_sortable_table.sindu_column tr {*/
+  /*display: table-row;*/
+/*}*/
 
 /*.sindu_sortable_table.sindu_row table {*/
 /*width: 100%;*/
@@ -40,41 +42,41 @@ ul.sindu_sortable_table {
 /*display: table-cell;*/
 /*}*/
 
-.sindu_dragging .sindu_sortable_table {
-  z-index: 1;
-  opacity: 1;
-}
-
-.sindu_dragging .sindu_origin_table * {
-  opacity: 0;
-}
-
-.sindu_dragging .sindu_origin_table .sindu_exclude {
-  opacity: 1;
-}
-
-.sindu_dragging .sindu_origin_table .sindu_exclude * {
-  opacity: 1;
-}
-
-/*.sortable-ghost {*/
-/*position: relative;*/
+/*.sindu_dragging .sindu_sortable_table {*/
+  /*z-index: 1;*/
+  /*opacity: 1;*/
 /*}*/
 
-.sortable-ghost:before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  box-shadow: 4px 5px 4px #C6C6C6 inset;
-  visibility: visible !important;
-  background: #EFEFEF !important;
-}
+/*.sindu_dragging .sindu_origin_table * {*/
+  /*opacity: 0;*/
+/*}*/
 
-.sortable-chosen {
-  background-color: green;
-}
+/*.sindu_dragging .sindu_origin_table .sindu_exclude {*/
+  /*opacity: 1;*/
+/*}*/
 
-.sindu_sortable_table.sindu_column .sortable-chosen tr {
-  display: table-row!important;
-}
+/*.sindu_dragging .sindu_origin_table .sindu_exclude * {*/
+  /*opacity: 1;*/
+/*}*/
+
+/*!*.sortable-ghost {*!*/
+/*!*position: relative;*!*/
+/*!*}*!*/
+
+/*.sortable-ghost:before {*/
+  /*content: '';*/
+  /*position: absolute;*/
+  /*width: 100%;*/
+  /*height: 100%;*/
+  /*box-shadow: 4px 5px 4px #C6C6C6 inset;*/
+  /*visibility: visible !important;*/
+  /*background: #EFEFEF !important;*/
+/*}*/
+
+/*.sortable-chosen {*/
+  /*background-color: green;*/
+/*}*/
+
+/*.sindu_sortable_table.sindu_column .sortable-chosen tr {*/
+  /*display: table-row!important;*/
+/*}*/

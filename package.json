@@ -16,7 +16,8 @@
   "dependencies": {
     "babel-polyfill": "^6.16.0",
     "sortablejs": "^1.5.0-rc1",
-    "vue": "^2.1.0"
+    "vue": "^2.1.0",
+    "dragula": "^3.7.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",

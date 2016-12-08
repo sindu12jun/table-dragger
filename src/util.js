@@ -6,6 +6,10 @@ export const empty = (node) => {
     node.removeChild(node.firstChild);
   }
 };
+// TODO 兼容性
+export const on = (el, eventName, cb) => {
+  el.addEventListener(eventName, cb);
+}
 
 export const appendSibling = ({ target, origin }) => {
   origin.parentNode.insertBefore(target, origin.nextSibling);
@@ -14,6 +18,19 @@ export const appendSibling = ({ target, origin }) => {
 export const insertBeforeSibling = ({ target, origin }) => {
   origin.parentNode.insertBefore(target, origin);
 };
+
+export const sort = ({ list, from, to }) => {
+  if (from < to) {
+    appendSibling({ target: list[from], origin: list[to] });
+  } else {
+    insertBeforeSibling({ target: list[from], origin: list[to] });
+  }
+}
+
+export const classes = {
+  originClass: 'sindu_origin_table',
+}
+
 
 // export const handleTr = (table, cb) => {
 //   let trIndex = 0;
