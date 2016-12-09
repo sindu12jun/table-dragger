@@ -4,7 +4,7 @@
 // import Sortable from 'sortablejs';
 // import Sortable from './Sortable';
 import dragula from 'dragula';
-import { insertBeforeSibling, handleTr, before } from './util';
+import { insertBeforeSibling, classes } from './util';
 // import { insertBeforeSibling, timeout } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
@@ -24,27 +24,39 @@ export default class SortTableList {
       li.appendChild(current.el);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
-    this.el.classList.add('sindu_sortable_table');
+
+    this.el.classList.add(classes.draggableTable);
     this.el.classList.add(`sindu_${mode}`);
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
+
     // 装饰者模式
-    options.onStart = before(options.onStart,
-      () => {
-        this.el.parentNode.classList.add('sindu_dragging');
-      }
-    );
-    options.onEnd = before(options.onEnd,
-      (evt) => {
-        console.log(evt);
-        this._onDrop({ from: evt.oldIndex, to: evt.newIndex });
-      }
-    );
-    // Sortable.create(this.el, options);
+    // TODO 思考一下这里允许用户输入的是什么参数
+    // const onDrag = before(options.onStart,
+    //   (el, container) => {
+    //     container.classList.add('sindu_dragging');
+    //   }
+    // );
+    //
+    // const onDrop = before(options.onEnd,
+    //   (el, container) => {
+    //     container.classList.remove('sindu_dragging');
+    //     this.originTable.onSortTableDrop({ from, to });
+    //   }
+    // );
 
     this.originTable = originTable;
-    this._renderTables();
-    dragula([this.el]);
+    this._renderPosition();
+
+    dragula([this.el])
+      .on('drag', (el, container) => {
+        container.classList.add(classes.dragging);
+      })
+      .on('drop', (el, target) => {
+        target.classList.remove(classes.dragging);
+        this.originTable._onDrop({ from: originTable.activeIndex, to: Array.from(target.children).indexOf(el) });
+      })
+
     const event = new MouseEvent('mousedown',
       {
         cancelable: true,
@@ -68,17 +80,6 @@ export default class SortTableList {
     // }, false);
   }
 
-  getTables () {
-    return Array.from(this.el.children).map(li => li.querySelector('table'));
-  }
-
-  _onDrop ({ from, to }) {
-    this.el.parentNode.classList.remove('sindu_dragging');
-    // swap table
-    // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
-    this.originTable.onSortTableDrop({ from, to });
-  }
-
   _renderPosition () {
     // 计算ul相对于视窗的位置
     // 考虑到和父元素class联动等，必须放在目标元素sibling的位置
@@ -91,7 +92,4 @@ export default class SortTableList {
   }
 
   // TODO li设定宽度，ul overflow-hidden
-  _renderTables () {
-    this._renderPosition();
-  }
 }

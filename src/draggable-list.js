@@ -1,10 +1,8 @@
 /**
  * Created by lijun on 2016/12/8.
  */
-// import Sortable from 'sortablejs';
-// import Sortable from './Sortable';
 import dragula from 'dragula';
-import { insertBeforeSibling, handleTr, before } from './util';
+import { insertBeforeSibling, before } from './util';
 // import { insertBeforeSibling, timeout } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法

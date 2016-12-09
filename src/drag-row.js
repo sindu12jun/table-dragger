@@ -48,7 +48,7 @@ export default class DragRow extends Drag {
       const table = this.el.cloneNode(true);
       const cols = table.querySelectorAll('col');
       table.removeAttribute('id');
-      table.classList.remove(classes.originClass);
+      table.classList.remove(classes.originTable);
       table.innerHTML = '';
       if (cols) {
         table.appendChild(cols);

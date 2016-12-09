@@ -43,7 +43,7 @@ export default class Drag {
     // this.colGroup = document.querySelector('colgroup');
     // the index number of column/row user selected
     this.activeIndex = -1; //
-    this.el.classList.add(classes.originClass);
+    this.el.classList.add(classes.originTable);
     this.bindEvents();
   }
 

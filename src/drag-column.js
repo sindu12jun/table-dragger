@@ -36,7 +36,7 @@ export default class DragColumn extends Drag {
     }
 
     table.removeAttribute('id');
-    table.classList.remove(classes.originClass);
+    table.classList.remove(classes.originTable);
     Array.from(table.rows).forEach(row => {
       const target = row.children[index];
       empty(row);

@@ -27,8 +27,11 @@ export const sort = ({ list, from, to }) => {
   }
 }
 
+//TODO 把sortable改成draggable
 export const classes = {
-  originClass: 'sindu_origin_table',
+  originTable: 'sindu_origin_table',
+  draggableTable: 'sindu_sortable_table',
+  dragging: 'sindu_dragging',
 }
 
 
