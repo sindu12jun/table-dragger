@@ -1,8 +1,8 @@
 /**
  * Created by lijun on 2016/11/16.
  */
-import Sortable from 'sortablejs';
-// import Sortable from './Sortable';
+// import Sortable from 'sortablejs';
+import Sortable from './Sortable';
 import { insertBeforeSibling, timeout, handleTr, before } from './util';
 // import { insertBeforeSibling, timeout } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox

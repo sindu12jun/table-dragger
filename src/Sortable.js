@@ -775,6 +775,7 @@
 
             this._animate(dragRect, dragEl);
             this._animate(targetRect, target);
+            console.log(targetRect);
           }
         }
       }
@@ -1171,7 +1172,6 @@
 
   function _dispatchEvent (sortable, rootEl, name, targetEl, fromEl, startIndex, newIndex) {
     sortable = (sortable || rootEl[expando]);
-    console.log(rootEl);
     var evt = document.createEvent('Event'),
       options = sortable.options,
       onName = 'on' + name.charAt(0).toUpperCase() + name.substr(1);
@@ -1185,7 +1185,6 @@
 
     evt.oldIndex = startIndex;
     evt.newIndex = newIndex;
-    console.log(evt);
     rootEl.dispatchEvent(evt);
 
     if (options[onName]) {

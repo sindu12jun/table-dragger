@@ -784,6 +784,7 @@
 
             this._animate(dragRect, dragEl);
             this._animate(targetRect, target);
+            console.log(targetRect);
           }
         }
       }
