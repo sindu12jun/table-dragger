@@ -30,18 +30,19 @@ export default class DragColumn extends Drag {
       const c = cols[index];
       c.style.width = '';
       Array.from(cols).forEach((col) => {
-        if (col !== c)
+        if (col !== c) {
           col.parentNode.removeChild(col);
-      })
+        }
+      });
     }
 
     table.removeAttribute('id');
     table.classList.remove(classes.originTable);
-    Array.from(table.rows).forEach(row => {
+    Array.from(table.rows).forEach((row) => {
       const target = row.children[index];
       empty(row);
       row.appendChild(target);
-    })
+    });
     return table;
   }
 
@@ -53,12 +54,13 @@ export default class DragColumn extends Drag {
       }
     );
     // 列排列时重新计算每一行的高度
-    const rowHeights = Array.from(this.el.rows).map(row => row.children[0].getBoundingClientRect().height);
+    const rowHeights = Array.from(this.el.rows)
+      .map(row => row.children[0].getBoundingClientRect().height);
     this.fakeTables.forEach((table) => {
       /* eslint-disable no-param-reassign*/
       Array.from(table.rows).forEach((row, index) => {
         row.style.height = `${rowHeights[index]}px`;
-      })
+      });
     });
   }
 
@@ -77,7 +79,6 @@ export default class DragColumn extends Drag {
     if (this.cols) {
       sort({ list: this.cols, from, to });
     }
-
   }
 
   _onDrop ({ from, to }) {
@@ -85,6 +86,6 @@ export default class DragColumn extends Drag {
   }
 
   static create (el, options) {
-    return new SortableTable(el, options);
+    return new DragColumn(el, options);
   }
 }

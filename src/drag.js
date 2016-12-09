@@ -4,23 +4,34 @@
 
 // TODO 目前只是处理了handler，没有处理moves和acceptable
 import DraggableList from './draggable-list';
-import { appendSibling, insertBeforeSibling, handleTr } from './util';
+import { on, classes } from './util';
 
+function checkIsTable (ele) {
+  return typeof ele === 'object'
+    &&
+    'nodeType' in ele
+    &&
+    ele.nodeType === 1
+    &&
+    ele.cloneNode
+    &&
+    ele.nodeName === 'TABLE';
+}
 
 export default class Drag {
   constructor (table = null, userOptions = {}) {
-
     if (!checkIsTable(table)) {
       throw new Error(`TableSortable: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
     }
 
 
+    this.onTapStart = this.onTapStart.bind(this);
     // bind all methods start with '_' to THIS instance
-    for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
-      if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
-        this[fn] = this[fn].bind(this);
-      }
-    }
+    // for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
+    //   if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
+    //     this[fn] = this[fn].bind(this);
+    //   }
+    // }
 
     const defaults = {
       mode: 'column',
@@ -33,7 +44,10 @@ export default class Drag {
 
     const defaultHandlers = options.mode === 'column' ? table.rows[0].children : Array.from(table.rows).map(row => row.children[0]);
 
-    this.handlers = Array.from(options.dragHandle ? this.el.querySelectorAll(options.dragHandle) : defaultHandlers);
+    const handlers =
+      this.handlers =
+        Array.from(options.dragHandle
+          ? this.el.querySelectorAll(options.dragHandle) : defaultHandlers);
     if (!handlers) {
       throw new Error('TableSortable: Please ensure dragHandler in table');
     }
@@ -41,8 +55,8 @@ export default class Drag {
     this.el = table;
     this.cols = table.querySelectorAll('col');
     // this.colGroup = document.querySelector('colgroup');
-    // the index number of column/row user selected
-    this.activeIndex = -1; //
+    // the coord of selected column/row
+    this.activeCoord = { x: 0, y: 0 }; //
     this.el.classList.add(classes.originTable);
     this.bindEvents();
   }
@@ -50,57 +64,37 @@ export default class Drag {
 
   bindEvents () {
     for (const h of this.handlers) {
-      on(h, 'mousedown', this._onTapStart);
-      on(h, 'touchstart', this._onTapStart);
-      on(h, 'pointerdown', this._onTapStart);
+      on(h, 'mousedown', this.onTapStart);
+      on(h, 'touchstart', this.onTapStart);
+      on(h, 'pointerdown', this.onTapStart);
     }
   }
 
-  _onTapStart (event) {
+  onTapStart (event) {
     // TODO 兼容性
     let t = event.target;
-    while (t.nodeName !== 'TD') {
+    while (t.nodeName !== 'TD' && t.nodeName !== 'TH') {
       t = t.parentElement;
     }
 
-    const cellIndex = t.cellIndex;
-    const rowIndex = t.parentElement.rowIndex;
+    this.activeCoord = { x: t.cellIndex, y: t.parentElement.rowIndex };
 
-    this.activeIndex = Array.from(this.movingRow.children).indexOf(event.target);
     const fakeTables = this.fakeTables = this.buildTables();
     this.sizeFake();
     this.sortTable = new DraggableList({
-      fakeTables,
+      tables: fakeTables,
       originTable: this,
-      activeIndex: this.options.mode === 'row' ? rowIndex : cellIndex
     });
-  }
-
-  buildTables () {
-
   }
 
   // get the longest row length
   getLongestRow () {
     let result = this.el.rows[0];
-    Array.from(this.el.rows).forEach(row => {
-      result = row.children.length > result.length ? row : result
-    })
+    Array.from(this.el.rows).forEach((row) => {
+      result = row.children.length > result.length ? row : result;
+    });
     return result;
   }
 
   static version = '1.0';
-}
-
-
-function checkIsTable (ele) {
-  return typeof ele === 'object'
-    &&
-    'nodeType' in ele
-    &&
-    ele.nodeType === 1
-    &&
-    ele.cloneNode
-    &&
-    ele.nodeName === 'TABLE';
 }

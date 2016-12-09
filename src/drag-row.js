@@ -2,12 +2,11 @@
  * Created by lijun on 2016/12/7.
  */
 import Drag from './drag';
-import { classes, empty, sort } from './util';
+import { classes, sort } from './util';
 
 export default class DragRow extends Drag {
   constructor (table = null, userOptions) {
     super(table, userOptions);
-
   }
 
   sortRow ({ from, to }) {
@@ -20,7 +19,7 @@ export default class DragRow extends Drag {
     }
   }
 
-  _onDrop ({ from, to }) {
+  onDrop ({ from, to }) {
     this.sortRow({ from, to });
   }
 
@@ -28,12 +27,12 @@ export default class DragRow extends Drag {
     const cells = this.getLongestRow().children;
     // 行排列时计算每一行各个cell宽度
     /* eslint-disable no-param-reassign*/
-    this.fakeTables.forEach((table, index) => {
-      Array.from(table.rows).forEach(row => {
-        Array.from(row.children).forEach((cell, index) => {
-          cell.style.width = `${cells[index]}px`;
-        })
-      })
+    this.fakeTables.forEach((table) => {
+      Array.from(table.rows).forEach((row) => {
+        Array.from(row.children).forEach((cell, i) => {
+          cell.style.width = `${cells[i]}px`;
+        });
+      });
       // table.style.height = `${rowHeights[index]}px`;
     });
     // 行排列时计算每一行高度
@@ -58,6 +57,10 @@ export default class DragRow extends Drag {
       organ.appendChild(row.cloneNode(true));
       table.appendChild(organ);
       return table;
-    })
+    });
+  }
+
+  static create (el, options) {
+    return new DragRow(el, options);
   }
 }

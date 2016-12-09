@@ -2,54 +2,51 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
-import { insertBeforeSibling, before } from './util';
+import { insertBeforeSibling } from './util';
 // import { insertBeforeSibling, timeout } from './util';
 // http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
 // 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
 export default class SortTableList {
   constructor ({ tables = [], originTable }) {
-    for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
-      if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
-        this[fn] = this[fn].bind(this);
-      }
-    }
-
     const options = originTable.options;
     const mode = options.mode;
 
     this.el = tables.reduce((previous, current) => {
       const li = document.createElement('li');
-      li.appendChild(current.el);
+      li.appendChild(current);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
+
     this.el.classList.add('sindu_sortable_table');
     this.el.classList.add(`sindu_${mode}`);
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
     // 装饰者模式
-    options.onStart = before(options.onStart,
-      () => {
-        this.el.parentNode.classList.add('sindu_dragging');
-      }
-    );
-    options.onEnd = before(options.onEnd,
-      (evt) => {
-        console.log(evt);
-        this._onDrop({ from: evt.oldIndex, to: evt.newIndex });
-      }
-    );
+    // options.onStart = before(options.onStart,
+    //   () => {
+    //     this.el.parentNode.classList.add('sindu_dragging');
+    //   }
+    // );
+    // options.onEnd = before(options.onEnd,
+    //   (evt) => {
+    //     console.log(evt);
+    //     this._onDrop({ from: evt.oldIndex, to: evt.newIndex });
+    //   }
+    // );
     // Sortable.create(this.el, options);
 
     this.originTable = originTable;
     this._renderTables();
     dragula([this.el]);
+
     const event = new MouseEvent('mousedown',
       {
         cancelable: true,
         bubbles: true,
         view: window,
       });
-    this.el.children[originTable.activeIndex].dispatchEvent(event);
+    const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
+    this.el.children[index].dispatchEvent(event);
     //
     // window.addEventListener('resize', () => {
     //   (async () => {
@@ -66,16 +63,16 @@ export default class SortTableList {
     // }, false);
   }
 
-  getTables () {
-    return Array.from(this.el.children).map(li => li.querySelector('table'));
-  }
+  // getTables () {
+  //   return Array.from(this.el.children).map(li => li.querySelector('table'));
+  // }
 
-  _onDrop ({ from, to }) {
-    this.el.parentNode.classList.remove('sindu_dragging');
-    // swap table
-    // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
-    this.originTable.onSortTableDrop({ from, to });
-  }
+  // _onDrop ({ from, to }) {
+  //   this.el.parentNode.classList.remove('sindu_dragging');
+  // swap table
+  // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
+  // this.originTable._onDrop({ from, to });
+  // }
 
   _renderPosition () {
     // 计算ul相对于视窗的位置

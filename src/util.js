@@ -9,7 +9,7 @@ export const empty = (node) => {
 // TODO 兼容性
 export const on = (el, eventName, cb) => {
   el.addEventListener(eventName, cb);
-}
+};
 
 export const appendSibling = ({ target, origin }) => {
   origin.parentNode.insertBefore(target, origin.nextSibling);
@@ -25,14 +25,14 @@ export const sort = ({ list, from, to }) => {
   } else {
     insertBeforeSibling({ target: list[from], origin: list[to] });
   }
-}
+};
 
-//TODO 把sortable改成draggable
+// TODO 把sortable改成draggable
 export const classes = {
   originTable: 'sindu_origin_table',
   draggableTable: 'sindu_sortable_table',
   dragging: 'sindu_dragging',
-}
+};
 
 
 // export const handleTr = (table, cb) => {

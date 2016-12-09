@@ -15,13 +15,11 @@ import DragRow from './drag-row';
   } else {
     window.SortableTable = factory();
   }
-}(() => {
-    return function TableDragger (el, options) {
-      if (options.mode === 'row') {
-        return new DragRow(el, options);
-      } else {
-        return new DragColumn(el, options);
-      }
+}(
+  () => function TableDragger (el, options) {
+    if (options.mode === 'row') {
+      return DragRow.create(el, options);
     }
+    return DragColumn.create(el, options);
   }
 ));
