@@ -1,33 +1,38 @@
-ul.sindu_sortable_table {
+.sindu_draggable_list {
   list-style: none;
-  /*opacity: 0;*/
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  z-index: 1;
-  background: red;
 }
 
-.sindu_sortable_table li {
+.sindu_draggable_list li {
   margin: 0;
   padding: 0;
+  list-style: none;
   text-align: inherit;
 }
 
-.sindu_sortable_table.sindu_column li {
+.gu-mirror {
+  list-style: none;
+}
+
+.sindu_draggable_list.sindu_column li {
   float: left;
 }
 
+.sindu_dragging .sindu_origin_table {
+  visibility: hidden;
+}
+
 /*.sindu_sortable_table.sindu_column tr {*/
-  /*display: none;*/
+/*display: none;*/
 /*}*/
 
 /*.sindu_sortable_table.sindu_column .sindu_draggable {*/
-  /*display: table-row;*/
+/*display: table-row;*/
 /*}*/
 
 /*.sindu_dragging .sindu_sortable_table.sindu_column tr {*/
-  /*display: table-row;*/
+/*display: table-row;*/
 /*}*/
 
 /*.sindu_sortable_table.sindu_row table {*/
@@ -43,20 +48,20 @@ ul.sindu_sortable_table {
 /*}*/
 
 /*.sindu_dragging .sindu_sortable_table {*/
-  /*z-index: 1;*/
-  /*opacity: 1;*/
+/*z-index: 1;*/
+/*opacity: 1;*/
 /*}*/
 
 /*.sindu_dragging .sindu_origin_table * {*/
-  /*opacity: 0;*/
+/*opacity: 0;*/
 /*}*/
 
 /*.sindu_dragging .sindu_origin_table .sindu_exclude {*/
-  /*opacity: 1;*/
+/*opacity: 1;*/
 /*}*/
 
 /*.sindu_dragging .sindu_origin_table .sindu_exclude * {*/
-  /*opacity: 1;*/
+/*opacity: 1;*/
 /*}*/
 
 /*!*.sortable-ghost {*!*/
@@ -64,19 +69,19 @@ ul.sindu_sortable_table {
 /*!*}*!*/
 
 /*.sortable-ghost:before {*/
-  /*content: '';*/
-  /*position: absolute;*/
-  /*width: 100%;*/
-  /*height: 100%;*/
-  /*box-shadow: 4px 5px 4px #C6C6C6 inset;*/
-  /*visibility: visible !important;*/
-  /*background: #EFEFEF !important;*/
+/*content: '';*/
+/*position: absolute;*/
+/*width: 100%;*/
+/*height: 100%;*/
+/*box-shadow: 4px 5px 4px #C6C6C6 inset;*/
+/*visibility: visible !important;*/
+/*background: #EFEFEF !important;*/
 /*}*/
 
 /*.sortable-chosen {*/
-  /*background-color: green;*/
+/*background-color: green;*/
 /*}*/
 
 /*.sindu_sortable_table.sindu_column .sortable-chosen tr {*/
-  /*display: table-row!important;*/
+/*display: table-row!important;*/
 /*}*/

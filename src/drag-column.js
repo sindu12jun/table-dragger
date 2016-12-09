@@ -76,12 +76,13 @@ export default class DragColumn extends Drag {
       sort({ list: row.children, from, to });
     });
 
-    if (this.cols) {
-      sort({ list: this.cols, from, to });
+    const cols = this.getCols();
+    if (cols) {
+      sort({ list: cols, from, to });
     }
   }
 
-  _onDrop ({ from, to }) {
+  onDrop ({ from, to }) {
     this.sortColumn({ from, to });
   }
 

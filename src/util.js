@@ -30,7 +30,7 @@ export const sort = ({ list, from, to }) => {
 // TODO 把sortable改成draggable
 export const classes = {
   originTable: 'sindu_origin_table',
-  draggableTable: 'sindu_sortable_table',
+  draggableTable: 'sindu_draggable_list',
   dragging: 'sindu_dragging',
 };
 

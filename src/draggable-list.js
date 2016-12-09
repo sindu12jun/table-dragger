@@ -2,14 +2,14 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
-import { insertBeforeSibling } from './util';
-// import { insertBeforeSibling, timeout } from './util';
-// http://stackoverflow.com/questions/40755515/drag-element-dynamicly-doesnt-work-in-firefox
-// 这个问题解决不了，所以只能采取table加载完就开始创建sortable的方法
+import { insertBeforeSibling, classes } from './util';
+
+// TODO 注意Drop以后排列tables
 export default class SortTableList {
   constructor ({ tables = [], originTable }) {
     const options = originTable.options;
     const mode = options.mode;
+    const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
 
     this.el = tables.reduce((previous, current) => {
       const li = document.createElement('li');
@@ -17,7 +17,7 @@ export default class SortTableList {
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
 
-    this.el.classList.add('sindu_sortable_table');
+    this.el.classList.add(classes.draggableTable);
     this.el.classList.add(`sindu_${mode}`);
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
@@ -30,14 +30,26 @@ export default class SortTableList {
     // options.onEnd = before(options.onEnd,
     //   (evt) => {
     //     console.log(evt);
-    //     this._onDrop({ from: evt.oldIndex, to: evt.newIndex });
     //   }
     // );
     // Sortable.create(this.el, options);
 
     this.originTable = originTable;
     this._renderTables();
-    dragula([this.el]);
+    const drake = dragula([this.el])
+      .on('drag', (el, source) => {
+        source.parentElement.classList.add(classes.dragging);
+      })
+      .on('drop', (el, target) => {
+        const from = index;
+        const to = Array.from(target.children).indexOf(el);
+        target.parentElement.classList.remove(classes.dragging);
+        target.parentNode.removeChild(target);
+        this.originTable.onDrop({ from, to });
+        setTimeout(() => {
+          drake.destroy();
+        }, 0);
+      });
 
     const event = new MouseEvent('mousedown',
       {
@@ -45,7 +57,6 @@ export default class SortTableList {
         bubbles: true,
         view: window,
       });
-    const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
     this.el.children[index].dispatchEvent(event);
     //
     // window.addEventListener('resize', () => {
@@ -63,15 +74,7 @@ export default class SortTableList {
     // }, false);
   }
 
-  // getTables () {
-  //   return Array.from(this.el.children).map(li => li.querySelector('table'));
-  // }
-
   // _onDrop ({ from, to }) {
-  //   this.el.parentNode.classList.remove('sindu_dragging');
-  // swap table
-  // 注意table交换这里并不是单纯交换,而是通过判断from 和 to的大小插入前面或后面，和origin中同理
-  // this.originTable._onDrop({ from, to });
   // }
 
   _renderPosition () {

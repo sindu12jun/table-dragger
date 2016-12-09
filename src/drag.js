@@ -5,6 +5,7 @@
 // TODO 目前只是处理了handler，没有处理moves和acceptable
 import DraggableList from './draggable-list';
 import { on, classes } from './util';
+import '../node_modules/dragula/dist/dragula.min.css';
 
 function checkIsTable (ele) {
   return typeof ele === 'object'
@@ -53,7 +54,6 @@ export default class Drag {
     }
 
     this.el = table;
-    this.cols = table.querySelectorAll('col');
     // this.colGroup = document.querySelector('colgroup');
     // the coord of selected column/row
     this.activeCoord = { x: 0, y: 0 }; //
@@ -61,12 +61,15 @@ export default class Drag {
     this.bindEvents();
   }
 
+  getCols () {
+    return this.el.querySelectorAll('col');
+  }
 
   bindEvents () {
     for (const h of this.handlers) {
       on(h, 'mousedown', this.onTapStart);
-      on(h, 'touchstart', this.onTapStart);
-      on(h, 'pointerdown', this.onTapStart);
+      // on(h, 'touchstart', this.onTapStart);
+      // on(h, 'pointerdown', this.onTapStart);
     }
   }
 
