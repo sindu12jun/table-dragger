@@ -37,19 +37,20 @@ export default class SortTableList {
     this.originTable = originTable;
     this._renderTables();
     const drake = dragula([this.el])
-      .on('drag', (el, source) => {
-        source.parentElement.classList.add(classes.dragging);
-      })
-      .on('drop', (el, target) => {
-        const from = index;
-        const to = Array.from(target.children).indexOf(el);
-        target.parentElement.classList.remove(classes.dragging);
-        target.parentNode.removeChild(target);
-        this.originTable.onDrop({ from, to });
-        setTimeout(() => {
-          drake.destroy();
-        }, 0);
-      });
+        .on('drag', (el, source) => {
+          source.parentElement.classList.add(classes.dragging);
+        })
+        .on('drop', (el, container) => {
+          const from = index;
+          const to = Array.from(container.children).indexOf(el);
+          container.parentElement.classList.remove(classes.dragging);
+          container.parentNode.removeChild(container);
+          this.originTable.onDrop({ from, to });
+          setTimeout(() => {
+            drake.destroy();
+          }, 0);
+        })
+      ;
 
     const event = new MouseEvent('mousedown',
       {
