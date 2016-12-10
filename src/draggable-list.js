@@ -5,6 +5,9 @@ import dragula from 'dragula';
 import { insertBeforeSibling, classes } from './util';
 
 // TODO 注意Drop以后排列tables
+// TODO 学习dragula，注意startBecauseDrag，左右键，ignoreTextSelection等
+// TODO mode 改为 horizentol 等关键词
+// 改drgula时注意，reference指明了被交换的坐标
 export default class SortTableList {
   constructor ({ tables = [], originTable }) {
     const options = originTable.options;
@@ -36,19 +39,35 @@ export default class SortTableList {
 
     this.originTable = originTable;
     this._renderTables();
-    const drake = dragula([this.el])
+    /* eslint-disable */
+    const drake = dragula([this.el], {
+        animation: 1000,
+        direction: options.mode === 'column' ? 'horizontal' : 'vertical'
+      })
         .on('drag', (el, source) => {
           source.parentElement.classList.add(classes.dragging);
         })
-        .on('drop', (el, container) => {
-          const from = index;
-          const to = Array.from(container.children).indexOf(el);
-          container.parentElement.classList.remove(classes.dragging);
-          container.parentNode.removeChild(container);
-          this.originTable.onDrop({ from, to });
-          setTimeout(() => {
-            drake.destroy();
-          }, 0);
+        .on('over', () => {
+          // console.log('over');
+          // source.parentElement.classList.add(classes.dragging);
+        })
+        .on('cloned', () => {
+          // console.log('over');
+          // source.parentElement.classList.add(classes.dragging);
+        })
+        .on('shadow', (el, container, source) => {
+          // source.parentElement.classList.add(classes.dragging);
+        })
+        .on('dragend', (el, container) => {
+          console.log('drop');
+          // const from = index;
+          // const to = Array.from(container.children).indexOf(el);
+          // container.parentElement.classList.remove(classes.dragging);
+          // container.parentNode.removeChild(container);
+          // this.originTable.onDrop({ from, to });
+          // setTimeout(() => {
+          //   drake.destroy();
+          // }, 0);
         })
       ;
 

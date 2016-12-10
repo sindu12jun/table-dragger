@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.16.0",
+    "dragula": "git+https://github.com/sindu12jun/dragula.git",
     "sortablejs": "^1.5.0-rc1",
-    "vue": "^2.1.0",
-    "dragula": "^3.7.2"
+    "vue": "^2.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
