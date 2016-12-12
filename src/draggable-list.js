@@ -7,9 +7,14 @@ import { insertBeforeSibling, classes } from './util';
 // TODO 注意Drop以后排列tables
 // TODO 学习dragula，注意startBecauseDrag，左右键，ignoreTextSelection等
 // TODO mode 改为 horizentol 等关键词
+// TODO alt等，再看一遍drugula
+// TODO render等好好组织一下
+// TODO Node全换成Element
 // 改drgula时注意，reference指明了被交换的坐标
 export default class SortTableList {
   constructor ({ tables = [], originTable }) {
+    this.destroy = this.destroy.bind(this);
+
     const options = originTable.options;
     const mode = options.mode;
     const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
@@ -39,37 +44,34 @@ export default class SortTableList {
 
     this.originTable = originTable;
     this._renderTables();
+    this.el.parentElement.classList.add(classes.dragging);
+
     /* eslint-disable */
-    const drake = dragula([this.el], {
-        animation: 1000,
-        direction: options.mode === 'column' ? 'horizontal' : 'vertical'
+    this.drake = dragula([this.el], {
+      animation: 300,
+      direction: options.mode === 'column' ? 'horizontal' : 'vertical'
+    })
+      .on('drag', () => {
+        document.removeEventListener('mouseup', this.destroy);
       })
-        .on('drag', (el, source) => {
-          source.parentElement.classList.add(classes.dragging);
-        })
-        .on('over', () => {
-          // console.log('over');
-          // source.parentElement.classList.add(classes.dragging);
-        })
-        .on('cloned', () => {
-          // console.log('over');
-          // source.parentElement.classList.add(classes.dragging);
-        })
-        .on('shadow', (el, container, source) => {
-          // source.parentElement.classList.add(classes.dragging);
-        })
-        .on('dragend', (el, container) => {
-          console.log('drop');
-          // const from = index;
-          // const to = Array.from(container.children).indexOf(el);
-          // container.parentElement.classList.remove(classes.dragging);
-          // container.parentNode.removeChild(container);
-          // this.originTable.onDrop({ from, to });
-          // setTimeout(() => {
-          //   drake.destroy();
-          // }, 0);
-        })
-      ;
+      .on('over', () => {
+        // console.log('over');
+        // source.parentElement.classList.add(classes.dragging);
+      })
+      .on('cloned', () => {
+        // console.log('over');
+        // source.parentElement.classList.add(classes.dragging);
+      })
+      .on('shadow', (el, container, source) => {
+        // source.parentElement.classList.add(classes.dragging);
+      })
+      .on('dragend', (el) => {
+        const from = index;
+        const to = Array.from(this.el.children).indexOf(el);
+        this.originTable.onDrop({ from, to });
+        this.destroy();
+      })
+    ;
 
     const event = new MouseEvent('mousedown',
       {
@@ -78,24 +80,20 @@ export default class SortTableList {
         view: window,
       });
     this.el.children[index].dispatchEvent(event);
-    //
-    // window.addEventListener('resize', () => {
-    //   (async () => {
-    //     await timeout(66);
-    //     this._renderTables();
-    //   })();
-    // }, false);
-    //
-    // window.addEventListener('scroll', () => {
-    //   (async () => {
-    //     await timeout(66);
-    //     this._renderPosition();
-    //   })();
-    // }, false);
+
   }
 
   // _onDrop ({ from, to }) {
   // }
+
+  destroy () {
+    document.documentElement.removeEventListener('mouseup', this.destroy);
+    this.el.parentElement.classList.remove(classes.dragging);
+    this.el.parentElement.removeChild(this.el);
+    setTimeout(() => {
+      this.drake.destroy();
+    }, 0);
+  }
 
   _renderPosition () {
     // 计算ul相对于视窗的位置
