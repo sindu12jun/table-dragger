@@ -42,7 +42,6 @@ export default class Drag {
 
     this.onTap = this.onTap.bind(this);
     this.startBecauseMouseMoved = this.startBecauseMouseMoved.bind(this);
-    // bind all methods start with '_' to THIS instance
     // for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
     //   if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
     //     this[fn] = this[fn].bind(this);
@@ -102,7 +101,6 @@ export default class Drag {
       return;
     }
 
-    this.grabbed = t;
     this.activeCoord = { x: t.cellIndex, y: t.parentElement.rowIndex };
     this.tappedCoord = { x: event.clientX, y: event.clientY };
     documentElement.addEventListener('mousemove', this.startBecauseMouseMoved);
