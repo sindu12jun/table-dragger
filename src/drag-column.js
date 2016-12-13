@@ -31,7 +31,7 @@ export default class DragColumn extends Drag {
       c.style.width = '';
       Array.from(cols).forEach((col) => {
         if (col !== c) {
-          col.parentNode.removeChild(col);
+          col.parentElement.removeChild(col);
         }
       });
     }
@@ -41,7 +41,9 @@ export default class DragColumn extends Drag {
     Array.from(table.rows).forEach((row) => {
       const target = row.children[index];
       empty(row);
-      row.appendChild(target);
+      if (target) {
+        row.appendChild(target);
+      }
     });
     return table;
   }
@@ -87,6 +89,7 @@ export default class DragColumn extends Drag {
   }
 
   static create (el, options) {
-    return new DragColumn(el, options);
+    const d = new DragColumn(el, options);
+    return d && d.dragger;
   }
 }

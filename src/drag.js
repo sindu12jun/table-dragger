@@ -2,10 +2,11 @@
  * Created by lijun on 2016/12/7.
  */
 
-// TODO 目前只是处理了handler，没有处理moves和acceptable
-// 几个add和remove，用eventual
+// TODO 版本管理 version
+// TODO 几个add和remove，用eventual
+// TODO 起名dragger
 import DraggableList from './draggable-list';
-import { on, classes } from './util';
+import { on, remove, classes, emitter } from './util';
 import '../node_modules/dragula/dist/dragula.min.css';
 
 const doc = document;
@@ -23,13 +24,12 @@ function checkIsTable (ele) {
     ele.nodeName === 'TABLE';
 }
 
-// TODO 根据兼容性，再考虑一下这里怎么写
-function whichMouseButton (e) {
+function isLeftButton (e) {
   if ('touches' in e) {
-    return e.touches.length;
+    return e.touches.length === 1;
   }
   if ('buttons' in e) {
-    return e.buttons;
+    return e.buttons === 1;
   }
   return false;
 }
@@ -42,36 +42,28 @@ export default class Drag {
 
     this.onTap = this.onTap.bind(this);
     this.startBecauseMouseMoved = this.startBecauseMouseMoved.bind(this);
-    // for (const fn of Object.getOwnPropertyNames((Object.getPrototypeOf(this)))) {
-    //   if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
-    //     this[fn] = this[fn].bind(this);
-    //   }
-    // }
 
     const defaults = {
       mode: 'column',
       excludeFooter: false,
-      animation: 150,
       dragHandle: '',
       onlyBody: '',
     };
     const options = this.options = Object.assign({}, defaults, userOptions);
 
+    this.fakeTables = [];
+    this.dragger = emitter({ dragging: false });
+
     const defaultHandlers = options.mode === 'column' ? table.rows[0].children : Array.from(table.rows).map(row => row.children[0]);
 
-    const handlers =
-      this.handlers =
-        Array.from(options.dragHandle
-          ? this.el.querySelectorAll(options.dragHandle) : defaultHandlers);
-    if (!handlers) {
+    this.handlers = Array.from(options.dragHandle ? table.querySelectorAll(options.dragHandle)
+      : defaultHandlers);
+    if (!this.handlers) {
       throw new Error('TableSortable: Please ensure dragHandler in table');
     }
 
     this.el = table;
-    this.grabbed = null;
     this.tappedCoord = { x: 0, y: 0 };
-    // this.colGroup = document.querySelector('colgroup');
-    // the coord of selected column/row
     this.activeCoord = { x: 0, y: 0 }; //
     this.el.classList.add(classes.originTable);
     this.bindEvents();
@@ -84,8 +76,8 @@ export default class Drag {
   bindEvents () {
     for (const h of this.handlers) {
       on(h, 'mousedown', this.onTap);
-      // on(h, 'touchstart', this.onTapStart);
-      // on(h, 'pointerdown', this.onTapStart);
+      on(h, 'touchstart', this.onTapStart);
+      on(h, 'pointerdown', this.onTapStart);
     }
   }
 
@@ -96,18 +88,17 @@ export default class Drag {
       t = t.parentElement;
     }
 
-    const ignore = whichMouseButton(event) !== 1 || event.metaKey || event.ctrlKey;
+    const ignore = !isLeftButton(event) || event.metaKey || event.ctrlKey;
     if (ignore) {
       return;
     }
 
     this.activeCoord = { x: t.cellIndex, y: t.parentElement.rowIndex };
     this.tappedCoord = { x: event.clientX, y: event.clientY };
-    documentElement.addEventListener('mousemove', this.startBecauseMouseMoved);
-    documentElement.addEventListener('mouseup', () => {
-      documentElement.removeEventListener('mousemove', this.startBecauseMouseMoved);
+    on(documentElement, 'mousemove', this.startBecauseMouseMoved);
+    on(documentElement, 'mouseup', () => {
+      remove(documentElement, 'mousemove', this.startBecauseMouseMoved);
     });
-    // touchy(documentElement, op, 'mousemove', startBecauseMouseMoved);
   }
 
   startBecauseMouseMoved (event) {
@@ -119,21 +110,24 @@ export default class Drag {
       return;
     }
 
-    documentElement.removeEventListener('mousemove', this.startBecauseMouseMoved);
-    const fakeTables = this.fakeTables = this.buildTables();
+    remove(documentElement, 'mousemove', this.startBecauseMouseMoved);
+
+    this.fakeTables = this.buildTables();
     this.sizeFake();
     this.sortTable = new DraggableList({
-      tables: fakeTables,
+      tables: this.fakeTables,
       originTable: this,
     });
-    documentElement.addEventListener('mouseup', this.sortTable.destroy);
+    on(documentElement, 'mouseup', this.sortTable.destroy);
   }
 
   // get the longest row length
   getLongestRow () {
     let result = this.el.rows[0];
     Array.from(this.el.rows).forEach((row) => {
-      result = row.children.length > result.length ? row : result;
+      const rowL = row.children.length;
+      const resultL = result.children.length;
+      result = rowL > resultL ? row : result;
     });
     return result;
   }

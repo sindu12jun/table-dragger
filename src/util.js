@@ -1,6 +1,26 @@
 /**
  * Created by lijun on 2016/11/16.
  */
+// publish-subscribe
+export const emitter = (thing = {}) => {
+  /* eslint-disable no-param-reassign */
+  const evt = {};
+  thing.on = (type, fn) => {
+    evt[type] = evt[type] || [];
+    evt[type].push(fn);
+    return thing;
+  };
+  thing.emit = (type, ...args) => {
+    if (!evt[type]) {
+      return;
+    }
+    for (const fn of evt[type]) {
+      fn(...args);
+    }
+  };
+  return thing;
+};
+
 export const empty = (node) => {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
@@ -11,8 +31,13 @@ export const on = (el, eventName, cb) => {
   el.addEventListener(eventName, cb);
 };
 
-export const appendSibling = ({ target, origin }) => {
-  origin.parentNode.insertBefore(target, origin.nextSibling);
+export const remove = (el, eventName, cb) => {
+  el.removeEventListener(eventName, cb);
+};
+
+export const appendSibling = ({ target, origin, parent }) => {
+  // if row length is different
+  (parent || origin.parentNode).insertBefore(target, origin ? origin.nextElementSibling : null);
 };
 
 export const insertBeforeSibling = ({ target, origin }) => {
@@ -34,6 +59,35 @@ export const classes = {
   dragging: 'sindu_dragging',
 };
 
+export const getScrollBarWidth = () => {
+  /* eslint-disable */
+  if (document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
+    return 0
+  }
+  let inner = document.createElement('p')
+  inner.style.width = '100%'
+  inner.style.height = '200px'
+
+  let outer = document.createElement('div')
+  outer.style.position = 'absolute'
+  outer.style.top = '0px'
+  outer.style.left = '0px'
+  outer.style.visibility = 'hidden'
+  outer.style.width = '200px'
+  outer.style.height = '150px'
+  outer.style.overflow = 'hidden'
+  outer.appendChild(inner)
+
+  document.body.appendChild(outer)
+  let w1 = inner.offsetWidth
+  outer.style.overflow = 'scroll'
+  let w2 = inner.offsetWidth
+  if (w1 === w2) w2 = outer.clientWidth
+
+  document.body.removeChild(outer)
+
+  return (w1 - w2)
+}
 
 // export const handleTr = (table, cb) => {
 //   let trIndex = 0;

@@ -14,13 +14,25 @@ export default class DragRow extends Drag {
     if (from === to) {
       return;
     }
-    if (this.cols) {
-      sort({ list: this.cols, from, to });
-    }
+    const list = this.getRows();
+    sort({ list, parent: list[to].parentElement, from, to });
   }
 
   onDrop ({ from, to }) {
     this.sortRow({ from, to });
+  }
+
+  getRows () {
+    const { el } = this;
+    // if (this.options.onlyBody) {
+    //   return Array.from(el.tBodies).reduce((prev, next) => {
+    //     Array.from(next.children).forEach((r) => {
+    //       prev.push(r);
+    //     });
+    //     return prev;
+    //   }, []);
+    // }
+    return Array.from(el.rows);
   }
 
   sizeFake () {
@@ -28,29 +40,31 @@ export default class DragRow extends Drag {
     // 行排列时计算每一行各个cell宽度
     /* eslint-disable no-param-reassign*/
     this.fakeTables.forEach((table) => {
-      Array.from(table.rows).forEach((row) => {
-        Array.from(row.children).forEach((cell, i) => {
-          cell.style.width = `${cells[i]}px`;
-        });
+      Array.from(table.rows[0].children).forEach((cell, i) => {
+        cell.style.width = `${cells[i]}px`;
       });
-      // table.style.height = `${rowHeights[index]}px`;
     });
     // 行排列时计算每一行高度
-    this.fakeTables.forEach((table, index) => {
-      /* eslint-disable no-param-reassign*/
-      table.style.height = `${this.el.rows[index].getBoundingClientRect().height}px`;
-    });
+    // 似乎用不着计算
+    // this.fakeTables.forEach((table, index) => {
+    //   /* eslint-disable no-param-reassign*/
+    //   table.style.height = `${this.el.rows[index].getBoundingClientRect().height}px`;
+    // });
   }
 
   buildTables () {
-    return Array.from(this.el.rows).map((row) => {
+    return this.getRows().map((row) => {
       const table = this.el.cloneNode(true);
       const cols = table.querySelectorAll('col');
       table.removeAttribute('id');
       table.classList.remove(classes.originTable);
       table.innerHTML = '';
       if (cols) {
-        table.appendChild(cols);
+        const f = document.createDocumentFragment();
+        Array.from(cols).forEach((col) => {
+          f.appendChild(col);
+        });
+        table.appendChild(f);
       }
       const organ = row.parentNode.cloneNode();
       organ.innerHTML = '';
@@ -58,9 +72,20 @@ export default class DragRow extends Drag {
       table.appendChild(organ);
       return table;
     });
+    // return this.fakeTables.filter(
+    //   (t) => {
+    //     const c = t.children;
+    //     return Array.from(c).some(o => o.nodeName === 'TBODY');
+    //   }
+    // ).reduce((previous, current) => {
+    //   const li = document.createElement('li');
+    //   li.appendChild(current);
+    //   return previous.appendChild(li) && previous;
+    // }, document.createElement('ul'));
   }
 
   static create (el, options) {
-    return new DragRow(el, options);
+    const d = new DragRow(el, options);
+    return d && d.dragger;
   }
 }

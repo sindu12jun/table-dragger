@@ -2,7 +2,7 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
-import { insertBeforeSibling, classes } from './util';
+import { insertBeforeSibling, classes, getScrollBarWidth } from './util';
 
 // TODO 注意Drop以后排列tables
 // TODO 学习dragula，注意startBecauseDrag，左右键，ignoreTextSelection等
@@ -12,10 +12,11 @@ import { insertBeforeSibling, classes } from './util';
 // TODO Node全换成Element
 // 改drgula时注意，reference指明了被交换的坐标
 export default class SortTableList {
-  constructor ({ tables = [], originTable }) {
+  constructor ({ tables, originTable }) {
     this.destroy = this.destroy.bind(this);
 
     const options = originTable.options;
+    const dragger = originTable.dragger;
     const mode = options.mode;
     const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
 
@@ -24,52 +25,48 @@ export default class SortTableList {
       li.appendChild(current);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
-
     this.el.classList.add(classes.draggableTable);
     this.el.classList.add(`sindu_${mode}`);
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
-    // 装饰者模式
-    // options.onStart = before(options.onStart,
-    //   () => {
-    //     this.el.parentNode.classList.add('sindu_dragging');
-    //   }
-    // );
-    // options.onEnd = before(options.onEnd,
-    //   (evt) => {
-    //     console.log(evt);
-    //   }
-    // );
-    // Sortable.create(this.el, options);
 
     this.originTable = originTable;
     this._renderTables();
     this.el.parentElement.classList.add(classes.dragging);
 
-    /* eslint-disable */
+    const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
+    const bodyOverflow = document.body.style.overflow;
     this.drake = dragula([this.el], {
       animation: 300,
-      direction: options.mode === 'column' ? 'horizontal' : 'vertical'
+      mirrorContainer: this.el,
+      direction: options.mode === 'column' ? 'horizontal' : 'vertical',
     })
       .on('drag', () => {
-        document.removeEventListener('mouseup', this.destroy);
-      })
-      .on('over', () => {
-        // console.log('over');
-        // source.parentElement.classList.add(classes.dragging);
-      })
-      .on('cloned', () => {
-        // console.log('over');
-        // source.parentElement.classList.add(classes.dragging);
-      })
-      .on('shadow', (el, container, source) => {
-        // source.parentElement.classList.add(classes.dragging);
+        document.body.style.overflow = 'hidden';
+        // const originRight = document.body.style.paddingRight || 0;
+        const barWidth = getScrollBarWidth();
+        if (barWidth) {
+          document.body.style.paddingRight = `${barWidth + bodyPaddingRight}px`;
+        }
+        document.documentElement.removeEventListener('mouseup', this.destroy);
+        dragger.emit('onDrag');
       })
       .on('dragend', (el) => {
+        document.body.style.overflow = bodyOverflow;
+        document.body.style.paddingRight = `${bodyPaddingRight}px`;
         const from = index;
         const to = Array.from(this.el.children).indexOf(el);
-        this.originTable.onDrop({ from, to });
+        originTable.onDrop({ from, to });
         this.destroy();
+        dragger.emit('onDrop', from, to, originTable.el);
+      })
+      .on('shadow', (el) => {
+        const from = index;
+        const to = Array.from(this.el.children).indexOf(el);
+        dragger.emit('onMove', from, to, originTable.el);
+      })
+      .on('out', () => {
+        dragger.emit('onOut', originTable.el);
       })
     ;
 
@@ -80,11 +77,7 @@ export default class SortTableList {
         view: window,
       });
     this.el.children[index].dispatchEvent(event);
-
   }
-
-  // _onDrop ({ from, to }) {
-  // }
 
   destroy () {
     document.documentElement.removeEventListener('mouseup', this.destroy);
@@ -108,6 +101,9 @@ export default class SortTableList {
 
   // TODO li设定宽度，ul overflow-hidden
   _renderTables () {
+    const rect = this.originTable.el.getBoundingClientRect();
+    this.el.style.width = `${rect.width}px`;
+    this.el.style.height = `${rect.height}px`;
     this._renderPosition();
   }
 }
