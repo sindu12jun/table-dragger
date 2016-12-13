@@ -37,16 +37,16 @@ export const remove = (el, eventName, cb) => {
 
 export const appendSibling = ({ target, origin, parent }) => {
   // if row length is different
-  (parent || origin.parentNode).insertBefore(target, origin ? origin.nextElementSibling : null);
+  (parent || target.parentNode).insertBefore(target, origin ? origin.nextElementSibling : null);
 };
 
 export const insertBeforeSibling = ({ target, origin }) => {
   origin.parentNode.insertBefore(target, origin);
 };
 
-export const sort = ({ list, from, to }) => {
+export const sort = ({ list, from, to, parent }) => {
   if (from < to) {
-    appendSibling({ target: list[from], origin: list[to] });
+    appendSibling({ target: list[from], origin: list[to], parent });
   } else {
     insertBeforeSibling({ target: list[from], origin: list[to] });
   }
