@@ -3,7 +3,8 @@
  */
 import 'babel-polyfill';
 import './main.css';
-import SortableTable from './OriginTable';
+import DragColumn from './drag-column';
+import DragRow from './drag-row';
 
 (function sortableModule (factory) {
   /* eslint-disable no-undef */
@@ -14,5 +15,11 @@ import SortableTable from './OriginTable';
   } else {
     window.SortableTable = factory();
   }
-}(() => SortableTable
+}(
+  () => function TableDragger (el, options) {
+    if (options.mode === 'row') {
+      return DragRow.create(el, options);
+    }
+    return DragColumn.create(el, options);
+  }
 ));

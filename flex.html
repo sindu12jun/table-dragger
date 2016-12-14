@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .flex {
+      display: flex;
+      flex-flow: row;
+      /*flex-direction: row;*/
+      /*flex-wrap: wrap;*/
+      /*justify-content: center;*/
+      /*align-items: center;*/
+      /*align-content: center;*/
+    }
+
+    .box {
+      display: flex;
+      height: 500px;
+      border: 1px blue solid;
+    }
+
+    .item {
+      flex-grow: 1;
+      width: 20px;
+      height: 100px;
+    }
+
+    .red {
+      background-color: red;
+    }
+
+    .green {
+      background-color: green;
+    }
+
+    .yellow {
+      background-color: yellow;
+    }
+
+    .gray {
+      background-color: gray;
+    }
+
+    .d1 {
+      /*flex-grow: 100;*/
+    }
+
+    .d2 {
+      /*flex-grow: 100;*/
+      /*grid-area: main;*/
+
+    }
+
+    .d3 {
+      /*grid-area: sidebar;*/
+
+    }
+
+    .d4 {
+      /*grid-area: footer;*/
+    }
+  </style>
+</head>
+<body>
+<div class="flex box">
+  <div id="d1" class="item red d1">1</div>
+  <div id="d2" class="item green d2">2</div>
+  <div class="item yellow d3">3</div>
+  <div class="item gray d4">4</div>
+</div>
+<button id="btn">animate</button>
+<script>
+  const d1 = document.querySelector('#d1');
+  const d2 = document.querySelector('#d2');
+  const btn = document.querySelector('#btn');
+
+  btn.addEventListener('click', () => {
+    const prevRect = d2.getBoundingClientRect();
+    const r1 = d1.getBoundingClientRect();
+    const r2 = d2.getBoundingClientRect();
+    d1.parentNode.insertBefore(d2, d1);
+    animate(r1, d1);
+    animate(r2, d2);
+  })
+
+  function _css (el, prop, val) {
+    var style = el && el.style;
+
+    if (style) {
+      if (val === void 0) {
+        if (document.defaultView && document.defaultView.getComputedStyle) {
+          val = document.defaultView.getComputedStyle(el, '');
+        }
+        else if (el.currentStyle) {
+          val = el.currentStyle;
+        }
+
+        return prop === void 0 ? val : val[prop];
+      }
+      else {
+        if (!(prop in style)) {
+          prop = '-webkit-' + prop;
+        }
+
+        style[prop] = val + (typeof val === 'string' ? '' : 'px');
+      }
+    }
+  }
+
+  function animate (prevRect, target) {
+    var ms = 1000;
+    if (ms) {
+      var currentRect = target.getBoundingClientRect();
+
+      _css(target, 'transition', 'none');
+//      _css(target, 'transition', 'all 3s');
+      _css(target, 'transform', 'translate3d('
+        + (prevRect.left - currentRect.left) + 'px,'
+        + (prevRect.top - currentRect.top) + 'px,0)'
+      );
+
+      target.offsetWidth; // repaint
+//
+      _css(target, 'transition', 'all ' + ms + 'ms');
+      _css(target, 'transform', 'translate3d(0,0,0)');
+//
+      clearTimeout(target.animated);
+      target.animated = setTimeout(function () {
+        _css(target, 'transition', '');
+        _css(target, 'transform', '');
+        target.animated = false;
+      }, ms);
+    }
+  }
+  ;
+
+</script>
+</body>
+</html>
