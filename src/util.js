@@ -21,6 +21,10 @@ export const emitter = (thing = {}) => {
   return thing;
 };
 
+export const css = (csses) => {
+
+}
+
 export const empty = (node) => {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
