@@ -72,16 +72,6 @@ export default class DragRow extends Drag {
       table.appendChild(organ);
       return table;
     });
-    // return this.fakeTables.filter(
-    //   (t) => {
-    //     const c = t.children;
-    //     return Array.from(c).some(o => o.nodeName === 'TBODY');
-    //   }
-    // ).reduce((previous, current) => {
-    //   const li = document.createElement('li');
-    //   li.appendChild(current);
-    //   return previous.appendChild(li) && previous;
-    // }, document.createElement('ul'));
   }
 
   static create (el, options) {

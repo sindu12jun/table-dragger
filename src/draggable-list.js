@@ -22,6 +22,9 @@ export default class SortTableList {
 
     this.el = tables.reduce((previous, current) => {
       const li = document.createElement('li');
+      if (options.onlyBody && options.mode === 'row' && !Array.from(current.children).some(o => o.nodeName === 'TBODY')) {
+        li.classList.add('sindu_static');
+      }
       li.appendChild(current);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
@@ -39,6 +42,7 @@ export default class SortTableList {
     this.drake = dragula([this.el], {
       animation: 300,
       mirrorContainer: this.el,
+      staticClass: 'sindu_static',
       direction: options.mode === 'column' ? 'horizontal' : 'vertical',
     })
       .on('drag', () => {
@@ -63,7 +67,7 @@ export default class SortTableList {
       .on('shadow', (el) => {
         const from = index;
         const to = Array.from(this.el.children).indexOf(el);
-        dragger.emit('onMove', from, to, originTable.el);
+        dragger.emit('onShadowMove', from, to, originTable.el);
       })
       .on('out', () => {
         dragger.emit('onOut', originTable.el);
