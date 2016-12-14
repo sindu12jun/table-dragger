@@ -1,24 +1,42 @@
 {
-  "name": "table-drag",
+  "name": "table-dragger",
   "version": "1.0.0",
-  "description": "DRAGGABLE_TABLE",
+  "description": "Drag and sort columns and rows of table",
   "author": "sindu12jun <imgonnalovetheworld@gmail.com>",
-  "private": true,
+  "main": "dist/table-dragger.js",
+  "repository": {
+    "type": "git",
+    "url": "sindu12jun/SortableTable"
+  },
+  "homepage": "https://sindu12jun.github.io/SortableTable/",
+  "directories": {
+    "src": "src/"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "Dom",
+    "table",
+    "drag",
+    "sort"
+  ],
   "scripts": {
-    "dev": "node build/dev-server.js",
-    "dev:test": "karma start build/karma.dev.config.js",
-    "build": "node build/build.js",
-    "unit": "karma start test/unit/karma.conf.js --single-run",
-    "e2e": "node test/e2e/runner.js",
-    "test": "npm run unit && npm run e2e",
-    "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
+    "build": "webpack --progress --hide-modules --config  webpack.build.min.js && webpack --progress --hide-modules --config  webpack.build.js",
+    "builddocs": "webpack --progress --hide-modules && set NODE_ENV=production webpack --progress --hide-modules",
+    "docs": "webpack-dev-server --inline --hot --quiet",
+    "gpages": "gh-pages -d build",
+    "postversion": "git push && git push --tags",
+    "version": "npm run build && git add -A dist"
   },
   "dependencies": {
     "babel-polyfill": "^6.16.0",
     "crossvent": "^1.5.5",
-    "dragula": "git+https://github.com/sindu12jun/dragula.git",
-    "sortablejs": "^1.5.0-rc1",
-    "vue": "^2.1.0"
+    "dragula": "git+https://github.com/sindu12jun/dragula.git"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
@@ -34,7 +52,7 @@
     "chromedriver": "^2.21.2",
     "connect-history-api-fallback": "^1.1.0",
     "cross-spawn": "^4.0.2",
-    "css-loader": "^0.25.0",
+    "css-loader": "^0.26.1",
     "eslint": "^3.7.1",
     "eslint-config-airbnb-base": "^8.0.0",
     "eslint-friendly-formatter": "^2.0.5",
@@ -48,6 +66,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "function-bind": "^1.0.2",
+    "gh-pages": "^0.12.0",
     "html-webpack-plugin": "^2.8.1",
     "http-proxy-middleware": "^0.17.2",
     "inject-loader": "^2.0.1",
@@ -76,17 +95,11 @@
     "shelljs": "^0.7.4",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
-    "url-loader": "^0.5.7",
-    "vue-loader": "^10.0.0",
-    "vue-style-loader": "^1.0.0",
-    "vue-template-compiler": "^2.1.0",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.3",
     "webpack-hot-middleware": "^2.12.2",
-    "webpack-merge": "^0.14.1"
+    "webpack-merge": "^0.14.1",
+    "style-loader": "^0.13.1"
   },
-  "engines": {
-    "node": ">= 4.0.0",
-    "npm": ">= 3.0.0"
-  }
+  "license": "MIT"
 }

@@ -3,6 +3,7 @@
  */
 var webpack = require('webpack')
 var path = require('path')
+var projectRoot = path.resolve(__dirname, './')
 
 module.exports = {
   entry: './docs/index.js',
@@ -12,20 +13,32 @@ module.exports = {
     filename: 'build-docs.js'
   },
   resolve: {
-    root: path.resolve('./')
+    root: path.resolve('./'),
+  },
+  resolveLoader: {
+    fallback: [path.join(__dirname, '../node_modules')]
   },
   module: {
-    loaders: [
-      {test: /\.vue$/, loader: 'vue' },
+    preLoaders: [
       {
         test: /\.js$/,
-        exclude: /node_modules|vue\/src|vue-router\/|vue-loader\/|vue-hot-reload-api\//,
-        loader: 'babel'
+        loader: 'eslint',
+        include: projectRoot,
+        exclude: /node_modules/
+      }
+    ],
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: 'babel',
+        include: projectRoot,
+        exclude: /node_modules/
       },
-      { test: /\.css$/, loader: "style-loader!css-loader?root=./docs/" },
-      {test: /\.scss$/, loader: "style!css!sass"},
-      {test: /\.less$/, loader: "style-loader!css-loader!less-loader"},
+      { test: /\.css$/, loader: "style-loader!css-loader" }
     ]
+  },
+  eslint: {
+    formatter: require('eslint-friendly-formatter')
   },
   babel: {
     presets: ['es2015'],
