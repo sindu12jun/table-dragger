@@ -5,6 +5,7 @@
 // TODO 版本管理 version
 // TODO 几个add和remove，用eventual
 // TODO 起名dragger
+// 加一个destroy方法
 import DraggableList from './draggable-list';
 import { on, remove, classes, emitter } from './util';
 import '../node_modules/dragula/dist/dragula.min.css';
@@ -30,6 +31,9 @@ function isLeftButton (e) {
   }
   if ('buttons' in e) {
     return e.buttons === 1;
+  }
+  if ('button' in e) {
+    return e.button === 0;
   }
   return false;
 }
@@ -76,8 +80,8 @@ export default class Drag {
   bindEvents () {
     for (const h of this.handlers) {
       on(h, 'mousedown', this.onTap);
-      on(h, 'touchstart', this.onTapStart);
-      on(h, 'pointerdown', this.onTapStart);
+      on(h, 'touchstart', this.onTap);
+      on(h, 'pointerdown', this.onTap);
     }
   }
 

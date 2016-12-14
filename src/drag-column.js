@@ -28,7 +28,11 @@ export default class DragColumn extends Drag {
 
     if (cols) {
       const c = cols[index];
-      c.style.width = '';
+      if (c) {
+        c.style.width = '';
+      } else {
+        throw new Error('Please make sure the length of col element is equal with table\'s row length');
+      }
       Array.from(cols).forEach((col) => {
         if (col !== c) {
           col.parentElement.removeChild(col);
@@ -52,7 +56,9 @@ export default class DragColumn extends Drag {
     // 列排列时重新计算每一列的宽度
     Array.from(this.getLongestRow().children).forEach(
       (cell, index) => {
-        this.fakeTables[index].style.width = `${cell.getBoundingClientRect().width}px`;
+        const t = this.fakeTables[index];
+        // table 的width比td稍微宽一点，所以不要直接给table直接赋宽度
+        (t.querySelector('td') || t.querySelector('th')).style.width = `${cell.getBoundingClientRect().width}px`;
       }
     );
     // 列排列时重新计算每一行的高度

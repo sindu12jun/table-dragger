@@ -4,6 +4,8 @@
 import dragula from 'dragula';
 import { insertBeforeSibling, classes, getScrollBarWidth } from './util';
 
+// const isTest = true;
+const isTest = false;
 // TODO 注意Drop以后排列tables
 // TODO 学习dragula，注意startBecauseDrag，左右键，ignoreTextSelection等
 // TODO mode 改为 horizentol 等关键词
@@ -20,21 +22,30 @@ export default class SortTableList {
     const mode = options.mode;
     const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
 
-    this.el = tables.reduce((previous, current) => {
+    let s = originTable.el.getAttribute('cellspacing');
+    s = s === null ? 2 : s;
+    const a = mode === 'column' ? 'margin-right' : 'margin-bottom';
+    this.el = tables.reduce((previous, current, indexOrder) => {
       const li = document.createElement('li');
+
+      if (s && indexOrder < (tables.length - 1)) {
+        li.style[a] = `-${s}px`;
+      }
+
       if (options.onlyBody && options.mode === 'row' && !Array.from(current.children).some(o => o.nodeName === 'TBODY')) {
         li.classList.add('sindu_static');
       }
       li.appendChild(current);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
+
     this.el.classList.add(classes.draggableTable);
     this.el.classList.add(`sindu_${mode}`);
     this.el.style.position = 'fixed';
     insertBeforeSibling({ target: this.el, origin: originTable.el });
 
     this.originTable = originTable;
-    this._renderTables();
+    // this._renderTables();
     this.el.parentElement.classList.add(classes.dragging);
 
     const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
@@ -86,7 +97,9 @@ export default class SortTableList {
   destroy () {
     document.documentElement.removeEventListener('mouseup', this.destroy);
     this.el.parentElement.classList.remove(classes.dragging);
-    this.el.parentElement.removeChild(this.el);
+    if (!isTest) {
+      this.el.parentElement.removeChild(this.el);
+    }
     setTimeout(() => {
       this.drake.destroy();
     }, 0);
@@ -101,11 +114,16 @@ export default class SortTableList {
     // http://stackoverflow.com/questions/20514596/document-documentelement-scrolltop-return-value-differs-in-chrome
     this.el.style.top = `${originRect.top}px`;
     this.el.style.left = `${originRect.left}px`;
+    if (isTest) {
+      this.el.style.left = '500px';
+    }
   }
 
   // TODO li设定宽度，ul overflow-hidden
   _renderTables () {
-    const rect = this.originTable.el.getBoundingClientRect();
+    const oel = this.originTable.el;
+    const rect = oel.getBoundingClientRect();
+    // const border = oel.getAttribute('border');
     this.el.style.width = `${rect.width}px`;
     this.el.style.height = `${rect.height}px`;
     this._renderPosition();

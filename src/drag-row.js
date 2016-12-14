@@ -10,7 +10,6 @@ export default class DragRow extends Drag {
   }
 
   sortRow ({ from, to }) {
-    // TODO 所有的行都dragula，但是在dragula中筛选出可排列和可被排列的行
     if (from === to) {
       return;
     }
@@ -41,7 +40,7 @@ export default class DragRow extends Drag {
     /* eslint-disable no-param-reassign*/
     this.fakeTables.forEach((table) => {
       Array.from(table.rows[0].children).forEach((cell, i) => {
-        cell.style.width = `${cells[i]}px`;
+        cell.style.width = `${cells[i].getBoundingClientRect().width}px`;
       });
     });
     // 行排列时计算每一行高度

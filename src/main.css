@@ -11,6 +11,10 @@
   text-align: inherit;
 }
 
+.sindu_draggable_list li table, .sindu_draggable_list tr, .sindu_draggable_list th, .sindu_draggable_list td {
+  box-sizing: border-box;
+}
+
 .gu-mirror {
   list-style: none;
 }
