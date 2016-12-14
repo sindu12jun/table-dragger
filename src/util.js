@@ -1,29 +1,21 @@
 /**
  * Created by lijun on 2016/11/16.
  */
-// publish-subscribe
-export const emitter = (thing = {}) => {
-  /* eslint-disable no-param-reassign */
-  const evt = {};
-  thing.on = (type, fn) => {
-    evt[type] = evt[type] || [];
-    evt[type].push(fn);
-    return thing;
-  };
-  thing.emit = (type, ...args) => {
-    if (!evt[type]) {
-      return;
-    }
-    for (const fn of evt[type]) {
-      fn(...args);
-    }
-  };
-  return thing;
+
+export const classes = {
+  originTable: 'sindu_origin_table',
+  draggableTable: 'sindu_dragger',
+  dragging: 'sindu_dragging',
+  static: 'sindu_static',
 };
 
-export const css = (csses) => {
-
-}
+export const css = (el, csses) => {
+  Object.keys(csses).forEach((k) => {
+    /* eslint-disable */
+    el.style[k] = csses[k];
+  });
+  return el;
+};
 
 export const empty = (node) => {
   while (node.firstChild) {
@@ -54,13 +46,6 @@ export const sort = ({ list, from, to, parent }) => {
   } else {
     insertBeforeSibling({ target: list[from], origin: list[to] });
   }
-};
-
-// TODO 把sortable改成draggable
-export const classes = {
-  originTable: 'sindu_origin_table',
-  draggableTable: 'sindu_draggable_list',
-  dragging: 'sindu_dragging',
 };
 
 export const getScrollBarWidth = () => {
@@ -104,31 +89,31 @@ export const getScrollBarWidth = () => {
 // };
 
 // if node.Name==='TR',call cb;else,call fail
-export const handleTr = (table, cb, fail) => {
-  let trIndex = 0;
-  Array.from(table.children).forEach(organ =>
-    Array.from(organ.children).forEach(
-      (likeTr) => {
-        if (likeTr && likeTr.nodeName === 'TR') {
-          cb.call(this, { tr: likeTr, organ, trIndex });
-          trIndex += 1;
-        } else if (fail) {
-          fail.call(this, { likeTr });
-        }
-      }));
-};
+// export const handleTr = (table, cb, fail) => {
+//   let trIndex = 0;
+//   Array.from(table.children).forEach(organ =>
+//     Array.from(organ.children).forEach(
+//       (likeTr) => {
+//         if (likeTr && likeTr.nodeName === 'TR') {
+//           cb.call(this, { tr: likeTr, organ, trIndex });
+//           trIndex += 1;
+//         } else if (fail) {
+//           fail.call(this, { likeTr });
+//         }
+//       }));
+// };
 
-export const timeout = (time) => {
-  let resizeTimeout;
-  return new Promise((resolve) => {
-    if (!resizeTimeout) {
-      resizeTimeout = setTimeout(() => {
-        resizeTimeout = null;
-        resolve();
-      }, time);
-    }
-  });
-};
+// export const timeout = (time) => {
+//   let resizeTimeout;
+//   return new Promise((resolve) => {
+//     if (!resizeTimeout) {
+//       resizeTimeout = setTimeout(() => {
+//         resizeTimeout = null;
+//         resolve();
+//       }, time);
+//     }
+//   });
+// };
 
 
 // export const dispatchEvent =
@@ -141,10 +126,10 @@ export const timeout = (time) => {
 //     }
 //   };
 
-export const before = (fn, beforeFunc) => (...args) => {
-  beforeFunc.apply(this, args);
-  return fn && fn.apply(this, args);
-};
+// export const before = (fn, beforeFunc) => (...args) => {
+//   beforeFunc.apply(this, args);
+//   return fn && fn.apply(this, args);
+// };
 
 
 // export const getNodeByPath = (node, paths) => {

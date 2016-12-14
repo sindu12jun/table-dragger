@@ -6,20 +6,17 @@ import './main.css';
 import DragColumn from './drag-column';
 import DragRow from './drag-row';
 
-(function sortableModule (factory) {
+(function TableDraggerModule (factory) {
   /* eslint-disable no-undef */
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = factory();
   } else {
-    window.SortableTable = factory();
+    window.TableDragger = factory();
   }
 }(
   () => function TableDragger (el, options) {
-    if (options.mode === 'row') {
-      return DragRow.create(el, options);
-    }
-    return DragColumn.create(el, options);
+    return (options.mode === 'row' ? DragRow : DragColumn).create(el, options);
   }
 ));

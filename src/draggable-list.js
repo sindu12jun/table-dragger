@@ -2,7 +2,7 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
-import { insertBeforeSibling, classes, getScrollBarWidth } from './util';
+import { insertBeforeSibling, classes, getScrollBarWidth, css, remove } from './util';
 
 // const isTest = true;
 const isTest = false;
@@ -13,7 +13,7 @@ const isTest = false;
 // TODO render等好好组织一下
 // TODO Node全换成Element
 // 改drgula时注意，reference指明了被交换的坐标
-export default class SortTableList {
+export default class Dragger {
   constructor ({ tables, originTable }) {
     this.destroy = this.destroy.bind(this);
 
@@ -41,7 +41,7 @@ export default class SortTableList {
 
     this.el.classList.add(classes.draggableTable);
     this.el.classList.add(`sindu_${mode}`);
-    this.el.style.position = 'fixed';
+    css(this.el, { position: 'fixed' });
     insertBeforeSibling({ target: this.el, origin: originTable.el });
 
     this.originTable = originTable;
@@ -53,22 +53,21 @@ export default class SortTableList {
     this.drake = dragula([this.el], {
       animation: 300,
       mirrorContainer: this.el,
-      staticClass: 'sindu_static',
+      staticClass: classes.static,
       direction: options.mode === 'column' ? 'horizontal' : 'vertical',
     })
       .on('drag', () => {
-        document.body.style.overflow = 'hidden';
+        css(document.body, { overflow: 'hidden' });
         // const originRight = document.body.style.paddingRight || 0;
         const barWidth = getScrollBarWidth();
         if (barWidth) {
-          document.body.style.paddingRight = `${barWidth + bodyPaddingRight}px`;
+          css(document.body, { 'padding-right': `${barWidth + bodyPaddingRight}px` });
         }
-        document.documentElement.removeEventListener('mouseup', this.destroy);
+        remove(document, 'mouseup', this.destroy);
         dragger.emit('onDrag');
       })
       .on('dragend', (el) => {
-        document.body.style.overflow = bodyOverflow;
-        document.body.style.paddingRight = `${bodyPaddingRight}px`;
+        css(document.body, { overflow: bodyOverflow, 'padding-right': `${bodyPaddingRight}px` });
         const from = index;
         const to = Array.from(this.el.children).indexOf(el);
         originTable.onDrop({ from, to });
@@ -95,7 +94,7 @@ export default class SortTableList {
   }
 
   destroy () {
-    document.documentElement.removeEventListener('mouseup', this.destroy);
+    remove(document, 'mouseup', this.destroy);
     this.el.parentElement.classList.remove(classes.dragging);
     if (!isTest) {
       this.el.parentElement.removeChild(this.el);
@@ -112,10 +111,9 @@ export default class SortTableList {
     // 所以选择position 为fixed,相对视窗定位，所以不需要加window.pageYoffset了
     const originRect = this.originTable.el.getBoundingClientRect();
     // http://stackoverflow.com/questions/20514596/document-documentelement-scrolltop-return-value-differs-in-chrome
-    this.el.style.top = `${originRect.top}px`;
-    this.el.style.left = `${originRect.left}px`;
+    css(this.el, { top: `${originRect.top}px`, left: `${originRect.left}px` });
     if (isTest) {
-      this.el.style.left = '500px';
+      css(this.el, { left: '500px' });
     }
   }
 
@@ -124,8 +122,7 @@ export default class SortTableList {
     const oel = this.originTable.el;
     const rect = oel.getBoundingClientRect();
     // const border = oel.getAttribute('border');
-    this.el.style.width = `${rect.width}px`;
-    this.el.style.height = `${rect.height}px`;
+    css(this.el, { width: `${rect.width}px`, height: `${rect.height}px` });
     this._renderPosition();
   }
 }

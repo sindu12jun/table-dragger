@@ -9,11 +9,9 @@ module.exports = {
     'browser': true,
     'node': true
   },
-  // required to lint *.vue files
   plugins: [
     'html'
   ],
-  // check if imports actually resolve
   'settings': {
     'import/resolver': {
       'webpack': {
@@ -22,8 +20,8 @@ module.exports = {
     }
   },
   // add your custom rules here
-  'rules': {
-    // don't require .vue extension when importing
+  rules: {
+    'no-use-before-define': ["error", { "functions": false, "classes": false }],
     'import/extensions': ['error', 'always', {
       'js': 'never',
       'vue': 'never'

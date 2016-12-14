@@ -2,7 +2,7 @@
  * Created by lijun on 2016/12/7.
  */
 import Drag from './drag';
-import { classes, sort } from './util';
+import { classes, sort, css } from './util';
 
 export default class DragRow extends Drag {
   constructor (table = null, userOptions) {
@@ -40,7 +40,7 @@ export default class DragRow extends Drag {
     /* eslint-disable no-param-reassign*/
     this.fakeTables.forEach((table) => {
       Array.from(table.rows[0].children).forEach((cell, i) => {
-        cell.style.width = `${cells[i].getBoundingClientRect().width}px`;
+        css(cell, { width: `${cells[i].getBoundingClientRect().width}px` });
       });
     });
     // 行排列时计算每一行高度

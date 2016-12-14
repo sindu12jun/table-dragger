@@ -2,7 +2,7 @@
  * Created by lijun on 2016/12/7.
  */
 import Drag from './drag';
-import { classes, empty, sort } from './util';
+import { classes, empty, sort, css } from './util';
 
 export default class DragColumn extends Drag {
   constructor (table = null, userOptions) {
@@ -29,7 +29,7 @@ export default class DragColumn extends Drag {
     if (cols) {
       const c = cols[index];
       if (c) {
-        c.style.width = '';
+        css(c, { width: '' });
       } else {
         throw new Error('Please make sure the length of col element is equal with table\'s row length');
       }
@@ -58,7 +58,7 @@ export default class DragColumn extends Drag {
       (cell, index) => {
         const t = this.fakeTables[index];
         // table 的width比td稍微宽一点，所以不要直接给table直接赋宽度
-        (t.querySelector('td') || t.querySelector('th')).style.width = `${cell.getBoundingClientRect().width}px`;
+        css((t.querySelector('td') || t.querySelector('th')), { width: `${cell.getBoundingClientRect().width}px` });
       }
     );
     // 列排列时重新计算每一行的高度
@@ -67,7 +67,7 @@ export default class DragColumn extends Drag {
     this.fakeTables.forEach((table) => {
       /* eslint-disable no-param-reassign*/
       Array.from(table.rows).forEach((row, index) => {
-        row.style.height = `${rowHeights[index]}px`;
+        css(row, { height: `${rowHeights[index]}px` });
       });
     });
   }
@@ -78,9 +78,9 @@ export default class DragColumn extends Drag {
     }
 
     Array.from(this.el.rows).forEach((row) => {
-      if (row.parentElement.nodeName === 'TFOOT' && this.options.excludeFooter) {
-        return;
-      }
+      // if (row.parentElement.nodeName === 'TFOOT' && this.options.excludeFooter) {
+      //   return;
+      // }
       sort({ list: row.children, from, to });
     });
 
