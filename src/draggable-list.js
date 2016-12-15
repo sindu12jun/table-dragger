@@ -2,6 +2,7 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
+// import dragula from './dragula';
 import { insertBeforeSibling, classes, getScrollBarWidth, css, remove, getLongestRow, empty, sort } from './util';
 
 // const isTest = true;
@@ -74,7 +75,9 @@ export default class Dragger {
         const from = index;
         const to = Array.from(this.el.children).indexOf(el);
         sortTable(this.mode, from, to, this.originTable.el);
-        this.destroy();
+        if (!isTest) {
+          this.destroy();
+        }
         dragger.emit('onDrop', from, to, originTable.el);
       })
       .on('shadow', (el) => {
@@ -99,9 +102,7 @@ export default class Dragger {
   destroy () {
     remove(document, 'mouseup', this.destroy);
     this.el.parentElement.classList.remove(classes.dragging);
-    if (!isTest) {
-      this.el.parentElement.removeChild(this.el);
-    }
+    this.el.parentElement.removeChild(this.el);
     setTimeout(() => {
       this.drake.destroy();
     }, 0);

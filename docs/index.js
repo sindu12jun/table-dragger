@@ -3,4 +3,4 @@
  */
 import tableDragger from '../src/index';
 
-tableDragger(document.querySelector('#default-table'), { animation: 300, mode: 'free' });
+tableDragger(document.querySelector('#default-table'), { animation: 300, mode: 'free', onlyBody: true });
