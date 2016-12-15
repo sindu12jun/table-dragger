@@ -3,9 +3,6 @@
  */
 import 'babel-polyfill';
 import './main.css';
-import DragRow from './drag-row';
-import DragColumn from './drag-column';
+import Drag from './drag';
 
-export default (el, options) => {
-  return (options.mode === 'row' ? DragRow : DragColumn).create(el, options);
-};
+export default (el, options) => Drag.create(el, options);

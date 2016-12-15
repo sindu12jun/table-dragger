@@ -12,13 +12,6 @@ module.exports = {
   plugins: [
     'html'
   ],
-  'settings': {
-    'import/resolver': {
-      'webpack': {
-        'config': 'build/webpack.base.conf.js'
-      }
-    }
-  },
   // add your custom rules here
   rules: {
     'no-use-before-define': ["error", { "functions": false, "classes": false }],

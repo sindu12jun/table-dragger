@@ -14,6 +14,8 @@ module.exports = {
   },
   resolve: {
     root: path.resolve('./'),
+    extensions: ['', '.js'],
+    fallback: [path.join(__dirname, '../node_modules')],
   },
   resolveLoader: {
     fallback: [path.join(__dirname, '../node_modules')]
@@ -41,7 +43,10 @@ module.exports = {
     formatter: require('eslint-friendly-formatter')
   },
   babel: {
-    presets: ['es2015'],
+    "presets": [
+      "es2015",
+      "stage-2"
+    ],
     plugins: ['transform-runtime']
   },
   devtool: 'source-map'

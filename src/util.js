@@ -9,6 +9,17 @@ export const classes = {
   static: 'sindu_static',
 };
 
+
+export const getLongestRow = (table) => {
+  let result = table.rows[0];
+  Array.from(table.rows).forEach((row) => {
+    const rowL = row.children.length;
+    const resultL = result.children.length;
+    result = rowL > resultL ? row : result;
+  });
+  return result;
+};
+
 export const css = (el, csses) => {
   Object.keys(csses).forEach((k) => {
     /* eslint-disable */
@@ -32,11 +43,17 @@ export const remove = (el, eventName, cb) => {
 };
 
 export const appendSibling = ({ target, origin, parent }) => {
+  if (!target) {
+    return;
+  }
   // if row length is different
   (parent || target.parentNode).insertBefore(target, origin ? origin.nextElementSibling : null);
 };
 
 export const insertBeforeSibling = ({ target, origin }) => {
+  if (!target) {
+    return;
+  }
   origin.parentNode.insertBefore(target, origin);
 };
 

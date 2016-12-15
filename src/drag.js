@@ -1,7 +1,6 @@
 /**
  * Created by lijun on 2016/12/7.
  */
-
 // TODO 版本管理 version
 import Dragger from './draggable-list';
 import { on, remove, classes } from './util';
@@ -9,7 +8,7 @@ import { on, remove, classes } from './util';
 export default class Drag {
   constructor (table = null, userOptions = {}) {
     if (!checkIsTable(table)) {
-      throw new Error(`TableSortable: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
+      console.error(`TableSortable: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
     }
 
     this.onTap = this.onTap.bind(this);
@@ -31,12 +30,13 @@ export default class Drag {
       destroy: this.destroy,
     });
 
+    // TODO 根据free改变handler，drag.js中的逻辑不应该和mode绑定到一起
     const defaultHandlers = options.mode === 'column' ? table.rows[0].children : Array.from(table.rows).map(row => row.children[0]);
 
     this.handlers = Array.from(options.dragHandle ? table.querySelectorAll(options.dragHandle)
       : defaultHandlers);
     if (!this.handlers) {
-      throw new Error('TableSortable: Please ensure dragHandler in table');
+      console.error('TableSortable: Please ensure dragHandler in table');
     }
 
     this.tappedCoord = { x: 0, y: 0 };
@@ -87,29 +87,32 @@ export default class Drag {
   }
 
   startBecauseMouseMoved (event) {
-    if (event.clientX === this.tappedCoord.x && event.clientY === this.tappedCoord.y) {
+    const gapX = Math.abs(event.clientX - this.tappedCoord.x);
+    const gapY = Math.abs(event.clientY - this.tappedCoord.y);
+    let mode = this.options.mode;
+    const isFree = mode === 'free';
+
+    if (gapX === 0 && gapY === 0) {
       return;
+    }
+
+    if (isFree) {
+      mode = gapX < gapY ? 'row' : 'column';
     }
 
     remove(document, 'mousemove', this.startBecauseMouseMoved);
 
-    this.fakeTables = this.buildTables();
-    this.sizeFake();
     this.sortTable = new Dragger({
-      tables: this.fakeTables,
+      mode,
       originTable: this,
     });
+    // 下面这个事件绑定会在list中的drag回调中remove掉，如果没有drag，就destroy
     on(document, 'mouseup', this.sortTable.destroy);
   }
 
-  getLongestRow () {
-    let result = this.el.rows[0];
-    Array.from(this.el.rows).forEach((row) => {
-      const rowL = row.children.length;
-      const resultL = result.children.length;
-      result = rowL > resultL ? row : result;
-    });
-    return result;
+  static create (el, options) {
+    const d = new Drag(el, options);
+    return d && d.dragger;
   }
 
   static version = '1.0';
