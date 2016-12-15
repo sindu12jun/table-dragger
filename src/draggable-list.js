@@ -139,7 +139,7 @@ function getColumnAsTableByIndex (table, index) {
   cTable.removeAttribute('id');
   const cols = cTable.querySelectorAll('col');
 
-  if (cols) {
+  if (cols.length) {
     const c = cols[index];
     if (c) {
       css(c, { width: 'initial' });
@@ -217,7 +217,7 @@ function sortColumn ({ from, to, table }) {
   });
 
   const cols = table.querySelectorAll('col');
-  if (cols) {
+  if (cols.length) {
     sort({ list: cols, from, to });
   }
 }
@@ -245,7 +245,7 @@ function buildRowTables (table) {
     cTable.removeAttribute('id');
     cTable.classList.remove(classes.originTable);
     cTable.innerHTML = '';
-    if (cols) {
+    if (cols.length) {
       const f = document.createDocumentFragment();
       Array.from(cols).forEach((col) => {
         col.removeAttribute('width');

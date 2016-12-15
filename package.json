@@ -20,10 +20,12 @@
     "dist"
   ],
   "keywords": [
-    "Dom",
+    "dom",
     "table",
     "drag",
-    "sort"
+    "sort",
+    "row",
+    "column"
   ],
   "scripts": {
     "build": "webpack --progress --hide-modules --config  webpack.build.min.js && webpack --progress --hide-modules --config  webpack.build.js",
@@ -35,7 +37,6 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.16.0",
-    "crossvent": "^1.5.5",
     "dragula": "git+https://github.com/sindu12jun/dragula.git"
   },
   "devDependencies": {
@@ -101,5 +102,6 @@
     "webpack-merge": "^0.14.1",
     "style-loader": "^0.13.1"
   },
+  "bugs": "https://github.com/sindu12jun/table-dragger/issues",
   "license": "MIT"
 }

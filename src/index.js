@@ -5,4 +5,4 @@ import 'babel-polyfill';
 import './main.css';
 import Drag from './drag';
 
-export default (el, options) => Drag.create(el, options);
+module.exports = (el, options) => Drag.create(el, options);
