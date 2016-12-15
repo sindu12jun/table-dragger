@@ -4,5 +4,5 @@ npm-debug.log
 test/unit/coverage
 
 .idea
-build
-dist
+build/
+dist/
