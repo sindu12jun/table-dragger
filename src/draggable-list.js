@@ -132,12 +132,17 @@ export default class Dragger {
 
 function getColumnAsTableByIndex (table, index) {
   const cTable = table.cloneNode(true);
+  css(cTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
+  cTable.removeAttribute('width');
+  cTable.removeAttribute('height');
+  cTable.removeAttribute('id');
   const cols = cTable.querySelectorAll('col');
 
   if (cols) {
     const c = cols[index];
     if (c) {
-      css(c, { width: '' });
+      css(c, { width: 'initial' });
+      c.removeAttribute('width');
     } else {
       throw new Error('Please make sure the length of col element is equal with table\'s row length');
     }
@@ -164,9 +169,11 @@ function sizeColumnFake (fakeTables, table) {
   // 列排列时重新计算每一列的宽度
   Array.from(getLongestRow(table).children).forEach(
     (cell, index) => {
+      const w = cell.getBoundingClientRect().width;
       const t = fakeTables[index];
       // table 的width比td稍微宽一点，所以不要直接给table直接赋宽度
-      css((t.querySelector('td') || t.querySelector('th')), { width: `${cell.getBoundingClientRect().width}px` });
+      css(t, { width: `${w}px` });
+      css(t.rows[0].children[0], { width: `${w}px` });
     }
   );
   // 列排列时重新计算每一行的高度
@@ -182,9 +189,11 @@ function sizeColumnFake (fakeTables, table) {
 
 function sizeRowFake (fakeTables, table) {
   const cells = getLongestRow(table).children;
+  const w = table.getBoundingClientRect().width;
   // 行排列时计算每一行各个cell宽度
   /* eslint-disable no-param-reassign*/
   fakeTables.forEach((t) => {
+    css(t, { width: `${w}px` });
     Array.from(t.rows[0].children).forEach((cell, i) => {
       css(cell, { width: `${cells[i].getBoundingClientRect().width}px` });
     });
@@ -226,23 +235,29 @@ function sortTable (mode, from, to, table) {
 
 function buildRowTables (table) {
   return Array.from(table.rows).map((row) => {
-    const t = table.cloneNode(true);
-    const cols = t.querySelectorAll('col');
-    t.removeAttribute('id');
-    t.classList.remove(classes.originTable);
-    t.innerHTML = '';
+    const cTable = table.cloneNode(true);
+    css(cTable, 'table-layout', 'fixed');
+    const cols = cTable.querySelectorAll('col');
+    css(cTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
+    cTable.removeAttribute('width');
+    cTable.removeAttribute('height');
+    cTable.removeAttribute('id');
+    cTable.classList.remove(classes.originTable);
+    cTable.innerHTML = '';
     if (cols) {
       const f = document.createDocumentFragment();
       Array.from(cols).forEach((col) => {
+        col.removeAttribute('width');
+        col.style.width = 'initial';
         f.appendChild(col);
       });
-      t.appendChild(f);
+      cTable.appendChild(f);
     }
     const organ = row.parentNode.cloneNode();
     organ.innerHTML = '';
     organ.appendChild(row.cloneNode(true));
-    t.appendChild(organ);
-    return t;
+    cTable.appendChild(organ);
+    return cTable;
   });
 }
 
