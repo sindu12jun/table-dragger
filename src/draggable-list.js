@@ -2,20 +2,28 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
-import { insertBeforeSibling, classes, getScrollBarWidth, css, remove, getLongestRow, empty, sort } from './util';
+import classes from './classes';
+import {
+  insertBeforeSibling,
+  getScrollBarWidth,
+  css,
+  remove,
+  getLongestRow,
+  empty,
+  sort,
+  touchy
+} from './util';
 
 // const isTest = true;
 const isTest = false;
-// TODO 注意Drop以后排列tables
-// TODO 学习dragula，注意startBecauseDrag，左右键，ignoreTextSelection等
 // TODO mode 改为 horizentol 等关键词
-// TODO alt等，再看一遍drugula
 // TODO render等好好组织一下
 // TODO 函数克里化，函数式？
-// 改drgula时注意，reference指明了被交换的坐标
 export default class Dragger {
   constructor ({ originTable, mode }) {
-    const fakeTables = buildTables(originTable.el, mode);
+    const originEl = originTable.el;
+
+    const fakeTables = buildTables(originEl, mode);
     sizeFakeTables(fakeTables, originTable.el, mode);
     this.mode = mode;
 
@@ -23,7 +31,7 @@ export default class Dragger {
 
     const options = originTable.options;
     const dragger = originTable.dragger;
-    const index = mode === 'column' ? originTable.activeCoord.x : originTable.activeCoord.y;
+    const index = mode === 'column' ? originTable.cellIndex.x : originTable.cellIndex.y;
 
     let s = originTable.el.getAttribute('cellspacing');
     s = s === null ? 2 : s;
@@ -67,7 +75,7 @@ export default class Dragger {
         if (barWidth) {
           css(document.body, { 'padding-right': `${barWidth + bodyPaddingRight}px` });
         }
-        remove(document, 'mouseup', this.destroy);
+        touchy(document, 'remove', 'mouseup', this.destroy);
         dragger.emit('onDrag');
       })
       .on('dragend', (el) => {
@@ -131,53 +139,17 @@ export default class Dragger {
   }
 }
 
-function getColumnAsTableByIndex (table, index) {
-  const cTable = table.cloneNode(true);
-  css(cTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
-  cTable.removeAttribute('width');
-  cTable.removeAttribute('height');
-  cTable.removeAttribute('id');
-  const cols = cTable.querySelectorAll('col');
-
-  if (cols.length) {
-    const c = cols[index];
-    if (c) {
-      css(c, { width: 'initial' });
-      c.removeAttribute('width');
-    } else {
-      throw new Error('Please make sure the length of col element is equal with table\'s row length');
-    }
-    Array.from(cols).forEach((col) => {
-      if (col !== c) {
-        col.parentElement.removeChild(col);
-      }
-    });
-  }
-
-  cTable.removeAttribute('id');
-  cTable.classList.remove(classes.originTable);
-  Array.from(cTable.rows).forEach((row) => {
-    const target = row.children[index];
-    empty(row);
-    if (target) {
-      row.appendChild(target);
-    }
-  });
-  return cTable;
-}
-
 function sizeColumnFake (fakeTables, table) {
-  // 列排列时重新计算每一列的宽度
+  // calculate width of every column
   Array.from(getLongestRow(table).children).forEach(
     (cell, index) => {
       const w = cell.getBoundingClientRect().width;
       const t = fakeTables[index];
-      // table 的width比td稍微宽一点，所以不要直接给table直接赋宽度
       css(t, { width: `${w}px` });
       css(t.rows[0].children[0], { width: `${w}px` });
     }
   );
-  // 列排列时重新计算每一行的高度
+  // calculate height of every cell
   const rowHeights = Array.from(table.rows)
     .map(row => row.children[0].getBoundingClientRect().height);
   fakeTables.forEach((t) => {
@@ -234,26 +206,50 @@ function sortTable (mode, from, to, table) {
   (mode === 'column' ? sortColumn : sortRow)({ from, to, table });
 }
 
+// input:clone(originTable)
+function origin2DragItem (liTable) {
+  css(liTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
+  liTable.removeAttribute('width');
+  liTable.removeAttribute('height');
+  liTable.removeAttribute('id');
+  liTable.classList.remove(classes.originTable);
+  Array.from(liTable.querySelectorAll(col)).forEach(col => {
+    col.removeAttribute('width');
+    css(col, { width: 'initial' });
+  })
+}
+
+function getColumnAsTableByIndex (table, index) {
+  const cTable = table.cloneNode(true);
+  origin2DragItem(cTable);
+
+  Array.from(cTable.querySelectorAll('col')).forEach((col, dex) => {
+    if (dex !== index) {
+      cTable.removeChild(col);
+    }
+  })
+
+  Array.from(cTable.rows).forEach((row) => {
+    const target = row.children[index];
+    empty(row);
+    if (target) {
+      row.appendChild(target);
+    }
+  });
+  return cTable;
+}
+
+
 function buildRowTables (table) {
   return Array.from(table.rows).map((row) => {
     const cTable = table.cloneNode(true);
-    css(cTable, 'table-layout', 'fixed');
-    const cols = cTable.querySelectorAll('col');
-    css(cTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
-    cTable.removeAttribute('width');
-    cTable.removeAttribute('height');
-    cTable.removeAttribute('id');
-    cTable.classList.remove(classes.originTable);
-    cTable.innerHTML = '';
-    if (cols.length) {
-      const f = document.createDocumentFragment();
-      Array.from(cols).forEach((col) => {
-        col.removeAttribute('width');
-        col.style.width = 'initial';
-        f.appendChild(col);
-      });
-      cTable.appendChild(f);
+
+    origin2DragItem(cTable);
+
+    while (cTable.firstChild && cTable.firstChild.nodeName !== 'COL') {
+      cTable.removeChild(cTable.firstChild);
     }
+
     const organ = row.parentNode.cloneNode();
     organ.innerHTML = '';
     organ.appendChild(row.cloneNode(true));

@@ -1,14 +1,20 @@
 /**
  * Created by lijun on 2016/12/7.
  */
-// TODO 版本管理 version
 import Dragger from './draggable-list';
-import { on, remove, classes } from './util';
+import classes from './classes';
+import { on, remove, touchy } from './util';
 
 export default class Drag {
   constructor (table = null, userOptions = {}) {
     if (!checkIsTable(table)) {
-      console.error(`TableSortable: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
+      throw new TypeError(`table-dragger: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
+    }
+    if (!table.rows.length) {
+      return;
+    }
+    if (mode === 'free' && !options.dragHandler) {
+      throw new Error('table-dragger: please specify dragHandler in free mode');
     }
 
     this.onTap = this.onTap.bind(this);
@@ -17,51 +23,47 @@ export default class Drag {
 
     const defaults = {
       mode: 'column',
-      // excludeFooter: false,
-      dragHandle: '',
+      dragHandler: '',
       onlyBody: false,
       animation: 300,
     };
     const options = this.options = Object.assign({}, defaults, userOptions);
+    const { mode } = options;
 
-    this.fakeTables = [];
     this.dragger = emitter({
       dragging: false,
       destroy: this.destroy,
     });
 
-    // TODO 根据free改变handler，drag.js中的逻辑不应该和mode绑定到一起
-    const defaultHandlers = options.mode === 'column' ? table.rows[0].children : Array.from(table.rows).map(row => row.children[0]);
-
-    this.handlers = Array.from(options.dragHandle ? table.querySelectorAll(options.dragHandle)
-      : defaultHandlers);
-    if (!this.handlers) {
-      console.error('TableSortable: Please ensure dragHandler in table');
+    let handlers;
+    if (options.dragHandler) {
+      handlers = table.querySelectorAll(options.dragHandler);
+      if (handlers && !handlers.length) {
+        throw new Error('table-dragger: no element match dragHandler selector');
+      }
+    } else {
+      handlers = mode === 'column' ? (table.rows[0] ? table.rows[0].children : []) : Array.from(table.rows).map(row => row.children[0]);
     }
+    this.handlers = Array.from(handlers);
 
-    this.tappedCoord = { x: 0, y: 0 };
-    this.activeCoord = { x: 0, y: 0 };
     table.classList.add(classes.originTable);
+
+    this.tappedCoord = { x: 0, y: 0 }; // the coord of mouseEvent user clicked
+    this.cellIndex = { x: 0, y: 0 }; // the cell's index of row and column
     this.el = table;
     this.bindEvents();
   }
 
-  getCols () {
-    return this.el.querySelectorAll('col');
-  }
-
   bindEvents () {
-    for (const h of this.handlers) {
-      on(h, 'mousedown', this.onTap);
-      on(h, 'touchstart', this.onTap);
-      on(h, 'pointerdown', this.onTap);
+    for (const e of this.handlers) {
+      touchy(e, 'add', 'mousedown', this.onTap);
     }
   }
 
   onTap (event) {
-    let t = event.target;
-    while (t.nodeName !== 'TD' && t.nodeName !== 'TH') {
-      t = t.parentElement;
+    let { target } = event;
+    while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
+      target = target.parentElement;
     }
 
     const ignore = !isLeftButton(event) || event.metaKey || event.ctrlKey;
@@ -69,46 +71,51 @@ export default class Drag {
       return;
     }
 
-    this.activeCoord = { x: t.cellIndex, y: t.parentElement.rowIndex };
+    this.cellIndex = { x: target.cellIndex, y: target.parentElement.rowIndex };
     this.tappedCoord = { x: event.clientX, y: event.clientY };
 
-    on(document, 'mousemove', this.startBecauseMouseMoved);
-    on(document, 'mouseup', () => {
-      remove(document, 'mousemove', this.startBecauseMouseMoved);
+    this.eventualStart(false);
+    touchy(document, 'add', 'mouseup', () => {
+      this.eventualStart(true);
     });
   }
 
-  destroy () {
-    for (const h of this.handlers) {
-      remove(h, 'mousedown', this.removeTap);
-      remove(h, 'touchstart', this.removeTap);
-      remove(h, 'pointerdown', this.removeTap);
-    }
-  }
-
   startBecauseMouseMoved (event) {
-    const gapX = Math.abs(event.clientX - this.tappedCoord.x);
-    const gapY = Math.abs(event.clientY - this.tappedCoord.y);
-    let mode = this.options.mode;
+    const { tappedCoord, options:{ mode } } = this;
+    const gapX = Math.abs(event.clientX - tappedCoord.x);
+    const gapY = Math.abs(event.clientY - tappedCoord.y);
     const isFree = mode === 'free';
+    let realMode = mode;
 
     if (gapX === 0 && gapY === 0) {
       return;
     }
 
     if (isFree) {
-      mode = gapX < gapY ? 'row' : 'column';
+      realMode = gapX < gapY ? 'row' : 'column';
     }
 
-    remove(document, 'mousemove', this.startBecauseMouseMoved);
-
-    this.sortTable = new Dragger({
-      mode,
+    const sortTable = new Dragger({
+      mode: realMode,
       originTable: this,
     });
-    // 下面这个事件绑定会在list中的drag回调中remove掉，如果没有drag，就destroy
-    on(document, 'mouseup', this.sortTable.destroy);
+    this.eventualStart(true);
+    // this listener will be removed after user start dragging
+    touchy(document, 'add', 'mouseup', sortTable.destroy);
   }
+
+  eventualStart (remove) {
+    const op = remove ? 'remove' : 'add';
+    touchy(document, op, 'mousemove', this.startBecauseMouseMoved);
+  }
+
+  destroy () {
+    for (const h of this.handlers) {
+      touchy(h, 'remove', 'mousedown', this.onTap);
+    }
+    this.el.classList.remove(classes.originTable);
+  }
+
 
   static create (el, options) {
     const d = new Drag(el, options);
