@@ -119,7 +119,9 @@ export default class Drag {
 }
 
 function checkIsTable (ele) {
-  return typeof ele === 'object'
+  return ele
+    &&
+    typeof ele === 'object'
     &&
     'nodeType' in ele
     &&

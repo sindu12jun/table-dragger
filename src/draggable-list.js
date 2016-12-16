@@ -2,7 +2,6 @@
  * Created by lijun on 2016/12/8.
  */
 import dragula from 'dragula';
-// import dragula from './dragula';
 import { insertBeforeSibling, classes, getScrollBarWidth, css, remove, getLongestRow, empty, sort } from './util';
 
 // const isTest = true;
@@ -42,6 +41,8 @@ export default class Dragger {
       li.appendChild(current);
       return previous.appendChild(li) && previous;
     }, document.createElement('ul'));
+    const originRect = originTable.el.getBoundingClientRect();
+    css(this.el, { width: `${originRect.width}px`, height: `${originRect.height}px` });
 
     this.el.classList.add(classes.draggableTable);
     this.el.classList.add(`sindu_${mode}`);
@@ -56,7 +57,6 @@ export default class Dragger {
     const bodyOverflow = document.body.style.overflow;
     this.drake = dragula([this.el], {
       animation: 300,
-      mirrorContainer: this.el,
       staticClass: classes.static,
       direction: mode === 'column' ? 'horizontal' : 'vertical',
     })
