@@ -1,7 +1,7 @@
 /**
  * Created by lijun on 2016/12/8.
  */
-import dragula from 'dragula';
+import dragula from 'dragula-with-animation';
 import classes from './classes';
 import {
   insertBeforeSibling,
@@ -14,8 +14,6 @@ import {
   getTouchyEvent,
 } from './util';
 
-// const isTest = true;
-const isTest = false;
 const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
 const bodyOverflow = document.body.style.overflow;
 export default class Dragger {
@@ -86,9 +84,7 @@ export default class Dragger {
   destroy () {
     remove(document, 'mouseup', this.destroy);
     this.el.parentElement.classList.remove(classes.dragging);
-    if (!isTest) {
-      this.el.parentElement.removeChild(this.el);
-    }
+    this.el.parentElement.removeChild(this.el);
     setTimeout(() => {
       this.drake.destroy();
     }, 0);
@@ -116,7 +112,7 @@ export default class Dragger {
       /* eslint-disable no-param-reassign*/
       const table = li && li.querySelector('table');
       if (this.options.onlyBody && mode === 'row' && !Array.from(table.children).some(o => o.nodeName === 'TBODY')) {
-        li.classList.add('sindu_static');
+        li.classList.add(classes.static);
       }
 
       if (s && dex < (l - 1)) {
