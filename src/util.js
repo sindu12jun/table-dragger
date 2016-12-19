@@ -5,32 +5,43 @@
 import crossvent from 'crossvent';
 
 const global = window;
+const touch = {
+  mouseup: 'touchend',
+  mousedown: 'touchstart',
+  mousemove: 'touchmove',
+};
+const pointers = {
+  mouseup: 'pointerup',
+  mousedown: 'pointerdown',
+  mousemove: 'pointermove',
+};
+
+export const getTouchyEvent = () => {
+  if (global.navigator.pointerEnabled) {
+    /* eslint-disable */
+    return new PointerEvent('pointerdown',
+      {
+        cancelable: true,
+        bubbles: true,
+        view: window,
+      });
+  }
+  return new MouseEvent('mousedown',
+    {
+      cancelable: true,
+      bubbles: true,
+      view: window,
+    });
+};
 
 export const touchy = (el, op, type, fn) => {
-  const touch = {
-    mouseup: 'touchend',
-    mousedown: 'touchstart',
-    mousemove: 'touchmove'
-  };
-  const pointers = {
-    mouseup: 'pointerup',
-    mousedown: 'pointerdown',
-    mousemove: 'pointermove'
-  };
-  const microsoft = {
-    mouseup: 'MSPointerUp',
-    mousedown: 'MSPointerDown',
-    mousemove: 'MSPointerMove'
-  };
   if (global.navigator.pointerEnabled) {
     crossvent[op](el, pointers[type], fn);
-  } else if (global.navigator.msPointerEnabled) {
-    crossvent[op](el, microsoft[type], fn);
   } else {
     crossvent[op](el, touch[type], fn);
     crossvent[op](el, type, fn);
   }
-}
+};
 
 
 export const getLongestRow = (table) => {

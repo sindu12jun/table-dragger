@@ -3,7 +3,7 @@
  */
 import Dragger from './draggable-list';
 import classes from './classes';
-import { on, remove, touchy } from './util';
+import { touchy, sort } from './util';
 
 export default class Drag {
   constructor (table = null, userOptions = {}) {
@@ -13,13 +13,6 @@ export default class Drag {
     if (!table.rows.length) {
       return;
     }
-    if (mode === 'free' && !options.dragHandler) {
-      throw new Error('table-dragger: please specify dragHandler in free mode');
-    }
-
-    this.onTap = this.onTap.bind(this);
-    this.destroy = this.destroy.bind(this);
-    this.startBecauseMouseMoved = this.startBecauseMouseMoved.bind(this);
 
     const defaults = {
       mode: 'column',
@@ -29,10 +22,20 @@ export default class Drag {
     };
     const options = this.options = Object.assign({}, defaults, userOptions);
     const { mode } = options;
+    if (mode === 'free' && !options.dragHandler) {
+      throw new Error('table-dragger: please specify dragHandler in free mode');
+    }
 
-    this.dragger = emitter({
+    ['onTap', 'destroy', 'startBecauseMouseMoved', 'sortColumn', 'sortRow'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
+
+    const dragger = this.dragger = emitter({
       dragging: false,
       destroy: this.destroy,
+    });
+    dragger.on('drop', (from, to, originEl, realMode) => {
+      (realMode === 'column' ? this.sortColumn : this.sortRow)(from, to);
     });
 
     let handlers;
@@ -45,6 +48,9 @@ export default class Drag {
       handlers = mode === 'column' ? (table.rows[0] ? table.rows[0].children : []) : Array.from(table.rows).map(row => row.children[0]);
     }
     this.handlers = Array.from(handlers);
+    this.handlers.forEach((h) => {
+      h.classList.add(classes.handle);
+    });
 
     table.classList.add(classes.originTable);
 
@@ -81,7 +87,7 @@ export default class Drag {
   }
 
   startBecauseMouseMoved (event) {
-    const { tappedCoord, options:{ mode } } = this;
+    const { tappedCoord, options: { mode } } = this;
     const gapX = Math.abs(event.clientX - tappedCoord.x);
     const gapY = Math.abs(event.clientY - tappedCoord.y);
     const isFree = mode === 'free';
@@ -116,6 +122,29 @@ export default class Drag {
     this.el.classList.remove(classes.originTable);
   }
 
+  sortColumn (from, to) {
+    if (from === to) {
+      return;
+    }
+    const table = this.el;
+    Array.from(table.rows).forEach((row) => {
+      sort({ list: row.children, from, to });
+    });
+
+    const cols = table.querySelectorAll('col');
+    if (cols.length) {
+      sort({ list: cols, from, to });
+    }
+  }
+
+  sortRow (from, to) {
+    if (from === to) {
+      return;
+    }
+    const table = this.el;
+    const list = Array.from(table.rows);
+    sort({ list, parent: list[to].parentElement, from, to });
+  }
 
   static create (el, options) {
     const d = new Drag(el, options);

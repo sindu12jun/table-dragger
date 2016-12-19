@@ -36,7 +36,6 @@
     "version": "npm run build && git add -A dist"
   },
   "dependencies": {
-    "babel-polyfill": "^6.16.0",
     "babel-runtime": "^6.20.0",
     "dragula": "git+https://github.com/sindu12jun/dragula.git",
     "crossvent": "^1.5.5"

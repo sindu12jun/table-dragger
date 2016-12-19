@@ -19,6 +19,7 @@ module.exports = {
       'js': 'never',
       'vue': 'never'
     }],
+    "no-nested-ternary": 0,
     "space-before-function-paren": 0,
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
     // allow debugger during development
