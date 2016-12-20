@@ -11,4 +11,6 @@ tableDragger(document.querySelector('#default-table'), {
 }).on('drop', (from, to) => {
   console.log(from);
   console.log(to);
+}).on('drag', () => {
+  alert('drag');
 });

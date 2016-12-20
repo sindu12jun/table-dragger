@@ -14,6 +14,7 @@ import {
   getTouchyEvent,
 } from './util';
 
+const isTest = false;
 const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
 const bodyOverflow = document.body.style.overflow;
 export default class Dragger {
@@ -54,16 +55,18 @@ export default class Dragger {
   onDrag () {
     css(document.body, { overflow: 'hidden' });
     const barWidth = getScrollBarWidth();
+    this.dragger.dragging = true;
     if (barWidth) {
       css(document.body, { 'padding-right': `${barWidth + bodyPaddingRight}px` });
     }
     touchy(document, 'remove', 'mouseup', this.destroy);
-    this.dragger.emit('drag');
+    this.dragger.emit('drag', this.originTable.el, this.options.mode);
   }
 
   onDragend (droppedItem) {
     const { originTable: { el: originEl }, dragger, index, mode, el } = this;
     css(document.body, { overflow: bodyOverflow, 'padding-right': `${bodyPaddingRight}px` });
+    this.dragger.dragging = false;
     const from = index;
     const to = Array.from(el.children).indexOf(droppedItem);
     this.destroy();
@@ -71,20 +74,23 @@ export default class Dragger {
   }
 
   onShadow (draggingItem) {
-    const { originTable: { el: originEl }, dragger, index, el } = this;
+    const { originTable: { el: originEl }, dragger, index, el, mode } = this;
     const from = index;
     const to = Array.from(el.children).indexOf(draggingItem);
-    dragger.emit('shadowMove', from, to, originEl);
+    dragger.emit('shadowMove', from, to, originEl, mode);
   }
 
   onOut () {
-    this.dragger.emit('out', this.originTable.el);
+    this.dragger.dragging = false;
+    this.dragger.emit('out', this.originTable.el, mode);
   }
 
   destroy () {
     remove(document, 'mouseup', this.destroy);
     this.el.parentElement.classList.remove(classes.dragging);
-    this.el.parentElement.removeChild(this.el);
+    if (!isTest) {
+      this.el.parentElement.removeChild(this.el);
+    }
     setTimeout(() => {
       this.drake.destroy();
     }, 0);
@@ -101,6 +107,16 @@ export default class Dragger {
     const rect = originEl.getBoundingClientRect();
 
     this.sizeFakes();
+    css(el, {
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      // position: 'fixed',
+      // top: `${rect.top}px`,
+      // left: `${rect.left}px`,
+      position: 'absolute',
+      top: `${originEl.offsetTop}px`,
+      left: `${originEl.offsetLeft}px`,
+    });
     insertBeforeSibling({ target: el, origin: originEl });
 
     // render every wrapper of table(element li)
@@ -123,14 +139,6 @@ export default class Dragger {
     el.parentElement.classList.add(classes.dragging);
     el.classList.add(classes.draggableTable);
     el.classList.add(`sindu_${mode}`);
-
-    css(el, {
-      width: `${rect.width}px`,
-      height: `${rect.height}px`,
-      position: 'fixed',
-      top: `${rect.top}px`,
-      left: `${rect.left}px`,
-    });
   }
 
   sizeFakes () {
