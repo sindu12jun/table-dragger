@@ -86,7 +86,7 @@ The `dragger` is an event emitter. The following events can be tracked using `dr
 Event Name | Listener Arguments               | Event Description
 -----------|----------------------------------|-------------------------------------------------------------------------------------
 `drag`     | `el, mode`                     | `el` is the origin table, `mode` is `column` or `row`, shows the mode user sort
-`drop`  | `oldIndex, newIndex, el, mode`                             | `oldIndex` is the index before sort. `newIndex` is the index after sort.
+`drop`  | `oldIndex, newIndex, el, mode`                             | `oldIndex` is the index before sorting. `newIndex` is the index after sorting.
 `shadowMove`  | `oldIndex, newIndex, el, mode`                             | trigger when column(row) is being lifted and moving into other column(row) place.
 `out`   | `el, mode`          | column(row) was dragged out of `el`, or dropped
 
@@ -97,25 +97,7 @@ This property will be true whenever an element is being dragged.
 #### `dragger.destroy`
 Removes all drag and drop events used by `table-dragger` to manage drag and drop.
 
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# run unit tests
-npm run unit
-
-# run all tests
-npm test
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+# License
+MIT
 
 [2]: http://bevacqua.github.io/dragula/

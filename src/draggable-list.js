@@ -14,7 +14,8 @@ import {
   getTouchyEvent,
 } from './util';
 
-const isTest = false;
+const isTest = true;
+// const isTest = false;
 const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
 const bodyOverflow = document.body.style.overflow;
 export default class Dragger {
@@ -82,7 +83,7 @@ export default class Dragger {
 
   onOut () {
     this.dragger.dragging = false;
-    this.dragger.emit('out', this.originTable.el, mode);
+    this.dragger.emit('out', this.originTable.el, this.mode);
   }
 
   destroy () {
@@ -120,8 +121,7 @@ export default class Dragger {
     insertBeforeSibling({ target: el, origin: originEl });
 
     // render every wrapper of table(element li)
-    let s = originEl.getAttribute('cellspacing');
-    s = s === null ? 2 : s;
+    const s = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
     const attr = mode === 'column' ? 'margin-right' : 'margin-bottom';
     const l = el.children.length;
     Array.from(el.children).forEach((li, dex) => {
@@ -132,7 +132,7 @@ export default class Dragger {
       }
 
       if (s && dex < (l - 1)) {
-        li.style[attr] = `-${s}px`;
+        li.style[attr] = `-${s}`;
       }
     });
 
@@ -185,7 +185,7 @@ export default class Dragger {
 
 // input:clone(originTable)
 function origin2DragItem (liTable) {
-  css(liTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
+  css(liTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial', padding: 0, margin: 0 });
   ['width', 'height', 'id'].forEach((p) => {
     liTable.removeAttribute(p);
   });

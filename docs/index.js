@@ -3,14 +3,7 @@
  */
 import tableDragger from '../src/index';
 
-tableDragger(document.querySelector('#default-table'), {
-  animation: 300,
-  mode: 'free',
-  onlyBody: true,
-  dragHandler: '.handle',
-}).on('drop', (from, to) => {
-  console.log(from);
-  console.log(to);
-}).on('drag', () => {
-  alert('drag');
-});
+tableDragger(document.querySelector('#default-table'));
+tableDragger(document.querySelector('#row-table'), { mode: 'row', onlyBody: true });
+tableDragger(document.querySelector('#handle-table'), { dragHandler: '.handle' });
+tableDragger(document.querySelector('#free-table'), { mode: 'free', dragHandler: '.handle', onlyBody: true });

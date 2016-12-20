@@ -1,35 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>vue-table-drag</title>
+  <title>VueJS Sortable</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.4.1/themes/prism-tomorrow.min.css">
+
   <style>
-    h1 {
-      font-size: 30px;
-      color: #fff;
-      text-transform: uppercase;
-      font-weight: 300;
-      text-align: center;
-      margin-bottom: 15px;
+    /* green: #7ec699
+     * black: #2d2d2d
+     * purple: #cc99cd
+     * teal: #67cdcc
+     */
+
+    .btn {
+      border: 2px solid;
+    }
+
+    footer a,
+    footer a:hover,
+    .jumbotron a,
+    .jumbotron a:hover {
+      color: #cc99cd;
+    }
+
+    footer, .jumbotron {
+      margin-bottom: 0;
+      background: #2d2d2d;
+      color: #67cdcc;
+    }
+
+    footer {
+      margin-top: 1em;
+      padding: 1em 0;
+      color: #ccc;
+    }
+
+    .handle {
+      position: relative;
+      top: 1px;
+      display: inline-block;
+      font-family: 'Glyphicons Halflings';
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      float: right;
+    }
+
+    .handle:hover {
+      cursor: pointer;
+    }
+
+    .handle:before {
+      content: "\e068";
+    }
+
+    .sortable-ghost {
+      background: #efefef;
     }
 
     table {
-      width: 100%;
       table-layout: fixed;
+      width: 100%;
+    }
+
+    section{
+      margin-bottom: 40px;
     }
 
     .tbl-header {
       background-color: rgba(255, 255, 255, 0.3);
     }
 
-    .tbl-content {
-      height: 300px;
-      overflow-x: auto;
-      margin-top: 0px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
     td, th {
+      background-color: #2d2d2d;
       padding: 15px;
       text-align: left;
       vertical-align: middle;
@@ -38,130 +84,160 @@
       color: #fff;
       border-bottom: solid 1px rgba(255, 255, 255, 0.1);
     }
-
-    /*demo styles*/
-
-    @import url(http://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
-    body {
-      background: -webkit-linear-gradient(left, #25c481, #25b7c4);
-      background: linear-gradient(to right, #25c481, #25b7c4);
-      font-family: 'Roboto', sans-serif;
-    }
-
-    section {
-      margin: 50px;
-    }
-
-    /*follow me template*/
-    .made-with-love {
-      margin-top: 40px;
-      padding: 10px;
-      clear: left;
-      text-align: center;
-      font-size: 10px;
-      font-family: arial;
-      color: #fff;
-    }
-
-    .made-with-love i {
-      font-style: normal;
-      color: #F50057;
-      font-size: 14px;
-      position: relative;
-      top: 2px;
-    }
-
-    .made-with-love a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .made-with-love a:hover {
-      text-decoration: underline;
-    }
-
-    /*for custom scrollbar for webkit browser*/
-
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    }
   </style>
 </head>
 <body>
-<section>
-  <!--for demo wrap-->
-  <h1>Inpired By dragula, hold the header and drag</h1>
-  <div>
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-2">
+        <h1>Vue.js Sortable</h1>
+        <p class="lead">Easily add drag-and-drop sorting to your Vue.js applications without jQuery, using the
+          v-sortable directive, a thin wrapper for the minimalist
+          <a href="https://github.com/RubaXa/Sortable">SortableJS</a> library.</p>
 
+        <a href="https://github.com/sagalbot/vue-sortable" class="btn btn-lg">View on GitHub</a>
+      </div>
+    </div>
   </div>
-  <div>
-    <table id="default-table" cellpadding="0" border="0">
-      <col width="10" style="background: red">
-      <col width="20">
-      <col width="30">
-      <col width="40">
-      <col width="50">
-      <thead class="tbl-header">
-      <tr>
-        <th><p>1</p></th>
-        <th><p>2</p></th>
-        <th><p>3</p></th>
-        <th><p>4</p></th>
-        <th><p>5</p></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td class="handle">AAC</td>
-        <td class="handle">AUSTRALIAN COMPANY</td>
-        <td class="handle">$1.38</td>
-        <td class="handle">+2.01</td>
-        <td class="handle">-0.36%</td>
-      </tr>
-      <tr>
-        <td>AAD23424234</td>
-        <td>AUSENCO</td>
-        <td>$2.38</td>
-        <td>-0.01</td>
-        <td>-1.36%</td>
-      </tr>
-      <tr>
-        <td>AAX</td>
-        <td>ADELAIDE</td>
-        <td>$3.22</td>
-        <td>+0.01</td>
-        <td>+1.36%</td>
-      </tr>
-      </tbody>
-      <tfoot>
-      <tr>
-        <td>foot1123</td>
-        <td>foot2</td>
-        <td>foot3</td>
-        <td>foot4</td>
-        <td>foot5</td>
-      </tr>
-      </tfoot>
-    </table>
-  </div>
-</section>
-<div style="height:400px"></div>
-<!-- follow me template -->
-<div class="made-with-love">
-  Made with
-  <i>♥</i> by
-  <a>sindu12jun</a>
 </div>
-<script src="./build/build-docs.js">
-</script>
-<!--<a href="https://github.com/sindu12jun/SortableTable"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>-->
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h2 class="page-header">Examples</h2>
+      <section>
+        <h4>Default</h4>
+        <table id="default-table" cellspacing="20">
+          <thead>
+          <tr>
+            <th>name</th>
+            <th>price</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>apple</td>
+            <td>3$</td>
+          </tr>
+          <tr>
+            <td>banana</td>
+            <td>5$</td>
+          </tr>
+          </tbody>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#default-table&#x22));
+        </code>
+        </pre>
+      </section>
+
+      <section>
+        <h4>Sort Rows</h4>
+        <table id="row-table" class="table">
+          <thead>
+          <tr>
+            <th>name</th>
+            <th>price</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>apple</td>
+            <td>3$</td>
+          </tr>
+          <tr>
+            <td>banana</td>
+            <td>5$</td>
+          </tr>
+          </tbody>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true });
+        </code>
+        </pre>
+      </section>
+
+      <section>
+        <h4>handle</h4>
+        <table id="handle-table" class="table">
+          <thead>
+          <tr>
+            <th>name <a class="handle">handle</a></th>
+            <th>price</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>apple <a class="handle">handle</a></td>
+            <td>3$</td>
+          </tr>
+          <tr>
+            <td>banana <a class="handle">handle</a></td>
+            <td>5$</td>
+          </tr>
+          </tbody>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#row-table&#x22), { dragHandler: &#x22.handle&#x22 });
+        </code>
+        </pre>
+      </section>
+
+      <section>
+        <h4>free</h4>
+        <table id="free-table" class="table">
+          <thead>
+          <tr>
+            <th>name <a class="handle">handle</a></th>
+            <th>price</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>apple <a class="handle">handle</a></td>
+            <td>3$</td>
+          </tr>
+          <tr>
+            <td>banana <a class="handle">handle</a></td>
+            <td>5$</td>
+          </tr>
+          </tbody>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true, dragHandler: &#x22.handle&#x22 });
+        </code>
+        </pre>
+      </section>
+
+      <h4>Further Customization</h4>
+      <p>Any arguments that can be passed to
+        <code>new Sortable(el, {})</code> can also be passed to the directive using an object literal. Check the
+        <a href="https://github.com/RubaXa/Sortable#options">Sortable docs</a> for a complete list of arguments. In this
+        example a custom drag handle has been set.
+      </p>
+      <custom></custom>
+
+      <p>If you need to pass multiple arguments, it can be cleaner to bind to an object from your VM data. The same drag
+        handles are applied here, while also disabling drag on
+        <code>.disabled</code> items.</p>
+      <data></data>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container text-center">
+    <small>Free to Use Under The MIT License (MIT) | Created by <a href="http://github.com/sagalbot">@sagalbot</a>
+    </small>
+  </div>
+</footer>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.4.1/prism.min.js"></script>
+<script src="./build/build-docs.js"></script>
 </body>
 </html>
