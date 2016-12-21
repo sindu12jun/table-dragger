@@ -2,18 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>VueJS Sortable</title>
+  <meta name="description" content="table-dragger, drag and sort rows or columns of table">
+  <meta name="author" content="sindu12jun">
+  <title>sindu12jun-TableDragger</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.4.1/themes/prism-tomorrow.min.css">
 
   <style>
-    /* green: #7ec699
-     * black: #2d2d2d
-     * purple: #cc99cd
-     * teal: #67cdcc
-     */
-
     .btn {
       border: 2px solid;
     }
@@ -38,19 +34,11 @@
     }
 
     .handle {
-      position: relative;
-      top: 1px;
-      display: inline-block;
       font-family: 'Glyphicons Halflings';
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      float: right;
+      color: #dd5;
     }
 
     .handle:hover {
-      cursor: pointer;
     }
 
     .handle:before {
@@ -61,28 +49,43 @@
       background: #efefef;
     }
 
+    section {
+      margin-bottom: 40px;
+    }
+
+    /*.tbl-header {*/
+    /*background-color: rgba(255, 255, 255, 0.3);*/
+    /*}*/
+
+    /*td, th {*/
+    /*background-color: #67CDCC;*/
+    /*padding: 15px;*/
+    /*text-align: left;*/
+    /*vertical-align: middle;*/
+    /*font-weight: 300;*/
+    /*font-size: 16px;*/
+    /*color: #fff;*/
+    /*border-bottom: solid 1px rgba(255, 255, 255, 0.1);*/
+    /*}*/
+
     table {
       table-layout: fixed;
       width: 100%;
     }
 
-    section{
-      margin-bottom: 40px;
-    }
-
-    .tbl-header {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
-
-    td, th {
-      background-color: #2d2d2d;
-      padding: 15px;
-      text-align: left;
-      vertical-align: middle;
-      font-weight: 300;
-      font-size: 12px;
+    .sindu-table {
+      background: #34495E;
       color: #fff;
-      border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .sindu-table th {
+      padding: 16px;
+      color: #dd5;
+    }
+
+    .sindu-table td {
+      padding: 16px;
     }
   </style>
 </head>
@@ -91,12 +94,10 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 col-md-offset-2">
-        <h1>Vue.js Sortable</h1>
-        <p class="lead">Easily add drag-and-drop sorting to your Vue.js applications without jQuery, using the
-          v-sortable directive, a thin wrapper for the minimalist
-          <a href="https://github.com/RubaXa/Sortable">SortableJS</a> library.</p>
-
-        <a href="https://github.com/sagalbot/vue-sortable" class="btn btn-lg">View on GitHub</a>
+        <a href="https://github.com/sindu12jun/table-dragger"><h1>table-dragger</h1></a>
+        <p class="lead">
+          Easily add drag-and-drop sorting to your table without jQuery
+          <a href="https://github.com/sindu12jun/table-dragger" class="btn btn-lg">View on GitHub</a>
       </div>
     </div>
   </div>
@@ -104,26 +105,40 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <h2 class="page-header">Examples</h2>
+      <h2 class="page-header">Usage
+        <span class="small">
+          cells that can be lifted up was marked with icon <i class="handle"></i>
+        </span>
+      </h2>
       <section>
-        <h4>Default</h4>
-        <table id="default-table" cellspacing="20">
+        <h4>Default <span class="small">With no options, sort columns, handler was the first row</span></h4>
+        <table id="default-table" class="sindu-table">
           <thead>
           <tr>
-            <th>name</th>
-            <th>price</th>
+            <th>Movie Title<i class="handle"></i></th>
+            <th>Genre<i class="handle"></i></th>
+            <th>Year<i class="handle"></i></th>
+            <th>Gross<i class="handle"></i></th>
           </tr>
           </thead>
-          <tbody>
           <tr>
-            <td>apple</td>
-            <td>3$</td>
+            <td>Star Wars</td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
           </tr>
           <tr>
-            <td>banana</td>
-            <td>5$</td>
+            <td>Howard The Duck</td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
           </tr>
-          </tbody>
+          <tr>
+            <td>American Graffiti</td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
         </table>
         <pre>
           <code class="language-javascript">
@@ -133,51 +148,71 @@ tableDragger(document.querySelector(&#x22#default-table&#x22));
       </section>
 
       <section>
-        <h4>Sort Rows</h4>
-        <table id="row-table" class="table">
+        <h4>Sort Rows <span class="small">Sort rows, handler was the first column</span></h4>
+        <table id="row-table" class="sindu-table">
           <thead>
           <tr>
-            <th>name</th>
-            <th>price</th>
+            <th>Movie Title<i class="handle"></i></th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
           </tr>
           </thead>
-          <tbody>
           <tr>
-            <td>apple</td>
-            <td>3$</td>
+            <td>Star Wars<i class="handle"></i></td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
           </tr>
           <tr>
-            <td>banana</td>
-            <td>5$</td>
+            <td>Howard The Duck<i class="handle"></i></td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
           </tr>
-          </tbody>
+          <tr>
+            <td>American Graffiti<i class="handle"></i></td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
         </table>
         <pre>
           <code class="language-javascript">
-tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true });
+tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22 });
         </code>
         </pre>
       </section>
 
       <section>
-        <h4>handle</h4>
-        <table id="handle-table" class="table">
+        <h4>Handler <span class="small">Specify drag handler wherever within the table</span></h4>
+        <table id="handle-table" class="sindu-table">
           <thead>
           <tr>
-            <th>name <a class="handle">handle</a></th>
-            <th>price</th>
+            <th>Movie Title <i class="handle">dragme</i></th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
           </tr>
           </thead>
-          <tbody>
           <tr>
-            <td>apple <a class="handle">handle</a></td>
-            <td>3$</td>
+            <td>Star Wars</td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
           </tr>
           <tr>
-            <td>banana <a class="handle">handle</a></td>
-            <td>5$</td>
+            <td>Howard The Duck</td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
           </tr>
-          </tbody>
+          <tr>
+            <td>American Graffiti</td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
         </table>
         <pre>
           <code class="language-javascript">
@@ -187,24 +222,34 @@ tableDragger(document.querySelector(&#x22#row-table&#x22), { dragHandler: &#x22.
       </section>
 
       <section>
-        <h4>free</h4>
-        <table id="free-table" class="table">
+        <h4>Free <span class="small">After mousedown, move mouse horizontally or vertically, see what happens. Don't forget to specify drag handler</span></h4>
+        <table id="free-table" class="sindu-table">
           <thead>
           <tr>
-            <th>name <a class="handle">handle</a></th>
-            <th>price</th>
+            <th>Movie Title</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
           </tr>
           </thead>
-          <tbody>
           <tr>
-            <td>apple <a class="handle">handle</a></td>
-            <td>3$</td>
+            <td>Star Wars<i class="handle">dragme</i></td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
           </tr>
           <tr>
-            <td>banana <a class="handle">handle</a></td>
-            <td>5$</td>
+            <td>Howard The Duck</td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
           </tr>
-          </tbody>
+          <tr>
+            <td>American Graffiti</td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
         </table>
         <pre>
           <code class="language-javascript">
@@ -213,26 +258,98 @@ tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22
         </pre>
       </section>
 
-      <h4>Further Customization</h4>
-      <p>Any arguments that can be passed to
-        <code>new Sortable(el, {})</code> can also be passed to the directive using an object literal. Check the
-        <a href="https://github.com/RubaXa/Sortable#options">Sortable docs</a> for a complete list of arguments. In this
-        example a custom drag handle has been set.
-      </p>
-      <custom></custom>
+      <section>
+        <h4>Only Body <span class="small">Setting onlyBody to true in row mode, user can only lift rows in tBody</span></h4>
+        <table id="only-body-table" class="sindu-table">
+          <thead>
+          <tr>
+            <th>Movie Title</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
+          </tr>
+          </thead>
+          <tr>
+            <td>Star Wars<i class="handle"></i></td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
+          </tr>
+          <tr>
+            <td>Howard The Duck<i class="handle"></i></td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
+          </tr>
+          <tr>
+            <td>American Graffiti<i class="handle"></i></td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true });
+        </code>
+        </pre>
+      </section>
 
-      <p>If you need to pass multiple arguments, it can be cleaner to bind to an object from your VM data. The same drag
-        handles are applied here, while also disabling drag on
-        <code>.disabled</code> items.</p>
-      <data></data>
-
+      <section>
+        <h4>Event <span class="small">Add callback when event trigger, open devtool see what happens</span></h4>
+        <table id="event-table" class="sindu-table">
+          <thead>
+          <tr>
+            <th>Movie Title</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
+          </tr>
+          </thead>
+          <tr>
+            <td>Star Wars <i class="handle">dragme</i></td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
+          </tr>
+          <tr>
+            <td>Howard The Duck</td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
+          </tr>
+          <tr>
+            <td>American Graffiti</td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector('#event-table'), { mode: 'free', dragHandler: '.handle', onlyBody: true })
+  .on('drag', () => {
+    console.log('drag');
+  })
+  .on('drop', (from, to, el, mode) => {
+    console.log('drop ' + el.nodeName + ' from ' + from + ' ' + mode + ' to ' + to + ' ' + mode);
+  })
+  .on('shadowMove', (from, to, el, mode) => {
+    console.log('move ' + el.nodeName + ' from ' + from + ' ' + mode + ' to ' + to + ' ' + mode);
+  })
+  .on('out', (el, mode) => {
+    console.log('move out or drop ' + el.nodeName + ' in ' + mode + ' mode');
+  });
+        </code>
+        </pre>
+      </section>
     </div>
   </div>
 </div>
 
 <footer>
   <div class="container text-center">
-    <small>Free to Use Under The MIT License (MIT) | Created by <a href="http://github.com/sagalbot">@sagalbot</a>
+    <small>Free to Use Under The MIT License (MIT) | Created by <a href="https://github.com/sindu12jun">@sindu12jun</a>
     </small>
   </div>
 </footer>

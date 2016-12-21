@@ -14,8 +14,8 @@ import {
   getTouchyEvent,
 } from './util';
 
-const isTest = true;
-// const isTest = false;
+// const isTest = true;
+const isTest = false;
 const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
 const bodyOverflow = document.body.style.overflow;
 export default class Dragger {
@@ -105,12 +105,10 @@ export default class Dragger {
   // TODO li设定宽度，ul overflow-hidden
   renderEl () {
     const { mode, el, originTable: { el: originEl } } = this;
-    const rect = originEl.getBoundingClientRect();
+    // const rect = originEl.getBoundingClientRect();
 
     this.sizeFakes();
     css(el, {
-      width: `${rect.width}px`,
-      height: `${rect.height}px`,
       // position: 'fixed',
       // top: `${rect.top}px`,
       // left: `${rect.left}px`,
@@ -180,6 +178,10 @@ export default class Dragger {
         css(cell, { width: `${cells[i].getBoundingClientRect().width}px` });
       });
     });
+    // fakeTables.forEach((table, index) => {
+    //   /* eslint-disable no-param-reassign*/
+    //   table.style.height = `${originEl.rows[index].getBoundingClientRect().height}px`;
+    // });
   }
 }
 

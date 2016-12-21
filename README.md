@@ -4,16 +4,17 @@
 
 # Demo
 
-Try out the [demo][2]!
+Try out the [demo][demo]!
 
 # Inspiration
 Table-dragger is a minimalist plain Javascript library for building reorderable drag-and-drop table.
 
 # Features
 - Super easy to set up
+- cellspacing, cellpadding, col and colgroup in account
 - Able to sort columns or rows at the same time
-- No bloated dependencies
 - Smooth animation when sort
+- No bloated dependencies
 - Touch events
 
 # Install
@@ -65,7 +66,7 @@ The options are detailed below.
 #### `options.mode`
 - Setting `mode` to `column`, user drag and sort columns of table
 - Setting `mode` to `row`, user drag and sort rows of table
-- Setting `mode` to `free`, user drag rows or columns, depending on the direction of the mouse movement after tapping.
+- Setting `mode` to `free`, user drag rows or columns, depending on the direction of the mouse movement after tapping. Notice you have to specify `dragHandler` in `free` mode.
 
 #### `options.dragHandler`
 - `dragHandler` is drag handle selector within table
@@ -86,7 +87,7 @@ The `dragger` is an event emitter. The following events can be tracked using `dr
 Event Name | Listener Arguments               | Event Description
 -----------|----------------------------------|-------------------------------------------------------------------------------------
 `drag`     | `el, mode`                     | `el` is the origin table, `mode` is `column` or `row`, shows the mode user sort
-`drop`  | `oldIndex, newIndex, el, mode`                             | `oldIndex` is the index before sorting. `newIndex` is the index after sorting.
+`drop`  | `oldIndex, newIndex, el, mode`                             | `oldIndex` is the index before sorting. `newIndex` is the index after sorting
 `shadowMove`  | `oldIndex, newIndex, el, mode`                             | trigger when column(row) is being lifted and moving into other column(row) place.
 `out`   | `el, mode`          | column(row) was dragged out of `el`, or dropped
 
@@ -100,4 +101,4 @@ Removes all drag and drop events used by `table-dragger` to manage drag and drop
 # License
 MIT
 
-[2]: http://bevacqua.github.io/dragula/
+[demo]: https://sindu12jun.github.io/table-dragger/
