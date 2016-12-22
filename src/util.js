@@ -17,21 +17,32 @@ const pointers = {
 };
 
 export const getTouchyEvent = () => {
+  let event;
   if (global.navigator.pointerEnabled) {
     /* eslint-disable */
-    return new PointerEvent('pointerdown',
-      {
-        cancelable: true,
-        bubbles: true,
-        view: window,
-      });
+    if (document.createEvent) {
+      event = document.createEvent("PointerEvent");
+      event.initMouseEvent("pointerdown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    } else {
+      event = new PointerEvent('pointerdown',
+        {
+          cancelable: true,
+          bubbles: true,
+          view: window,
+        });
+    }
   }
-  return new MouseEvent('mousedown',
-    {
-      cancelable: true,
-      bubbles: true,
-      view: window,
+  if (document.createEvent) {
+    event = document.createEvent("MouseEvent");
+    event.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+  } else {
+    event = new MouseEvent('mousedown', {
+      'view': window,
+      'bubbles': true,
+      'cancelable': true
     });
+  }
+  return event;
 };
 
 export const touchy = (el, op, type, fn) => {
