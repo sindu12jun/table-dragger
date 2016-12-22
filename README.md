@@ -1,9 +1,10 @@
 # table-dragger
 
-> Finally, you are able to drag and sort table freely
+> Finally, you are able to drag and sort your table as you want.
+
+[![demo.gif][demoPic]][demo]
 
 # Demo
-
 Try out the [demo][demo]!
 
 # Inspiration
@@ -106,3 +107,4 @@ Removes all drag and drop events used by `table-dragger` to manage drag and drop
 MIT
 
 [demo]: https://sindu12jun.github.io/table-dragger/
+[demoPic]: ./resources/dragger.gif
