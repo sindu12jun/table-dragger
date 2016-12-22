@@ -1,6 +1,6 @@
 # table-dragger
 
-> Finally, you are able to drag and sort table freely
+> Drag and sort your table as you want.
 
 [![demo.gif][demoPic]][demo]
 
