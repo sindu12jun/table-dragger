@@ -23,6 +23,10 @@ You can get it on npm.
 ```shell
 npm install table-dragger --save
 ```
+or
+```html
+<script src="../node_modules/table-dragger/dist/table-dragger.min.js"></script>
+```
 
 # Usage
 ```

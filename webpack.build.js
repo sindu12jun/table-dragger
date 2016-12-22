@@ -9,7 +9,7 @@ config.entry = {
 
 config.output = {
   filename: './dist/[name].js',
-  library: 'TableDragger',
+  library: 'tableDragger',
   libraryTarget: 'umd'
 }
 
