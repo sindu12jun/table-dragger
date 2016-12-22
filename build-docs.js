@@ -52,14 +52,19 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	(0, _index2.default)(document.querySelector('#default-table'), {
-	  animation: 300,
-	  mode: 'free',
-	  onlyBody: true,
-	  dragHandler: '.handle'
-	}).on('drop', function (from, to) {
-	  console.log(from);
-	  console.log(to);
+	(0, _index2.default)(document.querySelector('#default-table'));
+	(0, _index2.default)(document.querySelector('#row-table'), { mode: 'row' });
+	(0, _index2.default)(document.querySelector('#only-body-table'), { mode: 'row', onlyBody: true });
+	(0, _index2.default)(document.querySelector('#handle-table'), { dragHandler: '.handle' });
+	(0, _index2.default)(document.querySelector('#free-table'), { mode: 'free', dragHandler: '.handle', onlyBody: true });
+	(0, _index2.default)(document.querySelector('#event-table'), { mode: 'free', dragHandler: '.handle', onlyBody: true }).on('drag', function () {
+	  console.log('drag');
+	}).on('drop', function (from, to, el, mode) {
+	  console.log('drop ' + el.nodeName + ' from ' + from + ' ' + mode + ' to ' + to + ' ' + mode);
+	}).on('shadowMove', function (from, to, el, mode) {
+	  console.log('move ' + el.nodeName + ' from ' + from + ' ' + mode + ' to ' + to + ' ' + mode);
+	}).on('out', function (el, mode) {
+	  console.log('move out or drop ' + el.nodeName + ' in mode ' + mode);
 	});
 
 /***/ },
@@ -119,7 +124,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".sindu_dragger {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  box-sizing: border-box;\n}\n\n.sindu_handle {\n  cursor: move;\n}\n\n.sindu_dragger li {\n  margin: 0;\n  padding: 0;\n  list-style: none;\n  text-align: inherit;\n}\n\n.sindu_dragger li table, .sindu_dragger tr, .sindu_dragger th, .sindu_dragger td {\n  box-sizing: border-box;\n}\n\n.gu-mirror {\n  list-style: none;\n}\n\n.sindu_dragger.sindu_column li {\n  float: left;\n}\n\n.sindu_dragging .sindu_origin_table {\n  visibility: hidden;\n}\n\n.gu-mirror {\n  position: fixed !important;\n  margin: 0 !important;\n  z-index: 9999 !important;\n  opacity: 0.8;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)\";\n  filter: alpha(opacity=80);\n}\n\n.gu-mirror li {\n  margin: 0;\n  padding: 0;\n  list-style: none;\n  text-align: inherit;\n}\n\n.gu-mirror li table, .gu-mirror tr, .gu-mirror th, .gu-mirror td {\n  box-sizing: border-box;\n}\n\n.gu-hide {\n  display: none !important;\n}\n\n.gu-unselectable {\n  -webkit-user-select: none !important;\n  -moz-user-select: none !important;\n  -ms-user-select: none !important;\n  user-select: none !important;\n}\n\n.gu-transit {\n  opacity: 0.2;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)\";\n  filter: alpha(opacity=20);\n}\n", ""]);
+	exports.push([module.id, ".sindu_dragger {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  box-sizing: border-box;\n}\n\n.sindu_handle {\n  cursor: move;\n}\n\n.sindu_dragger li {\n  margin: 0;\n  padding: 0;\n  list-style: none;\n  text-align: inherit;\n}\n\n.sindu_dragger li table, .sindu_dragger tr, .sindu_dragger th, .sindu_dragger td {\n  box-sizing: border-box;\n}\n\n.gu-mirror {\n  list-style: none;\n}\n\n.sindu_dragger.sindu_column li {\n  float: left;\n}\n\n.sindu_dragging .sindu_origin_table {\n  visibility: hidden;\n}\n\n.gu-mirror {\n  position: fixed !important;\n  margin: 0 !important;\n  z-index: 9999 !important;\n  opacity: 0.8;\n}\n\n.gu-mirror li {\n  margin: 0;\n  padding: 0;\n  list-style: none;\n  text-align: inherit;\n}\n\n.gu-mirror li table, .gu-mirror tr, .gu-mirror th, .gu-mirror td {\n  box-sizing: border-box;\n}\n\n.gu-hide {\n  display: none !important;\n}\n\n.gu-unselectable {\n  -webkit-user-select: none !important;\n  -moz-user-select: none !important;\n  -ms-user-select: none !important;\n  user-select: none !important;\n}\n\n.gu-transit {\n  opacity: 0.5;\n}\n", ""]);
 	
 	// exports
 
@@ -2399,6 +2404,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var isTest = false;
 	var bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
 	var bodyOverflow = document.body.style.overflow;
 	
@@ -2446,11 +2452,12 @@
 	    value: function onDrag() {
 	      (0, _util.css)(document.body, { overflow: 'hidden' });
 	      var barWidth = (0, _util.getScrollBarWidth)();
+	      this.dragger.dragging = true;
 	      if (barWidth) {
 	        (0, _util.css)(document.body, { 'padding-right': barWidth + bodyPaddingRight + 'px' });
 	      }
 	      (0, _util.touchy)(document, 'remove', 'mouseup', this.destroy);
-	      this.dragger.emit('drag');
+	      this.dragger.emit('drag', this.originTable.el, this.options.mode);
 	    }
 	  }, {
 	    key: 'onDragend',
@@ -2462,6 +2469,7 @@
 	          el = this.el;
 	
 	      (0, _util.css)(document.body, { overflow: bodyOverflow, 'padding-right': bodyPaddingRight + 'px' });
+	      this.dragger.dragging = false;
 	      var from = index;
 	      var to = (0, _from2.default)(el.children).indexOf(droppedItem);
 	      this.destroy();
@@ -2473,16 +2481,18 @@
 	      var originEl = this.originTable.el,
 	          dragger = this.dragger,
 	          index = this.index,
-	          el = this.el;
+	          el = this.el,
+	          mode = this.mode;
 	
 	      var from = index;
 	      var to = (0, _from2.default)(el.children).indexOf(draggingItem);
-	      dragger.emit('shadowMove', from, to, originEl);
+	      dragger.emit('shadowMove', from, to, originEl, mode);
 	    }
 	  }, {
 	    key: 'onOut',
 	    value: function onOut() {
-	      this.dragger.emit('out', this.originTable.el);
+	      this.dragger.dragging = false;
+	      this.dragger.emit('out', this.originTable.el, this.mode);
 	    }
 	  }, {
 	    key: 'destroy',
@@ -2491,7 +2501,9 @@
 	
 	      (0, _util.remove)(document, 'mouseup', this.destroy);
 	      this.el.parentElement.classList.remove(_classes2.default.dragging);
-	      this.el.parentElement.removeChild(this.el);
+	      if (!isTest) {
+	        this.el.parentElement.removeChild(this.el);
+	      }
 	      setTimeout(function () {
 	        _this2.drake.destroy();
 	      }, 0);
@@ -2513,13 +2525,16 @@
 	          el = this.el,
 	          originEl = this.originTable.el;
 	
-	      var rect = originEl.getBoundingClientRect();
 	
 	      this.sizeFakes();
+	      (0, _util.css)(el, {
+	        position: 'absolute',
+	        top: originEl.offsetTop + 'px',
+	        left: originEl.offsetLeft + 'px'
+	      });
 	      (0, _util.insertBeforeSibling)({ target: el, origin: originEl });
 	
-	      var s = originEl.getAttribute('cellspacing');
-	      s = s === null ? 2 : s;
+	      var s = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
 	      var attr = mode === 'column' ? 'margin-right' : 'margin-bottom';
 	      var l = el.children.length;
 	      (0, _from2.default)(el.children).forEach(function (li, dex) {
@@ -2531,21 +2546,13 @@
 	        }
 	
 	        if (s && dex < l - 1) {
-	          li.style[attr] = '-' + s + 'px';
+	          li.style[attr] = '-' + s;
 	        }
 	      });
 	
 	      el.parentElement.classList.add(_classes2.default.dragging);
 	      el.classList.add(_classes2.default.draggableTable);
 	      el.classList.add('sindu_' + mode);
-	
-	      (0, _util.css)(el, {
-	        width: rect.width + 'px',
-	        height: rect.height + 'px',
-	        position: 'fixed',
-	        top: rect.top + 'px',
-	        left: rect.left + 'px'
-	      });
 	    }
 	  }, {
 	    key: 'sizeFakes',
@@ -2598,7 +2605,7 @@
 	exports.default = Dragger;
 	
 	function origin2DragItem(liTable) {
-	  (0, _util.css)(liTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial' });
+	  (0, _util.css)(liTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial', padding: 0, margin: 0 });
 	  ['width', 'height', 'id'].forEach(function (p) {
 	    liTable.removeAttribute(p);
 	  });
