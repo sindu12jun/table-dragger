@@ -3,6 +3,7 @@ node_modules/
 .editorconfig
 npm-debug.log
 test/unit/coverage
-.idea/
+.idea
 build/
 dist/
+.idea
