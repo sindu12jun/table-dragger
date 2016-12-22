@@ -102,7 +102,6 @@ export default class Dragger {
     el.children[index].dispatchEvent(getTouchyEvent());
   }
 
-  // TODO li设定宽度，ul overflow-hidden
   renderEl () {
     const { mode, el, originTable: { el: originEl } } = this;
     // const rect = originEl.getBoundingClientRect();
