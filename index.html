@@ -332,13 +332,13 @@ tableDragger(document.querySelector('#event-table'), { mode: 'free', dragHandler
     console.log('drag');
   })
   .on('drop', (from, to, el, mode) => {
-    console.log('drop ' + el.nodeName + ' from ' + from + ' ' + mode + ' to ' + to + ' ' + mode);
+    console.log(`drop ${el.nodeName} from ${from} ${mode} to ${to} ${mode}`);
   })
   .on('shadowMove', (from, to, el, mode) => {
-    console.log('move ' + el.nodeName + ' from ' + from + ' ' + mode + ' to ' + to + ' ' + mode);
+    console.log(`move ${el.nodeName} from ${from} ${mode} to ${to} ${mode}`);
   })
   .on('out', (el, mode) => {
-    console.log('move out or drop ' + el.nodeName + ' in ' + mode + ' mode');
+    console.log(`move out or drop ${el.nodeName} in mode ${mode}`);
   });
         </code>
         </pre>
@@ -355,6 +355,6 @@ tableDragger(document.querySelector('#event-table'), { mode: 'free', dragHandler
 </footer>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.4.1/prism.min.js"></script>
-<script src="./build/build-docs.js"></script>
+<script src="./build-docs.js"></script>
 </body>
 </html>
