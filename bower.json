@@ -1,0 +1,26 @@
+{
+  "name": "table-dragger",
+  "description": "Drag and sort columns and rows of table",
+  "main": "dist/table-dragger.js",
+  "authors": [
+    "sindu12jun <imgonnalovetheworld@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "dom",
+    "table",
+    "drag",
+    "sort",
+    "row",
+    "column"
+  ],
+  "homepage": "https://sindu12jun.github.io/table-dragger/",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
