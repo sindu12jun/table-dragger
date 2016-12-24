@@ -10,6 +10,7 @@ export default class Drag {
     if (!checkIsTable(table)) {
       throw new TypeError(`table-dragger: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`);
     }
+
     if (!table.rows.length) {
       return;
     }
