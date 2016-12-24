@@ -185,6 +185,43 @@ tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22
       </section>
 
       <section>
+        <h4>Only Body <span class="small">Setting onlyBody to true in row mode, user can only lift rows in tBody</span></h4>
+        <table id="only-body-table" class="sindu-table">
+          <thead>
+          <tr>
+            <th>Movie Title</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
+          </tr>
+          </thead>
+          <tr>
+            <td>Star Wars<i class="handle"></i></td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>
+          </tr>
+          <tr>
+            <td>Howard The Duck<i class="handle"></i></td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
+          </tr>
+          <tr>
+            <td>American Graffiti<i class="handle"></i></td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true });
+        </code>
+        </pre>
+      </section>
+
+      <section>
         <h4>Handler <span class="small">Specify drag handler wherever within the table</span></h4>
         <table id="handle-table" class="sindu-table">
           <thead>
@@ -254,43 +291,6 @@ tableDragger(document.querySelector(&#x22#row-table&#x22), { dragHandler: &#x22.
         <pre>
           <code class="language-javascript">
 tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true, dragHandler: &#x22.handle&#x22 });
-        </code>
-        </pre>
-      </section>
-
-      <section>
-        <h4>Only Body <span class="small">Setting onlyBody to true in row mode, user can only lift rows in tBody</span></h4>
-        <table id="only-body-table" class="sindu-table">
-          <thead>
-          <tr>
-            <th>Movie Title</th>
-            <th>Genre</th>
-            <th>Year</th>
-            <th>Gross</th>
-          </tr>
-          </thead>
-          <tr>
-            <td>Star Wars<i class="handle"></i></td>
-            <td>Adventure, Sci-fi</td>
-            <td>1977</td>
-            <td>$460,935,665</td>
-          </tr>
-          <tr>
-            <td>Howard The Duck<i class="handle"></i></td>
-            <td>"Comedy"</td>
-            <td>1986</td>
-            <td>$16,295,774</td>
-          </tr>
-          <tr>
-            <td>American Graffiti<i class="handle"></i></td>
-            <td>Comedy, Drama</td>
-            <td>1973</td>
-            <td>$115,000,000</td>
-          </tr>
-        </table>
-        <pre>
-          <code class="language-javascript">
-tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true });
         </code>
         </pre>
       </section>
