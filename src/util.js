@@ -74,8 +74,8 @@ export const css = (el, csses) => {
 };
 
 export const empty = (node) => {
-  while (node.firstChild) {
-    node.removeChild(node.firstChild);
+  while (node.firstElementChild) {
+    node.removeChild(node.firstElementChild);
   }
 };
 // TODO 兼容性
@@ -92,14 +92,14 @@ export const appendSibling = ({ target, origin, parent }) => {
     return;
   }
   // if row length is different
-  (parent || target.parentNode).insertBefore(target, origin ? origin.nextElementSibling : null);
+  (parent || target.parentElement).insertBefore(target, origin ? origin.nextElementSibling : null);
 };
 
 export const insertBeforeSibling = ({ target, origin }) => {
   if (!target) {
     return;
   }
-  origin.parentNode.insertBefore(target, origin);
+  origin.parentElement.insertBefore(target, origin);
 };
 
 export const sort = ({ list, from, to, parent }) => {
