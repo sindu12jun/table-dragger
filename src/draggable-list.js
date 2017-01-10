@@ -14,8 +14,8 @@ import {
   getTouchyEvent,
 } from './util';
 
-const isTest = true;
-// const isTest = false;
+// const isTest = true;
+const isTest = false;
 const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
 const bodyOverflow = document.body.style.overflow;
 export default class Dragger {
