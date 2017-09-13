@@ -1,14 +1,13 @@
 {
-  "name": "@stonecypher/table-dragger",
+  "name": "@honeybook/table-dragger",
   "version": "1.0.1",
   "description": "Drag and sort columns and rows of table",
   "author": "sindu12jun <imgonnalovetheworld@gmail.com>",
   "main": "dist/table-dragger.js",
   "repository": {
     "type": "git",
-    "url": "sindu12jun/SortableTable"
+    "url": "StoneCypher/SortableTable"
   },
-  "homepage": "https://sindu12jun.github.io/table-dragger/",
   "directories": {
     "src": "src/"
   },
@@ -103,6 +102,5 @@
     "webpack-merge": "^0.14.1",
     "style-loader": "^0.13.1"
   },
-  "bugs": "https://github.com/sindu12jun/table-dragger/issues",
   "license": "MIT"
 }
