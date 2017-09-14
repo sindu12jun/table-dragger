@@ -16,12 +16,15 @@ import {
 
 // const isTest = true;
 const isTest = false;
-const bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
-const bodyOverflow = document.body.style.overflow;
+let bodyPaddingRight;
+let bodyOverflow;
 export default class Dragger {
   constructor ({ originTable, mode }) {
     const { dragger, cellIndex, el: originEl, options } = originTable;
     const fakeTables = this.fakeTables = buildTables(originEl, mode);
+
+    bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
+    bodyOverflow = document.body.style.overflow;
 
     this.options = options;
     this.mode = mode;
