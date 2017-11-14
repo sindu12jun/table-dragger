@@ -136,6 +136,7 @@ export default class Drag {
       sort({ list: cols, from, to });
     }
   }
+  // test
 
   sortRow (from, to) {
     if (from === to) {
