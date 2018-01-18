@@ -9,6 +9,7 @@ tableDragger(document.querySelector('#row-table'), { mode: 'row' });
 tableDragger(document.querySelector('#only-body-table'), { mode: 'row', onlyBody: true });
 tableDragger(document.querySelector('#handle-table'), { dragHandler: '.handle' });
 tableDragger(document.querySelector('#free-table'), { mode: 'free', dragHandler: '.handle', onlyBody: true });
+tableDragger(document.querySelector('#free-table-first-fixed'), { mode: 'free', dragHandler: '.handle', onlyBody: true, fixFirstColumn: true });
 tableDragger(document.querySelector('#event-table'), { mode: 'free', dragHandler: '.handle', onlyBody: true })
   .on('drag', () => {
     console.log('drag');
