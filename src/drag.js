@@ -45,7 +45,9 @@ export default class Drag {
         throw new Error('table-dragger: no element match dragHandler selector');
       }
     } else {
-      handlers = mode === 'column' ? (table.rows[0] ? table.rows[0].children : []) : Array.from(table.rows).map(row => row.children[0]);
+      const rowsArray = Array.from(table.rows); 
+      const rows = options.onlyBody ? rowsArray.slice(1) : rowsArray;
+      handlers = mode === 'column' ? (rows ? rows[0].children : []) : rows.map(row => row.children[0]);
     }
     this.handlers = Array.from(handlers);
     this.handlers.forEach((h) => {
