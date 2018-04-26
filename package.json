@@ -101,7 +101,8 @@
     "webpack-dev-middleware": "^1.8.3",
     "webpack-hot-middleware": "^2.12.2",
     "webpack-merge": "^0.14.1",
-    "style-loader": "^0.13.1"
+    "style-loader": "^0.13.1",
+    "parcel-bundler": "^1.7.1"
   },
   "bugs": "https://github.com/sindu12jun/table-dragger/issues",
   "license": "MIT"
