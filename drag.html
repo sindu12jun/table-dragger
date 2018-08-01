@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="button">go</button>
+<ul id="ul">
+  <li id="test1">1</li>
+  <li>2</li>
+  <li>3</li>
+</ul>
+<script>
+  let li
+  document.querySelector('#button').addEventListener('mousedown', (event) => {
+    li = document.querySelector('#test1')
+    start({ pageX: event.pageX, pageY: event.pageY })
+  })
+
+  function start(mousePosition) {
+    let oldPageX = mousePosition.pageX;
+    let oldPageY = mousePosition.pageY
+    isDrag = true
+    const mouseMove = (event) => {
+      let originTransform = li.style.transform
+      console.log(originTransform);
+      if (!originTransform) {
+        originTransform = li.style.transform = 'translate(0px,0px)'
+      }
+      const originTranslateX = getTranslateXValue(originTransform)
+      const originTranslteY = getTranslateYValue(originTransform)
+
+      const { pageX, pageY } = event
+      const distanceX = pageX - oldPageX
+      const distanceY = pageY - oldPageY
+
+      const nowTranslateX = originTranslateX + distanceX
+      const nowTranslateY = originTranslteY + distanceY
+      const formValue = `translate(${nowTranslateX}px,${nowTranslateY}px)`
+      oldPageX = pageX
+      oldPageY = pageY
+
+      Object.assign(li.style, {
+        transform: formValue
+      })
+    }
+    document.addEventListener('mousemove', mouseMove)
+
+    document.addEventListener('mouseup', evnet => {
+      document.removeEventListener('mousemove', mouseMove)
+    })
+  }
+
+  function getTranslateXValue(translateString) {
+
+    var n = translateString.indexOf("(");
+    var n1 = translateString.indexOf(",");
+
+    var res = parseInt(translateString.slice(n + 1, n1 - 2));
+
+    return res;
+
+  }
+
+  function getTranslateYValue(translateString) {
+
+    var n = translateString.indexOf(",");
+    var n1 = translateString.indexOf(")");
+
+    var res = parseInt(translateString.slice(n + 1, n1 - 1));
+    return res;
+
+  }
+
+</script>
+</body>
+</html>
