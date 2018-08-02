@@ -60,10 +60,8 @@ export default class Drag {
     this.bindEvents();
   }
 
-  bindEvents () {
-    for (const e of this.handlers) {
-      touchy(e, 'add', 'mousedown', this.onTap);
-    }
+  bindEvents() {
+    touchy(this.el, 'add', 'mousedown', this.onTap);
   }
 
   onTap (event) {

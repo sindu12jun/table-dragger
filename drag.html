@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <style>
+    .drag-mirror {
+    }
+
+    ul {
+      list-style-position: inside;
+    }
+  </style>
 </head>
 <body>
 <button id="button">go</button>
@@ -12,66 +20,82 @@
   <li>3</li>
 </ul>
 <script>
-  let li
+  let copy
+  // 鼠标点击坐标与按下 dom 的距离
+  let offsetX
+  let offsetY
   document.querySelector('#button').addEventListener('mousedown', (event) => {
-    li = document.querySelector('#test1')
+    const target = document.querySelector('#test1')
+    copy = target.cloneNode(true)
+    copy.classList.add('drag-mirror')
+    const rect = target.getBoundingClientRect()
+    Object.assign(copy.style, {
+      width: rect.width + 'px',
+      height: rect.height + 'px',
+      left: rect.left + 'px',
+      top: rect.top + 'px',
+    })
+    offsetX = event.pageX - rect.left
+    copy.style.position = 'fixed'
+    document.body.appendChild(copy)
     start({ pageX: event.pageX, pageY: event.pageY })
   })
 
   function start(mousePosition) {
     let oldPageX = mousePosition.pageX;
     let oldPageY = mousePosition.pageY
-    isDrag = true
     const mouseMove = (event) => {
-      let originTransform = li.style.transform
-      console.log(originTransform);
-      if (!originTransform) {
-        originTransform = li.style.transform = 'translate(0px,0px)'
-      }
-      const originTranslateX = getTranslateXValue(originTransform)
-      const originTranslteY = getTranslateYValue(originTransform)
-
       const { pageX, pageY } = event
       const distanceX = pageX - oldPageX
       const distanceY = pageY - oldPageY
 
-      const nowTranslateX = originTranslateX + distanceX
-      const nowTranslateY = originTranslteY + distanceY
-      const formValue = `translate(${nowTranslateX}px,${nowTranslateY}px)`
-      oldPageX = pageX
-      oldPageY = pageY
-
-      Object.assign(li.style, {
-        transform: formValue
+      Object.assign(copy.style, {
+        left:
       })
+    }
+    const mouseUp = event => {
+      const mirror = document.querySelector('.drag-mirror')
+      mirror.parentElement.removeChild(mirror)
+      document.removeEventListener('mousemove', mouseMove)
+      document.removeEventListener('mouseup', mouseUp)
     }
     document.addEventListener('mousemove', mouseMove)
 
-    document.addEventListener('mouseup', evnet => {
-      document.removeEventListener('mousemove', mouseMove)
-    })
+    document.addEventListener('mouseup', mouseUp)
   }
 
-  function getTranslateXValue(translateString) {
 
-    var n = translateString.indexOf("(");
-    var n1 = translateString.indexOf(",");
-
-    var res = parseInt(translateString.slice(n + 1, n1 - 2));
-
-    return res;
-
+  function getOffset (el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      left: rect.left + getScroll('scrollLeft', 'pageXOffset'),
+      top: rect.top + getScroll('scrollTop', 'pageYOffset')
+    };
   }
 
-  function getTranslateYValue(translateString) {
-
-    var n = translateString.indexOf(",");
-    var n1 = translateString.indexOf(")");
-
-    var res = parseInt(translateString.slice(n + 1, n1 - 1));
-    return res;
-
+  function getScroll (scrollProp, offsetProp) {
+    if (typeof global[offsetProp] !== 'undefined') {
+      return global[offsetProp];
+    }
+    if (documentElement.clientHeight) {
+      return documentElement[scrollProp];
+    }
+    return doc.body[scrollProp];
   }
+
+  function getElementBehindPoint (point, x, y) {
+    var p = point || {};
+    var state = p.className;
+    var el;
+    p.className += ' gu-hide';
+    el = doc.elementFromPoint(x, y);
+    p.className = state;
+    return el;
+  }
+  function removePx(value) {
+    return value.split('px')[0]
+  }
+
 
 </script>
 </body>

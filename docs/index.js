@@ -22,3 +22,10 @@ tableDragger(document.querySelector('#event-table'), { mode: 'free', dragHandler
   .on('out', (el, mode) => {
     console.log(`move out or drop ${el.nodeName} in mode ${mode}`);
   });
+
+const tr = document.createElement('tr')
+tr.innerHTML = ` <td>123Star Wars</td>
+            <td>Adventure, Sci-fi</td>
+            <td>1977</td>
+            <td>$460,935,665</td>`
+document.querySelector('#row-table').querySelector('tbody').appendChild(tr)
