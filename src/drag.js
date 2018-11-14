@@ -35,6 +35,7 @@ export default class Drag {
       destroy: this.destroy,
     });
     dragger.on('drop', (from, to, originEl, realMode) => {
+      if (options.lockedColumns.includes(to)) return false;
       (realMode === 'column' ? this.sortColumn : this.sortRow)(from, to);
     });
 
