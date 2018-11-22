@@ -13,7 +13,6 @@ export default class Drag {
     if (!table.rows.length) {
       return;
     }
-
     const defaults = {
       mode: 'column',
       dragHandler: '',
