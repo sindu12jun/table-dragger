@@ -56,6 +56,8 @@ export default class Drag {
     this.tappedCoord = { x: 0, y: 0 }; // the coord of mouseEvent user clicked
     this.cellIndex = { x: 0, y: 0 }; // the cell's index of row and column
     this.el = table;
+    this.sortTable = null;
+    this.realMode = mode
     this.bindEvents();
   }
 
@@ -67,6 +69,7 @@ export default class Drag {
 
   onTap (event) {
     let { target } = event;
+
     while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
       target = target.parentElement;
     }
@@ -89,18 +92,23 @@ export default class Drag {
     const { tappedCoord, options: { mode } } = this;
     const gapX = Math.abs(event.clientX - tappedCoord.x);
     const gapY = Math.abs(event.clientY - tappedCoord.y);
+    // console.log('client');
+    // console.log(event.clientX);
+    // console.log(tappedCoord.x);
     const isFree = mode === 'free';
     let realMode = mode;
 
-    if (gapX === 0 && gapY === 0) {
+    if (!gapX && !gapY) {
       return;
     }
+    this.dragger.dragging = true;
 
     if (isFree) {
       realMode = gapX < gapY ? 'row' : 'column';
     }
+    this.realMode = realMode
 
-    const sortTable = new Dragger({
+    const sortTable = this.sortTable = new Dragger({
       mode: realMode,
       originTable: this,
     });

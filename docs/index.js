@@ -3,6 +3,8 @@
  */
 import tableDragger from '../src/index';
 
+console.log(tableDragger);
+
 /* eslint-disable no-console*/
 tableDragger(document.querySelector('#default-table'));
 tableDragger(document.querySelector('#row-table'), { mode: 'row' });
