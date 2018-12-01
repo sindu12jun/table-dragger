@@ -14,8 +14,6 @@ import {
   getTouchyEvent,
 } from './util';
 
-// const isTest = true;
-const isTest = false;
 let bodyPaddingRight;
 let bodyOverflow;
 export default class Dragger {
@@ -35,7 +33,6 @@ export default class Dragger {
       this[m] = this[m].bind(this);
     });
 
-    // pointfree?
     this.el = fakeTables.reduce((previous, current) => {
       const li = document.createElement('li');
       li.appendChild(current);
@@ -91,9 +88,7 @@ export default class Dragger {
   destroy () {
     remove(document, 'mouseup', this.destroy);
     this.el.parentElement.classList.remove(classes.dragging);
-    if (!isTest) {
-      this.el.parentElement.removeChild(this.el);
-    }
+    this.el.parentElement.removeChild(this.el);
     setTimeout(() => {
       this.drake.destroy();
     }, 0);
@@ -104,16 +99,11 @@ export default class Dragger {
     el.children[index].dispatchEvent(getTouchyEvent());
   }
 
-  // TODO li设定宽度，ul overflow-hidden
   renderEl () {
     const { mode, el, originTable: { el: originEl } } = this;
-    // const rect = originEl.getBoundingClientRect();
 
     this.sizeFakes();
     css(el, {
-      // position: 'fixed',
-      // top: `${rect.top}px`,
-      // left: `${rect.left}px`,
       position: 'absolute',
       top: `${originEl.offsetTop}px`,
       left: `${originEl.offsetLeft}px`,
