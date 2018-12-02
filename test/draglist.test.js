@@ -24,4 +24,15 @@ beforeEach(() => {
   dragList = new DragList({mode:'column',originTable:table})
 })
 
-test('')
+test('listener triggers when event emits', () => {
+  const drag = new Drag(table)
+  const onDrag = jest.fn();
+  const onDrop = jest.fn();
+  const onShadowMove = jest.fn();
+  const onOut = jest.fn();
+
+  drag.on('drag',onDrag)
+  drag.on('drop',onDrop)
+  drag.on('shadowMove',onShadowMove)
+  drag.on('out',onOut)
+})

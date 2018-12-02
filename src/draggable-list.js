@@ -56,6 +56,7 @@ export default class Dragger {
   onDrag () {
     css(document.body, { overflow: 'hidden' });
     const barWidth = getScrollBarWidth();
+    console.log(barWidth,'barWidth');
     if (barWidth) {
       css(document.body, { 'padding-right': `${barWidth + bodyPaddingRight}px` });
     }
@@ -111,9 +112,9 @@ export default class Dragger {
     insertBeforeSibling({ target: el, origin: originEl });
 
     // render every wrapper of table(element li)
-    const s = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
+    const spacing = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
     const attr = mode === 'column' ? 'margin-right' : 'margin-bottom';
-    const l = el.children.length;
+    const length = el.children.length;
     Array.from(el.children).forEach((li, dex) => {
       /* eslint-disable no-param-reassign*/
       const table = li && li.querySelector('table');
@@ -121,8 +122,8 @@ export default class Dragger {
         li.classList.add(classes.static);
       }
 
-      if (s && dex < (l - 1)) {
-        li.style[attr] = `-${s}`;
+      if (spacing && dex < (length - 1)) {
+        li.style[attr] = `-${spacing}`;
       }
     });
 

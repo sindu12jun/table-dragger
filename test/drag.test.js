@@ -1,6 +1,7 @@
 import Drag from '../src/drag'
 import DragList from '../src/draggable-list'
 import { createDrag, raise } from './utils'
+import classes from '../src/classes';
 
 let table = null
 
@@ -25,6 +26,16 @@ test('should specify dragHandler in free mode', () => {
   expect(() => {
     new Drag(table, { mode: 'free' })
   }).toThrow()
+})
+
+test('classes after create', () => {
+  const drag = new Drag(table)
+  expect(drag.handlers.every(handler => {
+    return handler.classList.includes(classes.handle)
+  })).toBe(true)
+  expect(table.classList.includes(classes.originTable)).toBe(true)
+  drag.destroy()
+  expect(table.classList.includes(classes.originTable)).not.toBe(true)
 })
 
 test('should be dragging', () => {
