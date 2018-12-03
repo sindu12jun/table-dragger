@@ -31,11 +31,11 @@ test('should specify dragHandler in free mode', () => {
 test('classes after create', () => {
   const drag = new Drag(table)
   expect(drag.handlers.every(handler => {
-    return handler.classList.includes(classes.handle)
+    return handler.classList.contains(classes.handle)
   })).toBe(true)
-  expect(table.classList.includes(classes.originTable)).toBe(true)
+  expect(table.classList.contains(classes.originTable)).toBe(true)
   drag.destroy()
-  expect(table.classList.includes(classes.originTable)).not.toBe(true)
+  expect(table.classList.contains(classes.originTable)).not.toBe(true)
 })
 
 test('should be dragging', () => {

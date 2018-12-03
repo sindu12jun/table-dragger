@@ -5,7 +5,6 @@ import dragula from 'dragula-with-animation';
 import classes from './classes';
 import {
   insertBeforeSibling,
-  getScrollBarWidth,
   css,
   remove,
   getLongestRow,
@@ -14,14 +13,12 @@ import {
   getTouchyEvent,
 } from './util';
 
-let bodyPaddingRight;
 let bodyOverflow;
 export default class Dragger {
   constructor ({ originTable, mode }) {
     const { dragger, cellIndex, el: originEl, options } = originTable;
     const fakeTables = this.fakeTables = buildTables(originEl, mode);
 
-    bodyPaddingRight = parseInt(document.body.style.paddingRight, 0) || 0;
     bodyOverflow = document.body.style.overflow;
 
     this.options = options;
@@ -55,18 +52,12 @@ export default class Dragger {
 
   onDrag () {
     css(document.body, { overflow: 'hidden' });
-    const barWidth = getScrollBarWidth();
-    console.log(barWidth,'barWidth');
-    if (barWidth) {
-      css(document.body, { 'padding-right': `${barWidth + bodyPaddingRight}px` });
-    }
     touchy(document, 'remove', 'mouseup', this.destroy);
     this.dragger.emit('drag', this.originTable.el, this.options.mode);
   }
 
   onDragend (droppedItem) {
     const { originTable: { el: originEl }, dragger, index, mode, el } = this;
-    css(document.body, { overflow: bodyOverflow, 'padding-right': `${bodyPaddingRight}px` });
     this.dragger.dragging = false;
     const from = index;
     const to = Array.from(el.children).indexOf(droppedItem);
@@ -104,10 +95,13 @@ export default class Dragger {
     const { mode, el, originTable: { el: originEl } } = this;
 
     this.sizeFakes();
+    // 不用 fixed 定位是因为会有重叠优先级的问题
+    const rect = originEl.getBoundingClientRect()
+    // use fixed position instead of absolute porition for now, choose the more simple way
     css(el, {
-      position: 'absolute',
-      top: `${originEl.offsetTop}px`,
-      left: `${originEl.offsetLeft}px`,
+      position: 'fixed',
+      top: `${rect.top}px`,
+      left: `${rect.left}px`,
     });
     insertBeforeSibling({ target: el, origin: originEl });
 
@@ -178,7 +172,6 @@ export default class Dragger {
   }
 }
 
-// input:clone(originTable)
 function origin2DragItem (liTable) {
   css(liTable, { 'table-layout': 'fixed', width: 'initial', height: 'initial', padding: 0, margin: 0 });
   ['width', 'height', 'id'].forEach((p) => {
