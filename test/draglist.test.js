@@ -1,5 +1,6 @@
 import Drag from '../src/drag'
 import DragList from '../src/draggable-list'
+import classes from '../src/classes'
 
 let table = null
 let drag = null
@@ -28,5 +29,9 @@ test('new ul position is the same with table', () => {
   const tableRect = table.getBoundingClientRect()
   const ulRect = ul.getBoundingClientRect()
   expect(tableRect).toMatchObject(ulRect)
+})
+
+test('classes is ok', () => {
+  window.getComputedStyle(table).getPropertyValue('visibility').toBe('hidden')
 })
 
