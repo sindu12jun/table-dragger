@@ -24,7 +24,7 @@ beforeEach(() => {
   dragList = new DragList({ mode: 'column', originTable: drag })
 })
 
-test('new ul position is the same with table', () => {
+test('new ul rect is the same with table', () => {
   const ul = dragList.el
   const tableRect = table.getBoundingClientRect()
   const ulRect = ul.getBoundingClientRect()
