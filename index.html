@@ -260,6 +260,44 @@ tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22
       </section>
 
       <section>
+        <h4>Free with the first column fixed <span class="small">After mousedown, move mouse horizontally or vertically, see what happens. Don't forget to specify drag handler</span>
+        </h4>
+        <table id="free-table-first-fixed" class="sindu-table">
+          <thead>
+          <tr>
+            <th>Movie Title</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Gross</th>
+          </tr>
+          </thead>
+          <tr>
+            <td>Star Wars</td>
+            <td>Adventure, Sci-fi <i class="handle">dragme</i></td>
+            <td>1977</td>
+            <td>$460,935,665</td>
+          </tr>
+          <tr>
+            <td>Howard The Duck</td>
+            <td>"Comedy"</td>
+            <td>1986</td>
+            <td>$16,295,774</td>
+          </tr>
+          <tr>
+            <td>American Graffiti</td>
+            <td>Comedy, Drama</td>
+            <td>1973</td>
+            <td>$115,000,000</td>
+          </tr>
+        </table>
+        <pre>
+          <code class="language-javascript">
+tableDragger(document.querySelector(&#x22#row-table&#x22), { mode: &#x22row&#x22, onlyBody: true, dragHandler: &#x22.handle&#x22, fixFirstColumn: true });
+        </code>
+        </pre>
+      </section>
+
+      <section>
         <h4>Only Body <span class="small">Setting onlyBody to true in row mode, user can only lift rows in tBody</span>
         </h4>
         <table id="only-body-table" class="sindu-table">

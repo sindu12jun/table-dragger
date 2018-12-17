@@ -124,16 +124,20 @@ export default class Dragger {
     const s = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
     const attr = mode === 'column' ? 'margin-right' : 'margin-bottom';
     const l = el.children.length;
+    let i = 0;
     Array.from(el.children).forEach((li, dex) => {
       /* eslint-disable no-param-reassign*/
       const table = li && li.querySelector('table');
-      if (this.options.onlyBody && mode === 'row' && !Array.from(table.children).some(o => o.nodeName === 'TBODY')) {
+      if ((this.options.onlyBody && mode === 'row' && !Array.from(table.children).some(o => o.nodeName === 'TBODY')) ||
+         (this.options.onlyBody && this.options.fixFirstColumn && mode === 'column' && i === 0)) {
         li.classList.add(classes.static);
       }
 
       if (s && dex < (l - 1)) {
         li.style[attr] = `-${s}`;
       }
+
+      i += 1;
     });
 
     el.parentElement.classList.add(classes.dragging);
