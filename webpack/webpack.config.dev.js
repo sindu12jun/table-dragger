@@ -1,13 +1,14 @@
 const Path = require('path');
 const Webpack = require('webpack');
 const merge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
   mode: 'development',
   devtool: 'cheap-eval-source-map',
-  output: {
-    chunkFilename: 'js/[name].chunk.js'
+  entry: {
+    'doc': Path.resolve(__dirname, '../docs/index.js')
   },
   devServer: {
     inline: true
@@ -19,15 +20,6 @@ module.exports = merge(common, {
   ],
   module: {
     rules: [
-      {
-        test: /\.(js)$/,
-        include: Path.resolve(__dirname, '../src'),
-        enforce: 'pre',
-        loader: 'eslint-loader',
-        options: {
-          emitWarning: true,
-        }
-      },
       {
         test: /\.(js)$/,
         include: Path.resolve(__dirname, '../src'),
