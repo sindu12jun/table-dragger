@@ -1,0 +1,47 @@
+{
+  "name": "table-dragger",
+  "version": "2.0.0",
+  "description": "Drag and sort columns and rows of table",
+  "main": "dist/table-dragger.js",
+  "scripts": {
+    "start": "webpack-dev-server --inline --hot --open --config webpack/webpack.config.dev.js",
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sindu12jun/table-dragger"
+  },
+  "keywords": [
+    "table",
+    "drag",
+    "sort",
+    "dnd"
+  ],
+  "author": "sindu12jun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sindu12jun/table-dragger/issues"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^2.0.2",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^3.0.0",
+    "eslint": "^5.16.0",
+    "eslint-loader": "^2.1.2",
+    "html-webpack-plugin": "^4.0.0-beta.5",
+    "mini-css-extract-plugin": "^0.8.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1",
+    "webpack-merge": "^4.2.1",
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.0",
+    "core-js": "^3.0.1",
+  }
+}
