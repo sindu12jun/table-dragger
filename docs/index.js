@@ -3,9 +3,6 @@ import classes from '../src/classes'
 
 /* eslint-disable no-console*/
 tableDragger(document.querySelector('#column-table'));
-tableDragger(document.querySelector('#row-table'), {mode: 'row'});
-tableDragger(document.querySelector('#only-body-table'), {mode: 'row', onlyBody: true});
-tableDragger(document.querySelector('#handle-table'), {dragHandler: '.handle'});
 tableDragger(document.querySelector('#free-table'), {mode: 'free', dragHandler: '.handle'});
 tableDragger(document.querySelector('#event-table'), {mode: 'free', dragHandler: '.handle'})
   .on('drag', () => {
