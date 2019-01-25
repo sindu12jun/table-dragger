@@ -1,6 +1,3 @@
-/**
- * Created by lijun on 2016/12/16.
- */
 export default {
   originTable: 'sindu_origin_table',
   fakeTable: 'sindu_dragger',
