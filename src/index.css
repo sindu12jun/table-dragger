@@ -1,0 +1,37 @@
+.sindu_dragger {
+    list-style: none;
+    overflow: hidden;
+    padding: 0!important;
+    /*margin needs to be the same with table*/
+}
+
+.sindu_dragger > li{
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+.sindu_dragging .sindu_origin_table {
+    visibility: hidden;
+}
+
+.sindu_dragger table {
+    table-layout: fixed !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.sindu_handle {
+    cursor: move;
+}
+
+.gu-mirror {
+    list-style: none!important;
+}
+
+.gu-mirror{
+    margin: 0;
+    padding: 0;
+}
+
+
