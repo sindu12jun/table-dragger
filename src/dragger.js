@@ -1,3 +1,6 @@
+import * as Rx from 'rxjs'
+import * as R from 'ramda'
+
 export default function tableDragger(table, userOptions) {
   const options = Object.assign({}, defaultOptions, userOptions)
   const {dragHandler, mode: optionMode} = options
@@ -18,4 +21,31 @@ export default function tableDragger(table, userOptions) {
 
     }),
   )
-}
+
+  firstDrag$.subscribe(({targetIndex, mode}) => {
+    const onlyBody = options.onlyBody && optionMode === 'row'
+
+    addClass(table, classes.originTable)
+    const fakeTable = R.compose(
+      R.curry(renderFakeTable)(table),
+      getWholeFakeTable)(table, mode)
+    dragula([fakeTable], {
+      animation: 300,
+      staticClass: classes.static,
+      direction: mode === columnType ? 'horizontal' : 'vertical',
+    })
+      .on('drag', () => {
+        return onDrag(dragger, table, mode)
+      })
+
+  }
+
+  export function onDrag(dragger, table, mode,) {
+    dragger.dragging = true
+    dragger.emit('drag', table, mode);
+  }
+
+  function modeString(mode) {
+    return mode === columnType ? 'column' : 'row'
+  }
+
