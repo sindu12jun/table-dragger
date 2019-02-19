@@ -43,7 +43,20 @@ export default function tableDragger(table, userOptions) {
     dragger.emit('drag', table, mode);
   }
 
+
+  export function getColumnCellsByIndex(table, index) {
+    return R.compose(
+      R.map((row) => {
+        return row.children[index]
+      }),
+      ArrayFrom)(table.rows)
+  }
+
   function modeString(mode) {
     return mode === columnType ? 'column' : 'row'
   }
+  export function getRowFakeTableByIndex(table, index) {
+
+  }
+
 
