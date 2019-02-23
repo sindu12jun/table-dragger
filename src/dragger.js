@@ -56,7 +56,19 @@ export default function tableDragger(table, userOptions) {
     return mode === columnType ? 'column' : 'row'
   }
   export function getRowFakeTableByIndex(table, index) {
-
+    const realRow = table.rows[index]
+    const realOrgan = getOrganByCell(realRow)
+    const fakeTable = R.pipe(
+      cloneNode(true),
+      realOrgan ? R.curry(appendDOMChild)(clone(false)(real)) : R.identity,
+      R.curry(appendDOMChild)(cloneNode(false)(table))
+    )(fakeF)
+    const tuple = R.zip(
+      ArrayFrom(fakeTable.rows[0].children)
+    )
+    R.forEach(function ([realCell, fakeCell]) {
+      setStyle(fakeCell, 'height', addPx(prop(realCell, 'clientWidth')))
+    })(tuple)
   }
 
 
