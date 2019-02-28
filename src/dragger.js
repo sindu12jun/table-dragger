@@ -45,11 +45,10 @@ export default function tableDragger(table, userOptions) {
 
 
   export function getColumnCellsByIndex(table, index) {
-    return R.compose(
-      R.map((row) => {
-        return row.children[index]
-      }),
-      ArrayFrom)(table.rows)
+    const cells = R.map(R.partial(getCellByIndexInRow, [index]))(ArrayFrom(table.rows))
+    const fakeTable = R.pipe(cloneNode(false),
+      R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
+    )(table)
   }
 
   function modeString(mode) {
