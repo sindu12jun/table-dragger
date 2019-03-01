@@ -43,17 +43,23 @@ export default function tableDragger(table, userOptions) {
     dragger.emit('drag', table, mode);
   }
 
+  export function getTableLength(table, mode) {
+    R.partialRight(prop, ['length']),
+      R.partialRight(prop, ['children'])
+  }
 
   export function getColumnCellsByIndex(table, index) {
-    const cells = R.map(R.partial(getCellByIndexInRow, [index]))(ArrayFrom(table.rows))
-    const fakeTable = R.pipe(cloneNode(false),
-      R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
-    )(table)
+    return R.compose(
+      R.map((row) => {
+        return row.children[index]
+      }),
+      ArrayFrom)(table.rows)
   }
 
   function modeString(mode) {
     return mode === columnType ? 'column' : 'row'
   }
+
   export function getRowFakeTableByIndex(table, index) {
     const realRow = table.rows[index]
     const realOrgan = getOrganByCell(realRow)
