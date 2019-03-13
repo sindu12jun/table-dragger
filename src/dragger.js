@@ -76,4 +76,27 @@ export default function tableDragger(table, userOptions) {
     })(tuple)
   }
 
+  export function getTableLength(table, mode) {
+    const getRowLength = R.compose(
+    )
+    return mode === rowType ?
+      table.rows.length :
+      R.compose(R.apply(Math.max), R.map(getRowLength), ArrayFrom)(table.rows)
+  }
+
+  export function getFakeTables(table, mode) {
+    const tableLength = getTableLength(table, mode)
+    return R.map(R.partial(getFakeTableByIndex, [table, mode]))(createArrByNumber(tableLength))
+  }
+
+  export function getColumnCellsByIndex(table, index) {
+    return R.compose(
+      R.map((row) => {
+        return row.children[index]
+      }),
+      ArrayFrom)(table.rows)
+  }
+
+
+
 
