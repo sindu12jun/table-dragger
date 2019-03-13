@@ -5,6 +5,8 @@ export default function tableDragger(table, userOptions) {
   const options = Object.assign({}, defaultOptions, userOptions)
   const {dragHandler, mode: optionMode} = options
   const handlers = getHandlers(table, options, dragHandler)
+  const down$ = Rx.fromEvent(handlers, 'mousedown')
+  const realMode = R.pipe(getMoveDirection, R.partial(getRealMode, [optionMode]))
   {
     const errorMsg = checkTable(table, options)
     if (errorMsg) throw new Error(errorMsg)
@@ -13,12 +15,6 @@ export default function tableDragger(table, userOptions) {
   const dragger = emitter({
     dragging: false,
   });
-  const firstDrag$ = down$.pipe(
-    filter(isMousedownValid),
-    mergeMap((downEvent) => {
-
-    }),
-  )
 
   firstDrag$.subscribe(({targetIndex, mode}) => {
     const onlyBody = options.onlyBody && optionMode === 'row'
@@ -27,16 +23,14 @@ export default function tableDragger(table, userOptions) {
     const fakeTable = R.compose(
       R.curry(renderFakeTable)(table),
       getWholeFakeTable)(table, mode)
-    dragula([fakeTable], {
-      animation: 300,
-      staticClass: classes.static,
-      direction: mode === columnType ? 'horizontal' : 'vertical',
-    })
-      .on('drag', () => {
-        return onDrag(dragger, table, mode)
-      })
 
-  }
+    if (onlyBody) {
+      R.forEach(function ([fakeRow, realRow]) {
+        if (getOrganByCell(realRow).nodeName !== 'TBODY') {
+          addClass(fakeRow, classes.static)
+        }
+      })(R.zip([...fakeTable.children], [...table.rows]))
+    }
 
   export function onDrag(dragger, table, mode,) {
     dragger.dragging = true
