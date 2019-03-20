@@ -16,9 +16,13 @@ export default function tableDragger(table, userOptions) {
     dragging: false,
   });
 
-  firstDrag$.subscribe(({targetIndex, mode}) => {
-    const onlyBody = options.onlyBody && optionMode === 'row'
-
+  const firstDrag$ = down$.pipe(
+    filter(isMousedownValid),
+    mergeMap((downEvent) => {
+      return move$.pipe(
+        takeUntil(up$),
+        map(R.partial(realMode, [downEvent])),
+  firstDrag$.subscribe(({targetIndex, mode}) => { const onlyBody = options.onlyBody && optionMode === 'row'
     addClass(table, classes.originTable)
     const fakeTable = R.compose(
       R.curry(renderFakeTable)(table),
@@ -91,6 +95,19 @@ export default function tableDragger(table, userOptions) {
       ArrayFrom)(table.rows)
   }
 
+    dragula([fakeTable], {
+      animation: 300,
+      staticClass: classes.static,
+      direction: mode === columnType ? 'horizontal' : 'vertical',
+    })
+      .on('drag', () => {
+        return onDrag(dragger, table, mode)
+      })
+      .on('dragend', R.partial(onDrop, [targetIndex, fakeTable, mode, table, dragger]))
+      .on('shadow', R.partial(onShadow, [targetIndex, fakeTable, mode, table, dragger]))
+      .on('out', () => {
+        return onOut(mode, table, dragger)
+      });
 
 
 
