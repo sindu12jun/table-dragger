@@ -35,6 +35,17 @@ export default function tableDragger(table, userOptions) {
         }
       })(R.zip([...fakeTable.children], [...table.rows]))
     }
+    export function exchangeColumns(table, from, to) {
+
+    }
+
+    export function exchangeRows(table, from, to) {
+      if (from === to) {
+        return;
+      }
+      const list = Array.from(table.rows);
+      sortElements(list[from], list[to], from < to)
+    }
 
   export function onDrag(dragger, table, mode,) {
     dragger.dragging = true
@@ -109,5 +120,23 @@ export default function tableDragger(table, userOptions) {
         return onOut(mode, table, dragger)
       });
 
+
+    function emitter(thing = {}) {
+      const evt = {};
+      thing.on = (type, fn) => {
+        evt[type] = evt[type] || [];
+        evt[type].push(fn);
+        return thing;
+      };
+      thing.emit = (type, ...args) => {
+        if (!evt[type]) {
+          return;
+        }
+        for (const fn of evt[type]) {
+          fn(...args);
+        }
+      };
+      return thing;
+    }
 
 
