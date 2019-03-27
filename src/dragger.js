@@ -1,6 +1,27 @@
 import * as Rx from 'rxjs'
 import * as R from 'ramda'
 
+export function onDrag(dragger, table, mode,) {
+  dragger.dragging = true
+  dragger.emit('drag', table, mode);
+}
+
+function modeString(mode) {
+  return mode === columnType ? 'column' : 'row'
+}
+
+export function onDrop(targetIndex, fakeTable, mode, table, dragger, droppedItem) {
+  const from = targetIndex
+  const to = ArrayFrom(fakeTable.children).indexOf(droppedItem);
+  const sortFunc = mode === columnType ? exchangeColumns : exchangeRows
+  sortFunc(table, from, to)
+  removeClass(fakeTable.parentElement, classes.dragging)
+  removeDom(fakeTable)
+  removeClass(table, classes.originTable)
+  dragger.emit('drop', from, to, table, modeString(mode));
+  dragger.dragging = false
+}
+
 export default function tableDragger(table, userOptions) {
   const options = Object.assign({}, defaultOptions, userOptions)
   const {dragHandler, mode: optionMode} = options
