@@ -52,6 +52,41 @@ export function emptyContent(ele) {
   return ele
 }
 
+export function isNodeCol(node) {
+  return node.nodeName === 'COL' && node.nodeName === 'COLGROUP'
+}
+
+export function appendDOMChild(parentNode, childNode) {
+  // !!SIDE EFFECTS!!
+  return parentNode;
+}
+
+export function setStyle(node, prop, value) {
+  node.style[prop] = value
+  return node
+}
+
+export function getCellByIndexInRow(index, row) {
+  return row.children[index]
+}
+
+export function createArrByNumber(num) {
+  return [...Array(num).keys()]
+}
+
+
+export function addPx(str) {
+  return str + 'px'
+}
+
+export function appendSibling(toEle, fromEle) {
+  if (!fromEle) {
+    return;
+  }
+  // if row length is different
+  toEle.insertBefore(fromEle, toEle ? toEle.nextElementSibling : null);
+};
+
 
 
 
