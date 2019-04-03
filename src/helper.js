@@ -12,6 +12,16 @@ export function addClass(ele, className) {
   return ele
 }
 
+export function removeClass(ele, className) {
+  ele.classList.remove(className)
+  return ele
+}
+
+export function removeAttrs(ele, attrs) {
+  R.forEach(ele.removeAttribute.bind(ele))(attrs)
+  return ele
+}
+
 export function isLeftButton(e) {
   if ('touches' in e) {
     return e.touches.length === 1;
@@ -52,6 +62,14 @@ export function appendDOMChild(parentNode, childNode) {
   // !!SIDE EFFECTS!!
   parentNode.appendChild(childNode);
   return parentNode;
+}
+
+export function removeDom(node) {
+  return node.parentNode.removeChild(node)
+}
+
+export function prop(obj, name) {
+  return obj[name]
 }
 
 export function rect(node) {
