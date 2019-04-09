@@ -70,6 +70,27 @@ export default function tableDragger(table, userOptions) {
             sortElements(list[from], list[to], from < to)
           }
 
+          export function getRowFakeTableByIndex(table, index) {
+            const realRow = table.rows[index]
+            const realOrgan = getOrganByCell(realRow)
+            const fakeTable = R.pipe(
+              cloneNode(true),
+              realOrgan ? R.curry(appendDOMChild)(cloneNode(false)(realOrgan)) : R.identity,
+              R.curry(appendDOMChild)(cloneNode(false)(table))
+            )(realRow)
+            const tuple = R.zip(
+              ArrayFrom(realRow.children),
+              ArrayFrom(fakeTable.rows[0].children)
+            )
+            R.forEach(function ([realCell, fakeCell]) {
+              setStyle(fakeCell, 'width', addPx(prop(realCell, 'clientWidth')))
+            })(tuple)
+            // set table height & width
+            setStyle(fakeTable, 'height', addPx(prop(realRow, 'clientHeight')))
+            setStyle(fakeTable, 'width', addPx(prop(table, 'clientWidth')))
+            return fakeTable
+          }
+
 
           function isMousedownValid(mousedownEvent) {
             const ignore = !isLeftButton(mousedownEvent) || mousedownEvent.metaKey || mousedownEvent.ctrlKey;
