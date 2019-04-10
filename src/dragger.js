@@ -130,6 +130,27 @@ export default function tableDragger(table, userOptions) {
               R.partialRight(prop, ['children'])
           }
 
+          export function getColumnFakeTableByIndex(table, index) {
+            const cells = R.map(R.partial(getCellByIndexInRow, [index]))(ArrayFrom(table.rows))
+            const fakeTable = R.pipe(cloneNode(false),
+              // set table height
+              R.partialRight(setStyle, ['height', addPx(table.clientHeight),]),
+              // set table width
+              R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
+            )(table)
+            return R.reduce(function (fakeTable, cell) {
+              // const realOrgan = getOrganByCell(cell)
+              return R.pipe(
+                R.partialRight(setStyle, ['height', addPx(cell.clientHeight)]),
+                // (realOrgan && !fakeTable.querySelector(realOrgan.nodeName)) ? R.partial(appendDOMChild, [cloneNode(false)(realOrgan)]) : R.identity,
+                R.curry(appendDOMChild)(fakeTable))
+              (cell)
+            })
+            (fakeTable)
+            (cells)
+          }
+
+
           export function getColumnCellsByIndex(table, index) {
             return R.compose(
               R.map((row) => {
