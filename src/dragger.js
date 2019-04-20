@@ -234,3 +234,19 @@ export default function tableDragger(table, userOptions) {
           }
 
 
+
+          export function getTargetIndexInTable(target, mode) {
+            while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
+              target = target.parentElement;
+            }
+            return mode === rowType ? target.parentElement.rowIndex : target.cellIndex
+          }
+
+
+          export function getMoveDirection(downEvent, moveEvent) {
+            const gapX = Math.abs(moveEvent.clientX - downEvent.clientX)
+            const gapY = Math.abs(moveEvent.clientY - downEvent.clientY)
+            if (gapX === gapY) return null
+            return gapX > gapY ? columnType : rowType
+          }
+
