@@ -62,6 +62,20 @@ export default function tableDragger(table, userOptions) {
 
           }
 
+          export function exchangeColumns(table, from, to) {
+            if (from === to) {
+              return;
+            }
+            Array.from(table.rows).forEach((row) => {
+              sortElements(row.children[from], row.children[to], from < to)
+            });
+
+            const cols = table.querySelectorAll('col');
+            if (cols.length) {
+              sortElements(cols[from], cols[to], from < to);
+            }
+          }
+
           export function exchangeRows(table, from, to) {
             if (from === to) {
               return;
@@ -70,25 +84,9 @@ export default function tableDragger(table, userOptions) {
             sortElements(list[from], list[to], from < to)
           }
 
-          export function getRowFakeTableByIndex(table, index) {
-            const realRow = table.rows[index]
-            const realOrgan = getOrganByCell(realRow)
-            const fakeTable = R.pipe(
-              cloneNode(true),
-              realOrgan ? R.curry(appendDOMChild)(cloneNode(false)(realOrgan)) : R.identity,
-              R.curry(appendDOMChild)(cloneNode(false)(table))
-            )(realRow)
-            const tuple = R.zip(
-              ArrayFrom(realRow.children),
-              ArrayFrom(fakeTable.rows[0].children)
-            )
-            R.forEach(function ([realCell, fakeCell]) {
-              setStyle(fakeCell, 'width', addPx(prop(realCell, 'clientWidth')))
-            })(tuple)
-            // set table height & width
-            setStyle(fakeTable, 'height', addPx(prop(realRow, 'clientHeight')))
-            setStyle(fakeTable, 'width', addPx(prop(table, 'clientWidth')))
-            return fakeTable
+          export function onDrag(dragger, table, mode,) {
+            dragger.dragging = true
+            dragger.emit('drag', table, mode);
           }
 
 
