@@ -22,6 +22,42 @@ export function onDrop(targetIndex, fakeTable, mode, table, dragger, droppedItem
   dragger.dragging = false
 }
 
+export function onShadow(targetIndex, fakeTable, mode, table, dragger, draggingItem) {
+  const from = targetIndex;
+  const to = Array.from(fakeTable.children).indexOf(draggingItem);
+  dragger.emit('shadowMove', from, to, table, modeString(mode));
+}
+
+export function onOut(mode, table, dragger) {
+  dragger.emit('out', table, modeString(mode));
+}
+
+export function getWholeFakeTable(table, mode) {
+  const fakeTables = getFakeTables(table, mode)
+  const rect = table.getBoundingClientRect()
+  const styles = {
+    position: 'fixed',
+    top: `${rect.top}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
+    margin: window.getComputedStyle(table).margin
+  }
+  // 'ul'
+  const ul = R.compose(R.partialRight(setCSSes, [styles]), R.partialRight(addClass, [classes.fakeTable]), createElement)('ul')
+  // 'li'
+  const lis = R.map(fakeTable => {
+    return appendDOMChild(createElement('li'), fakeTable)
+  })(fakeTables)
+  return R.reduce(appendDOMChild)(ul)(lis)
+}
+
+function removeAllCols(table) {
+  const cols = [...ArrayFrom(table.querySelectorAll('col')), ...ArrayFrom(table.querySelectorAll('colgroup'))]
+  R.forEach(removeDom)(cols)
+  return table
+}
+
 export default function tableDragger(table, userOptions) {
   const options = Object.assign({}, defaultOptions, userOptions)
   const {dragHandler, mode: optionMode} = options
