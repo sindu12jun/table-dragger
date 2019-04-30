@@ -149,14 +149,65 @@ export default function tableDragger(table, userOptions) {
               R.compose(R.apply(Math.max), R.map(getRowLength), ArrayFrom)(table.rows)
           }
 
-          export function getFakeTables(table, mode) {
-            const tableLength = getTableLength(table, mode)
-            return R.map(R.partial(getFakeTableByIndex, [table, mode]))(createArrByNumber(tableLength))
+          export function getOrganByCell(cell) {
+            while (cell && !['TBODY', 'THEAD', 'TFOOT'].includes(cell.nodeName)) {
+              cell = cell.parentElement;
+            }
+            return cell
           }
 
-          export function onDrag(dragger, table, mode,) {
-            dragger.dragging = true
-            dragger.emit('drag', table, mode);
+          export function getRowFakeTableByIndex(table, index) {
+            const realRow = table.rows[index]
+            const realOrgan = getOrganByCell(realRow)
+            const fakeTable = R.pipe(
+              cloneNode(true),
+              realOrgan ? R.curry(appendDOMChild)(cloneNode(false)(realOrgan)) : R.identity,
+              R.curry(appendDOMChild)(cloneNode(false)(table))
+            )(realRow)
+            const tuple = R.zip(
+              ArrayFrom(realRow.children),
+              ArrayFrom(fakeTable.rows[0].children)
+            )
+            R.forEach(function ([realCell, fakeCell]) {
+              setStyle(fakeCell, 'width', addPx(prop(realCell, 'clientWidth')))
+            })(tuple)
+            // set table height & width
+            setStyle(fakeTable, 'height', addPx(prop(realRow, 'clientHeight')))
+            setStyle(fakeTable, 'width', addPx(prop(table, 'clientWidth')))
+            return fakeTable
+          }
+
+          export function getColumnFakeTableByIndex(table, index) {
+            const cells = R.map(R.partial(getCellByIndexInRow, [index]))(ArrayFrom(table.rows))
+            const fakeTable = R.pipe(cloneNode(false),
+              // set table height
+              R.partialRight(setStyle, ['height', addPx(table.clientHeight),]),
+              // set table width
+              R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
+            )(table)
+            return R.reduce(function (fakeTable, cell) {
+              // const realOrgan = getOrganByCell(cell)
+              return R.pipe(
+                cloneNode(true),
+                R.partial(appendDOMChild, [createElement('tr')]),
+                R.partialRight(setStyle, ['height', addPx(cell.clientHeight)]),
+                // (realOrgan && !fakeTable.querySelector(realOrgan.nodeName)) ? R.partial(appendDOMChild, [cloneNode(false)(realOrgan)]) : R.identity,
+                R.curry(appendDOMChild)(fakeTable))
+              (cell)
+            })
+            (fakeTable)
+            (cells)
+          }
+
+          export function getFakeTableByIndex(table, mode, index) {
+            const getFakeTable = mode === rowType ? getRowFakeTableByIndex : getColumnFakeTableByIndex
+            const attrsToRemove = ['width', 'height', 'id']
+            return R.pipe(
+              getFakeTable,
+              R.partialRight(removeAttrs, [attrsToRemove]),
+              R.partialRight(removeClass, [classes.originTable]),
+              removeAllCols,
+            )(table, index)
           }
 
           export function getTableLength(table, mode) {
