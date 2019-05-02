@@ -1,4 +1,6 @@
 import tableDragger from '../src/index';
+import * as Rx from 'rxjs'
+import * as Op from 'rxjs/operators'
 import classes from '../src/classes'
 
 /* eslint-disable no-console*/

@@ -59,7 +59,6 @@ export function isNodeCol(node) {
 }
 
 export function appendDOMChild(parentNode, childNode) {
-  // !!SIDE EFFECTS!!
   parentNode.appendChild(childNode);
   return parentNode;
 }
