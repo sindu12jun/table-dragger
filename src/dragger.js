@@ -27,35 +27,28 @@ export function onShadow(targetIndex, fakeTable, mode, table, dragger, draggingI
   const to = Array.from(fakeTable.children).indexOf(draggingItem);
   dragger.emit('shadowMove', from, to, table, modeString(mode));
 }
-
-export function onOut(mode, table, dragger) {
-  dragger.emit('out', table, modeString(mode));
-}
-
-export function getWholeFakeTable(table, mode) {
-  const fakeTables = getFakeTables(table, mode)
-  const rect = table.getBoundingClientRect()
-  const styles = {
-    position: 'fixed',
-    top: `${rect.top}px`,
-    left: `${rect.left}px`,
-    width: `${rect.width}px`,
-    height: `${rect.height}px`,
-    margin: window.getComputedStyle(table).margin
-  }
-  // 'ul'
-  const ul = R.compose(R.partialRight(setCSSes, [styles]), R.partialRight(addClass, [classes.fakeTable]), createElement)('ul')
-  // 'li'
-  const lis = R.map(fakeTable => {
-    return appendDOMChild(createElement('li'), fakeTable)
-  })(fakeTables)
-  return R.reduce(appendDOMChild)(ul)(lis)
-}
-
 function removeAllCols(table) {
   const cols = [...ArrayFrom(table.querySelectorAll('col')), ...ArrayFrom(table.querySelectorAll('colgroup'))]
   R.forEach(removeDom)(cols)
   return table
+
+
+export function exchangeRows(table, from, to) {
+  if (from === to) {
+    return;
+  }
+  const list = Array.from(table.rows);
+  sortElements(list[from], list[to], from < to)
+}
+
+export function onDrag(dragger, table, mode,) {
+  dragger.dragging = true
+  dragger.emit('drag', table, mode);
+}
+
+function modeString(mode) {
+  return mode === columnType ? 'column' : 'row'
+}
 }
 
 export default function tableDragger(table, userOptions) {
@@ -147,56 +140,6 @@ export default function tableDragger(table, userOptions) {
             return mode === rowType ?
               table.rows.length :
               R.compose(R.apply(Math.max), R.map(getRowLength), ArrayFrom)(table.rows)
-          }
-
-          export function getOrganByCell(cell) {
-            while (cell && !['TBODY', 'THEAD', 'TFOOT'].includes(cell.nodeName)) {
-              cell = cell.parentElement;
-            }
-            return cell
-          }
-
-          export function getRowFakeTableByIndex(table, index) {
-            const realRow = table.rows[index]
-            const realOrgan = getOrganByCell(realRow)
-            const fakeTable = R.pipe(
-              cloneNode(true),
-              realOrgan ? R.curry(appendDOMChild)(cloneNode(false)(realOrgan)) : R.identity,
-              R.curry(appendDOMChild)(cloneNode(false)(table))
-            )(realRow)
-            const tuple = R.zip(
-              ArrayFrom(realRow.children),
-              ArrayFrom(fakeTable.rows[0].children)
-            )
-            R.forEach(function ([realCell, fakeCell]) {
-              setStyle(fakeCell, 'width', addPx(prop(realCell, 'clientWidth')))
-            })(tuple)
-            // set table height & width
-            setStyle(fakeTable, 'height', addPx(prop(realRow, 'clientHeight')))
-            setStyle(fakeTable, 'width', addPx(prop(table, 'clientWidth')))
-            return fakeTable
-          }
-
-          export function getColumnFakeTableByIndex(table, index) {
-            const cells = R.map(R.partial(getCellByIndexInRow, [index]))(ArrayFrom(table.rows))
-            const fakeTable = R.pipe(cloneNode(false),
-              // set table height
-              R.partialRight(setStyle, ['height', addPx(table.clientHeight),]),
-              // set table width
-              R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
-            )(table)
-            return R.reduce(function (fakeTable, cell) {
-              // const realOrgan = getOrganByCell(cell)
-              return R.pipe(
-                cloneNode(true),
-                R.partial(appendDOMChild, [createElement('tr')]),
-                R.partialRight(setStyle, ['height', addPx(cell.clientHeight)]),
-                // (realOrgan && !fakeTable.querySelector(realOrgan.nodeName)) ? R.partial(appendDOMChild, [cloneNode(false)(realOrgan)]) : R.identity,
-                R.curry(appendDOMChild)(fakeTable))
-              (cell)
-            })
-            (fakeTable)
-            (cells)
           }
 
           export function getFakeTableByIndex(table, mode, index) {
