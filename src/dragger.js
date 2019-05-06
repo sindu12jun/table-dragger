@@ -1,5 +1,42 @@
 import * as Rx from 'rxjs'
 import * as R from 'ramda'
+import classes from './classes'
+import {map, first, takeUntil, filter, mergeMap} from 'rxjs/operators'
+import dragula from 'dragula-with-animation';
+import {
+  setCSSes,
+  addClass,
+  removeClass,
+  removeAttrs,
+  isLeftButton,
+  checkIsTable,
+  appendDOMChild,
+  removeDom,
+  prop,
+  setStyle,
+  getCellByIndexInRow,
+  createArrByNumber,
+  insertBeforeSibling,
+  appendSibling,
+  addPx,
+  getMouseDownEvent
+} from './helpers'
+
+const up$ = Rx.fromEvent(document, 'mouseup')
+const move$ = Rx.fromEvent(document, 'mousemove')
+const ArrayFrom = R.flip(R.invoker(1, 'from'))(Array);
+const cloneNode = R.invoker(1, 'cloneNode')
+const createElement = document.createElement.bind(document)
+const columnType = Symbol()
+const rowType = Symbol()
+export {columnType, rowType}
+const defaultOptions = {
+  mode: 'column',
+  dragHandler: '',
+  onlyBody: false,
+  animation: 300,
+};
+
 
 export function onDrag(dragger, table, mode,) {
   dragger.dragging = true
