@@ -45,6 +45,18 @@ export function getTheFistRow(table) {
   return table.rows[0].children
 }
 
+export function getHandlers(table, options, dragHandler) {
+  const optionMode = options.mode
+  const onlyBody = options.onlyBody && optionMode === 'row'
+  if (dragHandler) {
+    return R.compose(ArrayFrom, table.querySelectorAll.bind(table))(dragHandler)
+  } else {
+    return ArrayFrom(optionMode === 'column' ? getTheFistRow(table) : getTheFirstColumn(
+      onlyBody ? table.querySelector('tbody') : table
+    ))
+  }
+}
+
 export function checkTable(table, options) {
   let errorMsg
   if (!checkIsTable(table)) {
@@ -86,19 +98,99 @@ export function getFakeTables(table, mode) {
   return R.map(R.partial(getFakeTableByIndex, [table, mode]))(createArrByNumber(tableLength))
 }
 
-export function getTargetIndexInTable(target, mode) {
-  while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
-    target = target.parentElement;
-  }
-  return mode === rowType ? target.parentElement.rowIndex : target.cellIndex
+function renderFakeTable(table, fakeTable) {
+  R.pipe(
+    R.partial(insertBeforeSibling, [table]),
+  )(fakeTable)
+  fakeTable.parentElement.classList.add(classes.dragging);
+  return fakeTable
 }
 
+export function getColumnCellsByIndex(table, index) {
+  return R.compose(
+    R.map((row) => {
+      return row.children[index]
+    }),
+    ArrayFrom)(table.rows)
+}
 
-export function getMoveDirection(downEvent, moveEvent) {
-  const gapX = Math.abs(moveEvent.clientX - downEvent.clientX)
-  const gapY = Math.abs(moveEvent.clientY - downEvent.clientY)
-  if (gapX === gapY) return null
-  return gapX > gapY ? columnType : rowType
+export function getWholeFakeTable(table, mode) {
+  const fakeTables = getFakeTables(table, mode)
+  const rect = table.getBoundingClientRect()
+  const styles = {
+    position: 'fixed',
+    top: `${rect.top}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
+    margin: window.getComputedStyle(table).margin
+  }
+  // 'ul'
+  const ul = R.compose(R.partialRight(setCSSes, [styles]), R.partialRight(addClass, [classes.fakeTable]), createElement)('ul')
+  // 'li'
+  const lis = R.map(fakeTable => {
+    return appendDOMChild(createElement('li'), fakeTable)
+  })(fakeTables)
+  return R.reduce(appendDOMChild)(ul)(lis)
+}
+
+function removeAllCols(table) {
+  const cols = [...ArrayFrom(table.querySelectorAll('col')), ...ArrayFrom(table.querySelectorAll('colgroup'))]
+  R.forEach(removeDom)(cols)
+  return table
+}
+export function getRowFakeTableByIndex(table, index) {
+  const realRow = table.rows[index]
+  const realOrgan = getOrganByCell(realRow)
+  const fakeTable = R.pipe(
+    cloneNode(true),
+    realOrgan ? R.curry(appendDOMChild)(cloneNode(false)(realOrgan)) : R.identity,
+    R.curry(appendDOMChild)(cloneNode(false)(table))
+  )(realRow)
+  const tuple = R.zip(
+    ArrayFrom(realRow.children),
+    ArrayFrom(fakeTable.rows[0].children)
+  )
+  R.forEach(function ([realCell, fakeCell]) {
+    setStyle(fakeCell, 'width', addPx(prop(realCell, 'clientWidth')))
+  })(tuple)
+  // set table height & width
+  setStyle(fakeTable, 'height', addPx(prop(realRow, 'clientHeight')))
+  setStyle(fakeTable, 'width', addPx(prop(table, 'clientWidth')))
+  return fakeTable
+}
+
+export function getColumnFakeTableByIndex(table, index) {
+  const cells = R.map(R.partial(getCellByIndexInRow, [index]))(ArrayFrom(table.rows))
+  const fakeTable = R.pipe(cloneNode(false),
+    // set table height
+    R.partialRight(setStyle, ['height', addPx(table.clientHeight),]),
+    // set table width
+    R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
+  )(table)
+  return R.reduce(function (fakeTable, cell) {
+    // const realOrgan = getOrganByCell(cell)
+    return R.pipe(
+      cloneNode(true),
+      R.partial(appendDOMChild, [createElement('tr')]),
+      R.partialRight(setStyle, ['height', addPx(cell.clientHeight)]),
+      // (realOrgan && !fakeTable.querySelector(realOrgan.nodeName)) ? R.partial(appendDOMChild, [cloneNode(false)(realOrgan)]) : R.identity,
+      R.curry(appendDOMChild)(fakeTable))
+    (cell)
+  })
+  (fakeTable)
+  (cells)
+}
+
+export function getFakeTableByIndex(table, mode, index) {
+  const getFakeTable = mode === rowType ? getRowFakeTableByIndex : getColumnFakeTableByIndex
+  const attrsToRemove = ['width', 'height', 'id']
+  return R.pipe(
+    getFakeTable,
+    R.partialRight(removeAttrs, [attrsToRemove]),
+    R.partialRight(removeClass, [classes.originTable]),
+    removeAllCols,
+  )(table, index)
 }
 
 /**
