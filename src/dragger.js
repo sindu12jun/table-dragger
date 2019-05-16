@@ -139,6 +139,19 @@ function removeAllCols(table) {
   R.forEach(removeDom)(cols)
   return table
 }
+
+/**
+ * Get tbody thead or tfoot
+ * @param cell
+ * @returns {*}
+ */
+export function getOrganByCell(cell) {
+  while (cell && !['TBODY', 'THEAD', 'TFOOT'].includes(cell.nodeName)) {
+    cell = cell.parentElement;
+  }
+  return cell
+}
+
 export function getRowFakeTableByIndex(table, index) {
   const realRow = table.rows[index]
   const realOrgan = getOrganByCell(realRow)
@@ -191,6 +204,21 @@ export function getFakeTableByIndex(table, mode, index) {
     R.partialRight(removeClass, [classes.originTable]),
     removeAllCols,
   )(table, index)
+}
+
+export function getTargetIndexInTable(target, mode) {
+  while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
+    target = target.parentElement;
+  }
+  return mode === rowType ? target.parentElement.rowIndex : target.cellIndex
+}
+
+
+export function getMoveDirection(downEvent, moveEvent) {
+  const gapX = Math.abs(moveEvent.clientX - downEvent.clientX)
+  const gapY = Math.abs(moveEvent.clientY - downEvent.clientY)
+  if (gapX === gapY) return null
+  return gapX > gapY ? columnType : rowType
 }
 
 /**
