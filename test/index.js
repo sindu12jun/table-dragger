@@ -48,10 +48,92 @@ function testTable({tableName, desc, mode}) {
       getTargetPosition = startIndex < endIndex ? getBottom : getTop
     }
 
+    const table = await page.$(`#${tableName}`)
     await page.evaluate((element) => {
       window.scroll(0, element.offsetTop);
     }, table);
+    const tableBox = await table.boundingBox()
+    const start = await table.$('.' + startClass)
+    const end = await table.$('.' + endClass)
     const startBox = await start.boundingBox()
     const endBox = await end.boundingBox()
-  }
+
+    await page.mouse.move(...getCenter(startBox));
+    await page.mouse.down()
+    await page.mouse.move(...getTargetPosition(endBox))
+    await page.mouse.move(...getCenter(startBox));
+    await page.mouse.move(...getTargetPosition(endBox))
+
+    expect(await getClasses(table)).toContain(classes.originTable)
+    expect(await page.evaluate((table) => {
+        return getComputedStyle(table).getPropertyValue('visibility');
+      }, table)
+    ).toBe('hidden')
+
+    const fakeTable = await page.$(`.${classes.fakeTable}`)
+    expect(fakeTable).toBeTruthy()
+    expect(await getClasses(await parent(fakeTable))).toContain(classes.dragging)
+
+    const fakeTableBox = await fakeTable.boundingBox()
+    expect(tableBox).toEqual(fakeTableBox)
+
+    await page.mouse.up()
+    if (mode === 'column') {
+      expect(await getClasses(await previous(start))).toContain(endClass)
+    }
+  }, 10000)
 }
+
+
+afterAll(async () => {
+  page.close()
+})
+
+function getCenter(box) {
+  return [box.x + box.width / 2,
+    box.y + box.height / 2
+  ]
+}
+
+function getRight(box) {
+  return [box.x + box.width, box.y + box.height / 2]
+}
+
+function getLeft(box) {
+  return [box.x, box.y + box.height / 2]
+}
+
+function getTop(box) {
+  return [box.x + box.width / 2, box.y]
+}
+
+function getBottom(box) {
+  return [box.x + box.width / 2, box.y]
+}
+
+function parent(element) {
+  return page.evaluateHandle((element) => {
+    return element.parentElement
+  }, element);
+}
+
+function children(element) {
+  return page.evaluateHandle((element) => {
+    return element.children
+  }, element);
+}
+
+function previous(element) {
+  return page.evaluateHandle((element) => {
+    return element.previousElementSibling
+  }, element);
+}
+
+async function getClasses(element) {
+  return page.evaluate((element) => {
+    return Array.from(element.classList)
+  }, element);
+}
+
+
+//
