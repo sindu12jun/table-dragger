@@ -79,3 +79,9 @@ function testTable({name, startNum, endNum, mode, desc}) {
     }
   });
 }
+
+testTable({name: 'column-table', startNum: 2, endNum: 4, mode: 'column', desc: 'column'})
+testTable({name: 'row-table', startNum: 1, endNum: 4, mode: 'row', desc: 'row'})
+testTable({name: 'free-table', startNum: 1, endNum: 3, mode: 'row', desc: 'free-row'})
+testTable({name: 'free-table', startNum: 3, endNum: 2, mode: 'column', desc: 'free-column'})
+
