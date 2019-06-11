@@ -149,6 +149,46 @@ test('get table length', () => {
 })
 
 
+test('get fake tables', () => {
+  expect(fns.getFakeTables(table, rowType).length).toBe(table.rows.length)
+  expect(fns.getFakeTables(table, columnType).length).toBe(table.rows[0].children.length)
+})
+
+test('get whole table', () => {
+  const fakeColumnTable = fns.getWholeFakeTable(table, columnType)
+  expect(fakeColumnTable.nodeName).toBe('UL')
+  expect(fakeColumnTable.children.length).toBe(4)
+  expect(Array.from(fakeColumnTable.children).every(node => node.nodeName === 'LI')).toBe(true)
+
+  const fakeRowTable = fns.getWholeFakeTable(table, rowType)
+  expect(fakeRowTable.nodeName).toBe('UL')
+  expect(fakeRowTable.children.length).toBe(5)
+  expect(Array.from(fakeRowTable.children).every(node => node.nodeName === 'LI')).toBe(true)
+  expect([fakeColumnTable, fakeRowTable].every(hasClass(classes.fakeTable))).toBe(true)
+})
+
+test('sort elements works when insert front element after latter element', () => {
+  const firstTd = querySelector('#firstTd')
+  const secondTd = querySelector('#secondTd')
+  const thirdTd = querySelector('#thirdTd')
+  const lastTd = querySelector('#lastTd')
+  fns.sortElements(firstTd, thirdTd, true)
+  expect(thirdTd.nextElementSibling).toBe(firstTd)
+  fns.sortElements(secondTd, lastTd, true)
+  expect(lastTd.nextElementSibling).toBe(secondTd)
+})
+
+test('sort elements works when insert latter element before front element', () => {
+  const firstTd = querySelector('#firstTd')
+  const secondTd = querySelector('#secondTd')
+  const thirdTd = querySelector('#thirdTd')
+  const lastTd = querySelector('#lastTd')
+  fns.sortElements(thirdTd, firstTd, false)
+  expect(firstTd.previousElementSibling).toBe(thirdTd)
+  fns.sortElements(lastTd, secondTd, false)
+  expect(secondTd.previousElementSibling).toBe(lastTd)
+})
+
 test('get column cells by index', () => {
   const getCells = R.curry(fns.getColumnCellsByIndex)(table)
   const c1 = getCells(0)
