@@ -154,10 +154,8 @@ export function getOrganByCell(cell) {
 
 export function getRowFakeTableByIndex(table, index) {
   const realRow = table.rows[index]
-  const realOrgan = getOrganByCell(realRow)
   const fakeTable = R.pipe(
     cloneNode(true),
-    realOrgan ? R.curry(appendDOMChild)(cloneNode(false)(realOrgan)) : R.identity,
     R.curry(appendDOMChild)(cloneNode(false)(table))
   )(realRow)
   const tuple = R.zip(
@@ -182,12 +180,10 @@ export function getColumnFakeTableByIndex(table, index) {
     R.partialRight(setStyle, ['width', addPx(cells[0].clientWidth),])
   )(table)
   return R.reduce(function (fakeTable, cell) {
-    // const realOrgan = getOrganByCell(cell)
     return R.pipe(
       cloneNode(true),
       R.partial(appendDOMChild, [createElement('tr')]),
       R.partialRight(setStyle, ['height', addPx(cell.clientHeight)]),
-      // (realOrgan && !fakeTable.querySelector(realOrgan.nodeName)) ? R.partial(appendDOMChild, [cloneNode(false)(realOrgan)]) : R.identity,
       R.curry(appendDOMChild)(fakeTable))
     (cell)
   })
