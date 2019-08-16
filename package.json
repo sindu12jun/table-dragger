@@ -39,7 +39,7 @@
   "dependencies": {
     "babel-runtime": "^6.20.0",
     "crossvent": "^1.5.5",
-    "dragula-with-animation": "^3.7.2"
+    "dragula-with-animation": "^3.7.4"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
