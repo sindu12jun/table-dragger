@@ -72,8 +72,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return _drag2.default.create(el, options);
 	};
 	exports.default = create;
-	
-	module.exports = create;
 
 /***/ }),
 /* 1 */
@@ -483,7 +481,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!table.rows.length) {
 	      return;
 	    }
-	
 	    var defaults = {
 	      mode: 'column',
 	      dragHandler: '',
@@ -530,6 +527,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.tappedCoord = { x: 0, y: 0 };
 	    this.cellIndex = { x: 0, y: 0 };
 	    this.el = table;
+	    this.sortTable = null;
+	    this.realMode = mode;
 	    this.bindEvents();
 	  }
 	
@@ -568,6 +567,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var target = event.target;
 	
+	
 	      while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
 	        target = target.parentElement;
 	      }
@@ -593,18 +593,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var gapX = Math.abs(event.clientX - tappedCoord.x);
 	      var gapY = Math.abs(event.clientY - tappedCoord.y);
+	
 	      var isFree = mode === 'free';
 	      var realMode = mode;
 	
-	      if (gapX === 0 && gapY === 0) {
+	      if (!gapX && !gapY) {
 	        return;
 	      }
+	      this.dragger.dragging = true;
 	
 	      if (isFree) {
 	        realMode = gapX < gapY ? 'row' : 'column';
 	      }
+	      this.realMode = realMode;
 	
-	      var sortTable = new _draggableList2.default({
+	      var sortTable = this.sortTable = new _draggableList2.default({
 	        mode: realMode,
 	        originTable: this
 	      });
@@ -867,9 +870,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	var LIBRARY = __webpack_require__(14);
 	var $export = __webpack_require__(15);
-	var redefine = __webpack_require__(30);
+	var redefine = __webpack_require__(31);
 	var hide = __webpack_require__(20);
-	var has = __webpack_require__(31);
 	var Iterators = __webpack_require__(32);
 	var $iterCreate = __webpack_require__(33);
 	var setToStringTag = __webpack_require__(49);
@@ -907,7 +909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Set @@toStringTag to native iterators
 	      setToStringTag(IteratorPrototype, TAG, true);
 	      // fix for some old engines
-	      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  }
 	  // fix Array#{values, @@iterator}.name in V8 / FF
@@ -951,6 +953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var core = __webpack_require__(17);
 	var ctx = __webpack_require__(18);
 	var hide = __webpack_require__(20);
+	var has = __webpack_require__(30);
 	var PROTOTYPE = 'prototype';
 	
 	var $export = function (type, name, source) {
@@ -968,7 +971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  for (key in source) {
 	    // contains in native
 	    own = !IS_FORCED && target && target[key] !== undefined;
-	    if (own && key in exports) continue;
+	    if (own && has(exports, key)) continue;
 	    // export native or passed
 	    out = own ? target[key] : source[key];
 	    // prevent global pollution for namespaces
@@ -1026,7 +1029,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 17 */
 /***/ (function(module, exports) {
 
-	var core = module.exports = { version: '2.5.1' };
+	var core = module.exports = { version: '2.6.9' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -1201,19 +1204,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(20);
-
-
-/***/ }),
-/* 31 */
 /***/ (function(module, exports) {
 
 	var hasOwnProperty = {}.hasOwnProperty;
 	module.exports = function (it, key) {
 	  return hasOwnProperty.call(it, key);
 	};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(20);
 
 
 /***/ }),
@@ -1325,7 +1328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var toIObject = __webpack_require__(38);
 	var arrayIndexOf = __webpack_require__(41)(false);
 	var IE_PROTO = __webpack_require__(44)('IE_PROTO');
@@ -1448,12 +1451,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	var core = __webpack_require__(17);
 	var global = __webpack_require__(16);
 	var SHARED = '__core-js_shared__';
 	var store = global[SHARED] || (global[SHARED] = {});
-	module.exports = function (key) {
-	  return store[key] || (store[key] = {});
-	};
+	
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: core.version,
+	  mode: __webpack_require__(14) ? 'pure' : 'global',
+	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+	});
 
 
 /***/ }),
@@ -1490,7 +1499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	var def = __webpack_require__(21).f;
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var TAG = __webpack_require__(50)('toStringTag');
 	
 	module.exports = function (it, tag, stat) {
@@ -1520,7 +1529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var toObject = __webpack_require__(52);
 	var IE_PROTO = __webpack_require__(44)('IE_PROTO');
 	var ObjectProto = Object.prototype;
@@ -1657,10 +1666,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	// ECMAScript 6 symbols shim
 	var global = __webpack_require__(16);
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var DESCRIPTORS = __webpack_require__(25);
 	var $export = __webpack_require__(15);
-	var redefine = __webpack_require__(30);
+	var redefine = __webpack_require__(31);
 	var META = __webpack_require__(61).KEY;
 	var $fails = __webpack_require__(26);
 	var shared = __webpack_require__(45);
@@ -1672,12 +1681,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	var enumKeys = __webpack_require__(63);
 	var isArray = __webpack_require__(66);
 	var anObject = __webpack_require__(22);
+	var isObject = __webpack_require__(23);
+	var toObject = __webpack_require__(52);
 	var toIObject = __webpack_require__(38);
 	var toPrimitive = __webpack_require__(28);
 	var createDesc = __webpack_require__(29);
 	var _create = __webpack_require__(34);
 	var gOPNExt = __webpack_require__(67);
 	var $GOPD = __webpack_require__(69);
+	var $GOPS = __webpack_require__(64);
 	var $DP = __webpack_require__(21);
 	var $keys = __webpack_require__(36);
 	var gOPD = $GOPD.f;
@@ -1694,7 +1706,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var AllSymbols = shared('symbols');
 	var OPSymbols = shared('op-symbols');
 	var ObjectProto = Object[PROTOTYPE];
-	var USE_NATIVE = typeof $Symbol == 'function';
+	var USE_NATIVE = typeof $Symbol == 'function' && !!$GOPS.f;
 	var QObject = global.QObject;
 	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
 	var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
@@ -1804,7 +1816,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  $DP.f = $defineProperty;
 	  __webpack_require__(68).f = gOPNExt.f = $getOwnPropertyNames;
 	  __webpack_require__(65).f = $propertyIsEnumerable;
-	  __webpack_require__(64).f = $getOwnPropertySymbols;
+	  $GOPS.f = $getOwnPropertySymbols;
 	
 	  if (DESCRIPTORS && !__webpack_require__(14)) {
 	    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
@@ -1855,6 +1867,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  getOwnPropertySymbols: $getOwnPropertySymbols
 	});
 	
+	// Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
+	// https://bugs.chromium.org/p/v8/issues/detail?id=3443
+	var FAILS_ON_PRIMITIVES = $fails(function () { $GOPS.f(1); });
+	
+	$export($export.S + $export.F * FAILS_ON_PRIMITIVES, 'Object', {
+	  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
+	    return $GOPS.f(toObject(it));
+	  }
+	});
+	
 	// 24.3.2 JSON.stringify(value [, replacer [, space]])
 	$JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function () {
 	  var S = $Symbol();
@@ -1864,15 +1886,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return _stringify([S]) != '[null]' || _stringify({ a: S }) != '{}' || _stringify(Object(S)) != '{}';
 	})), 'JSON', {
 	  stringify: function stringify(it) {
-	    if (it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
 	    var args = [it];
 	    var i = 1;
 	    var replacer, $replacer;
 	    while (arguments.length > i) args.push(arguments[i++]);
-	    replacer = args[1];
-	    if (typeof replacer == 'function') $replacer = replacer;
-	    if ($replacer || !isArray(replacer)) replacer = function (key, value) {
-	      if ($replacer) value = $replacer.call(this, key, value);
+	    $replacer = replacer = args[1];
+	    if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+	    if (!isArray(replacer)) replacer = function (key, value) {
+	      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
 	      if (!isSymbol(value)) return value;
 	    };
 	    args[1] = replacer;
@@ -1896,7 +1917,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var META = __webpack_require__(46)('meta');
 	var isObject = __webpack_require__(23);
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var setDesc = __webpack_require__(21).f;
 	var id = 0;
 	var isExtensible = Object.isExtensible || function () {
@@ -2056,7 +2077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var createDesc = __webpack_require__(29);
 	var toIObject = __webpack_require__(38);
 	var toPrimitive = __webpack_require__(28);
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var IE8_DOM_DEFINE = __webpack_require__(24);
 	var gOPD = Object.getOwnPropertyDescriptor;
 	
@@ -2323,6 +2344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	// 19.1.2.1 Object.assign(target, source, ...)
+	var DESCRIPTORS = __webpack_require__(25);
 	var getKeys = __webpack_require__(36);
 	var gOPS = __webpack_require__(64);
 	var pIE = __webpack_require__(65);
@@ -2352,7 +2374,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var length = keys.length;
 	    var j = 0;
 	    var key;
-	    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
+	    while (length > j) {
+	      key = keys[j++];
+	      if (!DESCRIPTORS || isEnum.call(S, key)) T[key] = S[key];
+	    }
 	  } return T;
 	} : $assign;
 
@@ -2463,7 +2488,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var isTest = false;
 	var bodyPaddingRight = void 0;
 	var bodyOverflow = void 0;
 	
@@ -2514,7 +2538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function onDrag() {
 	      (0, _util.css)(document.body, { overflow: 'hidden' });
 	      var barWidth = (0, _util.getScrollBarWidth)();
-	      this.dragger.dragging = true;
+	      console.log(barWidth, 'barWidth');
 	      if (barWidth) {
 	        (0, _util.css)(document.body, { 'padding-right': barWidth + bodyPaddingRight + 'px' });
 	      }
@@ -2563,9 +2587,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      (0, _util.remove)(document, 'mouseup', this.destroy);
 	      this.el.parentElement.classList.remove(_classes2.default.dragging);
-	      if (!isTest) {
-	        this.el.parentElement.removeChild(this.el);
-	      }
+	      this.el.parentElement.removeChild(this.el);
 	      setTimeout(function () {
 	        _this2.drake.destroy();
 	      }, 0);
@@ -2596,9 +2618,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	      (0, _util.insertBeforeSibling)({ target: el, origin: originEl });
 	
-	      var s = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
+	      var spacing = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
 	      var attr = mode === 'column' ? 'margin-right' : 'margin-bottom';
-	      var l = el.children.length;
+	      var length = el.children.length;
 	      (0, _from2.default)(el.children).forEach(function (li, dex) {
 	        var table = li && li.querySelector('table');
 	        if (_this3.options.onlyBody && mode === 'row' && !(0, _from2.default)(table.children).some(function (o) {
@@ -2607,8 +2629,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          li.classList.add(_classes2.default.static);
 	        }
 	
-	        if (s && dex < l - 1) {
-	          li.style[attr] = '-' + s;
+	        if (spacing && dex < length - 1) {
+	          li.style[attr] = '-' + spacing;
 	        }
 	      });
 	
@@ -2744,7 +2766,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var classes = __webpack_require__(106);
 	var doc = document;
 	var documentElement = doc.documentElement;
-	var oldCoord = 0;
+	var animateDuration = 300;
 	
 	function dragula (initialContainers, options) {
 	  var len = arguments.length;
@@ -2767,49 +2789,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var _grabbed; // holds mousedown context until first mousemove
 	
 	  var o = options || {};
-	  if (o.moves === void 0) {
-	    o.moves = always;
-	  }
-	  if (o.accepts === void 0) {
-	    o.accepts = always;
-	  }
-	  if (o.invalid === void 0) {
-	    o.invalid = invalidTarget;
-	  }
-	  if (o.containers === void 0) {
-	    o.containers = initialContainers || [];
-	  }
-	  if (o.isContainer === void 0) {
-	    o.isContainer = never;
-	  }
-	  if (o.copy === void 0) {
-	    o.copy = false;
-	  }
-	  if (o.copySortSource === void 0) {
-	    o.copySortSource = false;
-	  }
-	  if (o.revertOnSpill === void 0) {
-	    o.revertOnSpill = false;
-	  }
-	  if (o.removeOnSpill === void 0) {
-	    o.removeOnSpill = false;
-	  }
-	  if (o.direction === void 0) {
-	    o.direction = 'vertical';
-	  }
-	  if (o.ignoreInputTextSelection === void 0) {
-	    o.ignoreInputTextSelection = true;
-	  }
-	  if (o.mirrorContainer === void 0) {
-	    o.mirrorContainer = doc.body;
-	  }
-	  if (o.animation === void 0) {
-	    o.animation = false;
-	  }
-	  // 设置静态不动项目
-	  if (o.staticClass === void 0) {
-	    o.staticClass = '';
-	  }
+	  if (o.moves === void 0) { o.moves = always; }
+	  if (o.accepts === void 0) { o.accepts = always; }
+	  if (o.invalid === void 0) { o.invalid = invalidTarget; }
+	  if (o.containers === void 0) { o.containers = initialContainers || []; }
+	  if (o.isContainer === void 0) { o.isContainer = never; }
+	  if (o.copy === void 0) { o.copy = false; }
+	  if (o.copySortSource === void 0) { o.copySortSource = false; }
+	  if (o.revertOnSpill === void 0) { o.revertOnSpill = false; }
+	  if (o.removeOnSpill === void 0) { o.removeOnSpill = false; }
+	  if (o.direction === void 0) { o.direction = 'vertical'; }
+	  if (o.ignoreInputTextSelection === void 0) { o.ignoreInputTextSelection = true; }
+	  if (o.mirrorContainer === void 0) { o.mirrorContainer = doc.body; }
+	  if (o.staticClass === void 0) { o.staticClass = ''; }
+	
 	
 	  var drake = emitter({
 	    containers: o.containers,
@@ -2943,7 +2936,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!source) {
 	      return;
 	    }
-	    if (o.invalid(item, handle) || (o.staticClass && item.classList.contains(o.staticClass))) {
+	
+	    if ((o.staticClass && item.classList.contains(o.staticClass))) {
+	      return;
+	    }
+	
+	    if (o.invalid(item, handle)) {
 	      return;
 	    }
 	
@@ -3125,7 +3123,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }
 	
-	
 	  function drag (e) {
 	    if (!_mirror) {
 	      return;
@@ -3157,9 +3154,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 	    var reference;
-	    // var mover, moverRect;
-	    // var previous, next, previousRect, nextRect, itemRect;
-	    // var currentPrevious, currentNext;
 	    var immediate = getImmediateChild(dropTarget, elementBehindCursor);
 	    if (immediate !== null) {
 	      reference = getReference(dropTarget, immediate, clientX, clientY);
@@ -3179,18 +3173,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ) {
 	      _currentSibling = reference;
 	
-	      var isBrother = item.parentElement === dropTarget;
-	      var shouldAnimate = isBrother && o.animation;
 	      var itemRect = item.getBoundingClientRect();
+	      var referenceRect = reference ? reference.getBoundingClientRect() : null;
 	      var direct = o.direction;
-	      var mover;
-	      var nowCord = direct === 'horizontal' ? e.pageX : e.pageY;
-	      if (nowCord < oldCoord) {
-	        mover = reference; //upward or right
-	      } else {
-	        mover = reference ? (reference.previousElementSibling ? reference.previousElementSibling : reference) : dropTarget.lastElementChild;
+	      // if isPositive is true, the direction is right or down
+	      var isPositive;
+	      if (referenceRect) {
+	        isPositive = direct === 'horizontal' ? (itemRect.x < referenceRect.x) : (itemRect.y < referenceRect.y);
+	      }else{
+	        isPositive = true;
 	      }
-	      oldCoord = nowCord;
+	      // mover is the element to be exchange passively
+	      var mover;
+	      if (isPositive) {
+	        mover = reference ? (reference.previousElementSibling ? reference.previousElementSibling : reference) : dropTarget.lastElementChild;
+	      } else {
+	        mover = reference; //upward or right
+	      }
 	      if (!mover) {
 	        return;
 	      }
@@ -3199,27 +3198,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      var moverRect = mover && mover.getBoundingClientRect();
 	      dropTarget.insertBefore(item, reference);
-	      if (shouldAnimate && mover && moverRect) {
-	        animate(moverRect, mover, o.animation);
-	        animate(itemRect, item, o.animation);
+	      if (mover && moverRect) {
+	        animate(moverRect, mover);
+	        animate(itemRect, item);
 	      }
 	      drake.emit('shadow', item, dropTarget, _source);
 	    }
-	    function moved (type) {
-	      drake.emit(type, item, _lastDropTarget, _source);
-	    }
-	
-	    function over () {
-	      if (changed) {
-	        moved('over');
-	      }
-	    }
-	
-	    function out () {
-	      if (_lastDropTarget) {
-	        moved('out');
-	      }
-	    }
+	    function moved (type) { drake.emit(type, item, _lastDropTarget, _source); }
+	    function over () { if (changed) { moved('over'); } }
+	    function out () { if (_lastDropTarget) { moved('out'); } }
 	  }
 	
 	  function spillOver (el) {
@@ -3227,9 +3214,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  function spillOut (el) {
-	    if (drake.dragging) {
-	      classes.add(el, 'gu-hide');
-	    }
+	    if (drake.dragging) { classes.add(el, 'gu-hide'); }
 	  }
 	
 	  function renderMirrorImage () {
@@ -3281,12 +3266,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      for (i = 0; i < len; i++) {
 	        el = dropTarget.children[i];
 	        rect = el.getBoundingClientRect();
-	        if (horizontal && (rect.left + rect.width / 2) > x) {
-	          return el;
-	        }
-	        if (!horizontal && (rect.top + rect.height / 2) > y) {
-	          return el;
-	        }
+	        if (horizontal && (rect.left + rect.width / 2) > x) { return el; }
+	        if (!horizontal && (rect.top + rect.height / 2) > y) { return el; }
 	      }
 	      return null;
 	    }
@@ -3336,15 +3317,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function whichMouseButton (e) {
-	  if (e.touches !== void 0) {
-	    return e.touches.length;
-	  }
-	  if (e.which !== void 0 && e.which !== 0) {
-	    return e.which;
-	  } // see https://github.com/bevacqua/dragula/issues/261
-	  if (e.buttons !== void 0) {
-	    return e.buttons;
-	  }
+	  if (e.touches !== void 0) { return e.touches.length; }
+	  if (e.which !== void 0 && e.which !== 0) { return e.which; } // see https://github.com/bevacqua/dragula/issues/261
+	  if (e.buttons !== void 0) { return e.buttons; }
 	  var button = e.button;
 	  if (button !== void 0) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
 	    return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
@@ -3379,34 +3354,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return el;
 	}
 	
-	function never () {
-	  return false;
-	}
-	function always () {
-	  return true;
-	}
-	function getRectWidth (rect) {
-	  return rect.width || (rect.right - rect.left);
-	}
-	function getRectHeight (rect) {
-	  return rect.height || (rect.bottom - rect.top);
-	}
-	function getParent (el) {
-	  return el.parentNode === doc ? null : el.parentNode;
-	}
-	function isInput (el) {
-	  return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || isEditable(el);
-	}
+	function never () { return false; }
+	function always () { return true; }
+	function getRectWidth (rect) { return rect.width || (rect.right - rect.left); }
+	function getRectHeight (rect) { return rect.height || (rect.bottom - rect.top); }
+	function getParent (el) { return el.parentNode === doc ? null : el.parentNode; }
+	function isInput (el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || isEditable(el); }
 	function isEditable (el) {
-	  if (!el) {
-	    return false;
-	  } // no parents were editable
-	  if (el.contentEditable === 'false') {
-	    return false;
-	  } // stop the lookup
-	  if (el.contentEditable === 'true') {
-	    return true;
-	  } // found a contentEditable element in the chain
+	  if (!el) { return false; } // no parents were editable
+	  if (el.contentEditable === 'false') { return false; } // stop the lookup
+	  if (el.contentEditable === 'true') { return true; } // found a contentEditable element in the chain
 	  return isEditable(getParent(el)); // contentEditable is set to 'inherit'
 	}
 	
@@ -3421,35 +3378,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 	
-	// function previousEl (el) {
-	//   return el.previousElementSibling || manually();
-	//   function manually () {
-	//     var sibling = el;
-	//     do {
-	//       sibling = sibling.previousSibling;
-	//     } while (sibling && sibling.nodeType !== 1);
-	//     return sibling;
-	//   }
-	// }
-	
-	function animate (prevRect, target, time) {
-	  if (time) {
-	    if (!prevRect || !target) {
-	      return;
-	    }
-	    var currentRect = target.getBoundingClientRect();
-	    target.style.transition = 'none';
-	    target.style.transform = 'translate3d(' + (prevRect.left - currentRect.left) + 'px,' + (prevRect.top - currentRect.top) + 'px,0)';
-	    target.offsetWidth; // repaint
-	    target.style.transition = 'all ' + time + 'ms';
-	    target.style.transform = 'translate3d(0,0,0)';
-	    clearTimeout(target.animated);
-	    target.animated = setTimeout(function () {
-	      target.style.transition = '';
-	      target.style.transform = '';
-	      target.animated = false;
-	    }, time);
+	/**
+	 * Create an animation from position before sorting to present position
+	 * @param prevRect including element's position infomation before sorting
+	 * @param target element after sorting
+	 */
+	function animate (prevRect, target) {
+	  if (!prevRect || !target) {
+	    return;
 	  }
+	  var currentRect = target.getBoundingClientRect();
+	  var originProps = {transition: target.style.transition, transform: target.style.transform};
+	  Object.assign(target.style, {
+	    transition: 'none',
+	    transform: 'translate(' + (prevRect.left - currentRect.left) + 'px,' + (prevRect.top - currentRect.top) + 'px)'
+	  });
+	  target.offsetWidth; // repaint
+	  Object.assign(target.style, {transition: 'all ' + animateDuration + 'ms', transform: 'translate(0,0)'});
+	  clearTimeout(target.animated);
+	  target.animated = setTimeout(function () {
+	    Object.assign(target.style, {originProps: originProps});
+	    target.animated = false;
+	  }, animateDuration);
 	}
 	
 	
@@ -3583,15 +3533,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+	            (typeof self !== "undefined" && self) ||
+	            window;
 	var apply = Function.prototype.apply;
 	
 	// DOM APIs, for completeness
 	
 	exports.setTimeout = function() {
-	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+	  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
 	};
 	exports.setInterval = function() {
-	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+	  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
 	};
 	exports.clearTimeout =
 	exports.clearInterval = function(timeout) {
@@ -3606,7 +3559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
 	Timeout.prototype.close = function() {
-	  this._clearFn.call(window, this._id);
+	  this._clearFn.call(scope, this._id);
 	};
 	
 	// Does not start the time, just sets up the members needed.
@@ -3634,9 +3587,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// setimmediate attaches itself to the global object
 	__webpack_require__(101);
-	exports.setImmediate = setImmediate;
-	exports.clearImmediate = clearImmediate;
-
+	// On some exotic environments, it's not clear which object `setimmediate` was
+	// able to install onto.  Search each possibility in the same order as the
+	// `setimmediate` library.
+	exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+	                       (typeof global !== "undefined" && global.setImmediate) ||
+	                       (this && this.setImmediate);
+	exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+	                         (typeof global !== "undefined" && global.clearImmediate) ||
+	                         (this && this.clearImmediate);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
 /* 101 */
