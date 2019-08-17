@@ -43,6 +43,7 @@ export default class Dragger {
       animation: 300,
       staticClass: classes.static,
       direction: mode === 'column' ? 'horizontal' : 'vertical',
+      accepts: this.options.accepts || (() => true),
     })
       .on('drag', this.onDrag)
       .on('dragend', this.onDragend)

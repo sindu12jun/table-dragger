@@ -80,6 +80,11 @@ The options are detailed below.
 #### `options.onlyBody`
 - Setting `onlyBody` to `true` in `row` mode, user can only lift rows in `tbody`.
 
+#### `options.accepts`
+- You can set `accepts` to a method with the following signature: `(el, target, source, sibling)`. It'll be called to make sure that an element `el`, that came from container `source`, can be dropped on container `target` before a `sibling` element. The `sibling` can be `null`, which would mean that the element would be placed as the last element in the container. Note that if `options.copy` is set to `true`, `el` will be set to the copy, instead of the originally dragged element.
+
+  Also note that **the position where a drag starts is always going to be a valid place where to drop the element**, even if `accepts` returned `false` for all cases.
+
 #### `options.animation`
 - ms, animation speed moving items when sorting, `300` — without animation
 
