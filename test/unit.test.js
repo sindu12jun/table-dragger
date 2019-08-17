@@ -1,7 +1,7 @@
 import * as fns from '../src/dragger'
 import classes from '../src/classes'
 import {columnType, rowType} from "../src/dragger";
-import {emptyContent} from '../src/helpers'
+import * as Helper from '../src/helpers'
 import * as R from 'ramda'
 
 let wrapper, table, tableRect
@@ -66,7 +66,7 @@ beforeEach(() => {
 })
 
 test('empty content', () => {
-  emptyContent(table)
+  Helper.emptyContent(table)
   expect(table.rows.length).toBe(0)
 })
 
