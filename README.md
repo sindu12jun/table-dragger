@@ -100,9 +100,6 @@ Event Name | Listener Arguments               | Event Description
 #### `dragger.dragging`
 This property will be true whenever an element is being dragged.
 
-#### `dragger.destroy`
-Removes all drag and drop events used by `table-dragger` to manage drag and drop.
-
 # License
 MIT
 
