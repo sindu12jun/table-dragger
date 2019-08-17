@@ -55,10 +55,10 @@ function testTable({name, startNum, endNum, mode, desc}) {
     if (mode === 'column') {
       if (startNum < endNum) {
         // 所以要获得props要await并执行，就像上面的table，await并执行了，find到的子元素就不用再来一遍了
-        // 所以最后一定要带一个括号，不然就不是执行了
-        // start.innerText这种打印是打不出来的，只会等到assert的时候再计算
-        const next = await end.nextSibling(0)()
+        // you can console start.innerText, start.innerText can only be computed when assert
         // await t.expect(start.innerText).eql(next.innerText)
+        // the parenthess excute the function
+        const next = await end.nextSibling(0)()
       } else {
         // it seems the api is different with document
         // -1 is the closet, not 1
