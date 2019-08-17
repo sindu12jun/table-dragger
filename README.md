@@ -1,6 +1,6 @@
 # table-dragger
 
-[![Coveralls](https://img.shields.io/coveralls/xcatliu/pagic.svg)](https://coveralls.io/github/xcatliu/pagic)
+[![Coverage Status](https://coveralls.io/repos/github/sindu12jun/table-dragger/badge.svg?branch=master)](https://coveralls.io/github/sindu12jun/table-dragger?branch=master)
 
 [![Build Status](https://travis-ci.org/sindu12jun/table-dragger.svg?branch=master)](https://travis-ci.org/sindu12jun/table-dragger)
 
