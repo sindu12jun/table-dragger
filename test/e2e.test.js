@@ -60,7 +60,8 @@ function testTable({name, startNum, endNum, mode, desc}) {
         const next = await end.nextSibling(0)()
         // await t.expect(start.innerText).eql(next.innerText)
       } else {
-        // -1才是最近的！1是最远的，这个api排序和文档说的不一样
+        // it seems the api is different with document
+        // -1 is the closet, not 1
         const previous = await end.prevSibling(-1)()
         await t.expect(start.innerText).eql(previous.innerText)
       }
