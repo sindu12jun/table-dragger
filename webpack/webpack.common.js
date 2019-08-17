@@ -8,7 +8,10 @@ module.exports = {
   },
   output: {
     path: Path.join(__dirname, '../dist'),
-    filename: '[name].js'
+    filename: '[name].js',
+    library: 'tableDragger',
+    libraryExport: 'default',
+    libraryTarget: 'umd'
   },
   optimization: {},
   plugins: [
