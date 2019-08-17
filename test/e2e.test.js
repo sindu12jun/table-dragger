@@ -69,7 +69,6 @@ function testTable({name, startNum, endNum, mode, desc}) {
     if (mode === 'row') {
       const startRow = await start.parent(0)()
       if (startNum < endNum) {
-        // 这样写是不行的，要下面那样
         // const next = await endRow.nextSibling(0)()
         const next = await end.parent(0).nextSibling(0)()
         await t.expect(startRow.innerText).eql(next.innerText)

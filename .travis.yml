@@ -10,5 +10,5 @@ cache:
 install:
   - npm install
 scripts:
-  - npm run test
+  - npm run unit
   - npm run build
