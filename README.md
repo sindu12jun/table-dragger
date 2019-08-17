@@ -18,7 +18,6 @@ Table-dragger is a minimalist plain Javascript library for building reorderable 
 
 # Features
 - Super easy to set up
-- cellspacing, cellpadding, col and colgroup in account
 - Able to sort columns or rows at the same time
 - Smooth animation when sort
 - No bloated dependencies
