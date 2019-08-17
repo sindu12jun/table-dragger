@@ -57,7 +57,6 @@ var dragger = tableDragger(el, {
   mode: 'row',
   dragHandler: '.handle',
   onlyBody: true,
-  animation: 300
 });
 dragger.on('drop',function(from, to){
   console(from);
@@ -79,9 +78,6 @@ The options are detailed below.
 
 #### `options.onlyBody`
 - Setting `onlyBody` to `true` in `row` mode, user can only lift rows in `tbody`.
-
-#### `options.animation`
-- ms, animation speed moving items when sorting, `300` — without animation
 
 # API
 The `tableDragger` method returns a tiny object with a concise API. We'll refer to the API returned by `tableDragger` as `dragger`
