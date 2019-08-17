@@ -9,6 +9,9 @@ module.exports = merge(common, {
   devtool: 'source-map',
   stats: 'errors-only',
   bail: true,
+  entry: {
+    'table-dragger': Path.resolve(__dirname, '../src/index.js')
+  },
   plugins: [
     new Webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')

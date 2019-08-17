@@ -34,6 +34,11 @@ or
 <script src="../node_modules/table-dragger/dist/table-dragger.min.js"></script>
 ```
 
+If you want to try the unstable version under developing
+```shell
+npm install table-dragger@next --save
+```
+
 # Usage
 ```
 import tableDragger from 'table-dragger'
