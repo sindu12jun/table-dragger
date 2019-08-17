@@ -1,6 +1,7 @@
 import * as fns from '../src/dragger'
 import classes from '../src/classes'
 import {columnType, rowType} from "../src/dragger";
+import {emptyContent} from '../src/helpers'
 import * as R from 'ramda'
 
 let wrapper, table, tableRect
@@ -62,6 +63,11 @@ beforeEach(() => {
   document.body.appendChild(wrapper)
   table = document.querySelector('#pack-table')
   tableRect = rect(table)
+})
+
+test('empty content', () => {
+  emptyContent(table)
+  expect(table.rows.length).toBe(0)
 })
 
 test('get first column', () => {

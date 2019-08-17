@@ -10,6 +10,4 @@ cache:
 install:
   - npm install
 scripts:
-  - npm run unit
-after_success:
-  - npm run coveralls
+  - npm run test
