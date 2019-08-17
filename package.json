@@ -6,8 +6,8 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack/webpack.config.prod.js  --colors",
     "start": "webpack-dev-server --inline --hot --open --config webpack/webpack.config.dev.js",
-    "unit": "jest test/unit.test.js --coverage",
-    "e2e": "testcafe chrome test/e2e.test.js e2e"
+    "e2e": "testcafe chrome test/e2e.test.js e2e",
+    "test": "jest test/unit.test.js --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -33,21 +33,22 @@
     "chromedriver": "^76.0.0",
     "clean-webpack-plugin": "^2.0.2",
     "copy-webpack-plugin": "^5.0.3",
+    "coveralls": "^3.0.6",
     "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
     "eslint-loader": "^2.1.2",
+    "expect-puppeteer": "^4.3.0",
     "html-webpack-plugin": "^4.0.0-beta.5",
     "jest": "^24.8.0",
+    "jest-environment-puppeteer": "^4.3.0",
+    "jest-puppeteer": "^4.3.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "puppeteer": "^1.19.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1",
-    "webpack-merge": "^4.2.1",
-    "jest-puppeteer": "^4.3.0",
-    "jest-environment-puppeteer": "^4.3.0",
-    "expect-puppeteer": "^4.3.0",
-    "puppeteer": "^1.19.0"
+    "webpack-merge": "^4.2.1"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.0",

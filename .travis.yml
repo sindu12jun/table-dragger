@@ -11,4 +11,5 @@ install:
   - npm install
 scripts:
   - npm run unit
-  - npm run build
+after_success:
+  - npm run coveralls

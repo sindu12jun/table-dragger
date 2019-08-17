@@ -1,5 +1,9 @@
 # table-dragger
 
+[![Coveralls](https://img.shields.io/coveralls/xcatliu/pagic.svg)](https://coveralls.io/github/xcatliu/pagic)
+
+[![Build Status](https://travis-ci.org/sindu12jun/table-dragger.svg?branch=master)](https://travis-ci.org/sindu12jun/table-dragger)
+
 > Finally, you are able to drag and sort your table as you want.
 
 [![demo.gif][demoPic]][demo]

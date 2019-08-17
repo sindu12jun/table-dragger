@@ -116,7 +116,6 @@ test('get fake row table by index', () => {
   const rowIndex = 2
   const fakeRowTable = fns.getFakeTableByIndex(table, rowType, rowIndex)
 
-  expect(fakeRowTable.querySelector('tbody')).toBeTruthy()
   expect(fakeRowTable.rows.length).toBe(1)
   expect(fakeRowTable.rows[0].children.length).toBe(table.rows[rowIndex].children.length)
   expect(
