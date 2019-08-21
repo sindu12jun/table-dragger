@@ -7,7 +7,8 @@
     "build": "NODE_ENV=production webpack --config webpack/webpack.config.prod.js  --colors",
     "start": "webpack-dev-server --inline --hot --open --config webpack/webpack.config.dev.js",
     "e2e": "testcafe chrome test/e2e.test.js e2e",
-    "test": "jest test/unit.test.js --coverage && cat ./coverage/lcov.info | coveralls"
+    "test": "jest test/unit.test.js --coverage && cat ./coverage/lcov.info | coveralls",
+    "test-local": "jest test/unit.test.js"
   },
   "repository": {
     "type": "git",

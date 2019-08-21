@@ -57,16 +57,18 @@ export function getHandlers(table, options, dragHandler) {
   }
 }
 
+export const errMsgs = {
+  shouldBeTable: 'table-dragger: el must be TABLE HTMLElement',
+  specifyHandler: 'table-dragger: please specify dragHandler in free mode'
+}
+
 export function checkTable(table, options) {
   let errorMsg
   if (!checkIsTable(table)) {
-    errorMsg = `table-dragger: el must be TABLE HTMLElement, not ${{}.toString.call(table)}`;
+    errorMsg = errMsgs.shouldBeTable
   }
   if (options.mode === 'free' && !options.dragHandler) {
-    errorMsg = 'table-dragger: please specify dragHandler in free mode';
-  }
-  if (!table.rows.length) {
-    errorMsg = 'table-dragger: there are no cells in the table';
+    errorMsg = errMsgs.specifyHandler
   }
   return errorMsg
 }
@@ -231,7 +233,7 @@ export function sortElements(fromEle, toEle, isForward) {
   }
 }
 
-export function exchangeColumns(table, from, to) {
+export function sortColumns(table, from, to) {
   if (from === to) {
     return;
   }
@@ -245,7 +247,7 @@ export function exchangeColumns(table, from, to) {
   }
 }
 
-export function exchangeRows(table, from, to) {
+export function sortRows(table, from, to) {
   if (from === to) {
     return;
   }
@@ -265,7 +267,7 @@ function modeString(mode) {
 export function onDrop(targetIndex, fakeTable, mode, table, dragger, droppedItem) {
   const from = targetIndex
   const to = ArrayFrom(fakeTable.children).indexOf(droppedItem);
-  const sortFunc = mode === columnType ? exchangeColumns : exchangeRows
+  const sortFunc = mode === columnType ? sortColumns : sortRows
   sortFunc(table, from, to)
   removeClass(fakeTable.parentElement, classes.dragging)
   removeDom(fakeTable)
@@ -303,6 +305,9 @@ function emitter(thing = {}) {
 }
 
 export default function tableDragger(table, userOptions) {
+  if (!table.rows.length) {
+    return
+  }
   const options = Object.assign({}, defaultOptions, userOptions)
   const {dragHandler, mode: optionMode} = options
   const handlers = getHandlers(table, options, dragHandler)

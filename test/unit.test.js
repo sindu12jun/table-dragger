@@ -1,6 +1,6 @@
 import * as fns from '../src/dragger'
 import classes from '../src/classes'
-import {columnType, rowType} from "../src/dragger";
+import {columnType, rowType, errMsgs} from "../src/dragger";
 import * as R from 'ramda'
 
 let wrapper, table, tableRect
@@ -200,24 +200,21 @@ test('get column cells by index', () => {
 
 test('exchange columns by index', () => {
   const getCells = R.curry(fns.getColumnCellsByIndex)(table)
-  fns.exchangeColumns(table, 0, 1)
-  expect(getCells(0).every(hasClass('c2')))
-  expect(getCells(1).every(hasClass('c1')))
-  fns.exchangeColumns(table, 3, 2)
-  expect(getCells(2).every(hasClass('c4')))
-  expect(getCells(3).every(hasClass('c3')))
+  fns.sortColumns(table, 0, 1)
+  expect(getCells(0).every(hasClass('c2'))).toBe(true)
+  expect(getCells(1).every(hasClass('c1'))).toBe(true)
+  fns.sortColumns(table, 3, 2)
+  expect(getCells(2).every(hasClass('c4'))).toBe(true)
+  expect(getCells(3).every(hasClass('c3'))).toBe(true)
 })
 
 test('exchange rows by index', () => {
   const getRowCells = R.curry(function (table, index) {
     return Array.from(table.rows[index].children)
   })(table)
-  fns.exchangeRows(table, 0, 2)
-  expect(getRowCells(0).every(hasClass('r3')))
-  expect(getRowCells(2).every(hasClass('r1')))
-  fns.exchangeRows(table, 1, 3)
-  expect(getRowCells(1).every(hasClass('r5')))
-  expect(getRowCells(3).every(hasClass('r2')))
+  fns.sortRows(table, 0, 2)
+  expect(getRowCells(0).every(hasClass('r2'))).toBe(true)
+  expect(getRowCells(2).every(hasClass('r1'))).toBe(true)
 })
 
 test('get organ by cell', () => {
@@ -225,6 +222,15 @@ test('get organ by cell', () => {
   expect(fns.getOrganByCell(cell)).toBe(table.querySelector('thead'))
   const cellInTbody = querySelector('#firstTd')
   expect(fns.getOrganByCell(cellInTbody)).toBe(querySelector('tbody'))
+})
+
+test('check table', () => {
+  const msg1 = fns.checkTable(wrapper, {})
+  expect(msg1 === errMsgs.shouldBeTable)
+  const msg2 = fns.checkTable(table, {
+    mode: 'free'
+  })
+  expect(msg2 === errMsgs.specifyHandler)
 })
 
 
