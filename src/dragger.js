@@ -100,11 +100,9 @@ export function getFakeTables(table, mode) {
   return R.map(R.partial(getFakeTableByIndex, [table, mode]))(createArrByNumber(tableLength))
 }
 
-function renderFakeTable(table, fakeTable) {
-  R.pipe(
-    R.partial(insertBeforeSibling, [table]),
-  )(fakeTable)
-  fakeTable.parentElement.classList.add(classes.dragging);
+export function renderFakeTable(table, fakeTable) {
+  insertBeforeSibling(table, fakeTable)
+  addClass(fakeTable.parentElement, classes.dragging)
   return fakeTable
 }
 

@@ -49,15 +49,6 @@ export function checkIsTable(ele) {
     ele.nodeName === 'TABLE';
 }
 
-export function emptyContent(ele) {
-  ele.innerHTML = ''
-  return ele
-}
-
-export function isNodeCol(node) {
-  return node.nodeName === 'COL' && node.nodeName === 'COLGROUP'
-}
-
 export function appendDOMChild(parentNode, childNode) {
   parentNode.appendChild(childNode);
   return parentNode;
@@ -69,10 +60,6 @@ export function removeDom(node) {
 
 export function prop(obj, name) {
   return obj[name]
-}
-
-export function rect(node) {
-  return node.getBoundingClientRect()
 }
 
 export function setStyle(node, prop, value) {
