@@ -233,4 +233,10 @@ test('check table', () => {
   expect(msg2 === errMsgs.specifyHandler)
 })
 
+test('render fake table', () => {
+  const fakeTable = document.createElement('table')
+  fns.renderFakeTable(table, fakeTable)
+  expect(table.previousElementSibling).toBe(fakeTable)
+})
+
 
