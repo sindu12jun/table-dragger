@@ -72,8 +72,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return _drag2.default.create(el, options);
 	};
 	exports.default = create;
-	
-	module.exports = create;
 
 /***/ }),
 /* 1 */
@@ -483,7 +481,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!table.rows.length) {
 	      return;
 	    }
-	
 	    var defaults = {
 	      mode: 'column',
 	      dragHandler: '',
@@ -530,6 +527,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.tappedCoord = { x: 0, y: 0 };
 	    this.cellIndex = { x: 0, y: 0 };
 	    this.el = table;
+	    this.sortTable = null;
+	    this.realMode = mode;
 	    this.bindEvents();
 	  }
 	
@@ -568,6 +567,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var target = event.target;
 	
+	
 	      while (target.nodeName !== 'TD' && target.nodeName !== 'TH') {
 	        target = target.parentElement;
 	      }
@@ -593,18 +593,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var gapX = Math.abs(event.clientX - tappedCoord.x);
 	      var gapY = Math.abs(event.clientY - tappedCoord.y);
+	
 	      var isFree = mode === 'free';
 	      var realMode = mode;
 	
-	      if (gapX === 0 && gapY === 0) {
+	      if (!gapX && !gapY) {
 	        return;
 	      }
+	      this.dragger.dragging = true;
 	
 	      if (isFree) {
 	        realMode = gapX < gapY ? 'row' : 'column';
 	      }
+	      this.realMode = realMode;
 	
-	      var sortTable = new _draggableList2.default({
+	      var sortTable = this.sortTable = new _draggableList2.default({
 	        mode: realMode,
 	        originTable: this
 	      });
@@ -867,9 +870,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	var LIBRARY = __webpack_require__(14);
 	var $export = __webpack_require__(15);
-	var redefine = __webpack_require__(30);
+	var redefine = __webpack_require__(31);
 	var hide = __webpack_require__(20);
-	var has = __webpack_require__(31);
 	var Iterators = __webpack_require__(32);
 	var $iterCreate = __webpack_require__(33);
 	var setToStringTag = __webpack_require__(49);
@@ -907,7 +909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Set @@toStringTag to native iterators
 	      setToStringTag(IteratorPrototype, TAG, true);
 	      // fix for some old engines
-	      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  }
 	  // fix Array#{values, @@iterator}.name in V8 / FF
@@ -951,6 +953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var core = __webpack_require__(17);
 	var ctx = __webpack_require__(18);
 	var hide = __webpack_require__(20);
+	var has = __webpack_require__(30);
 	var PROTOTYPE = 'prototype';
 	
 	var $export = function (type, name, source) {
@@ -968,7 +971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  for (key in source) {
 	    // contains in native
 	    own = !IS_FORCED && target && target[key] !== undefined;
-	    if (own && key in exports) continue;
+	    if (own && has(exports, key)) continue;
 	    // export native or passed
 	    out = own ? target[key] : source[key];
 	    // prevent global pollution for namespaces
@@ -1026,7 +1029,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 17 */
 /***/ (function(module, exports) {
 
-	var core = module.exports = { version: '2.5.1' };
+	var core = module.exports = { version: '2.6.5' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -1201,19 +1204,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(20);
-
-
-/***/ }),
-/* 31 */
 /***/ (function(module, exports) {
 
 	var hasOwnProperty = {}.hasOwnProperty;
 	module.exports = function (it, key) {
 	  return hasOwnProperty.call(it, key);
 	};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(20);
 
 
 /***/ }),
@@ -1325,7 +1328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var toIObject = __webpack_require__(38);
 	var arrayIndexOf = __webpack_require__(41)(false);
 	var IE_PROTO = __webpack_require__(44)('IE_PROTO');
@@ -1448,12 +1451,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	var core = __webpack_require__(17);
 	var global = __webpack_require__(16);
 	var SHARED = '__core-js_shared__';
 	var store = global[SHARED] || (global[SHARED] = {});
-	module.exports = function (key) {
-	  return store[key] || (store[key] = {});
-	};
+	
+	(module.exports = function (key, value) {
+	  return store[key] || (store[key] = value !== undefined ? value : {});
+	})('versions', []).push({
+	  version: core.version,
+	  mode: __webpack_require__(14) ? 'pure' : 'global',
+	  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+	});
 
 
 /***/ }),
@@ -1490,7 +1499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	var def = __webpack_require__(21).f;
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var TAG = __webpack_require__(50)('toStringTag');
 	
 	module.exports = function (it, tag, stat) {
@@ -1520,7 +1529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var toObject = __webpack_require__(52);
 	var IE_PROTO = __webpack_require__(44)('IE_PROTO');
 	var ObjectProto = Object.prototype;
@@ -1657,10 +1666,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	// ECMAScript 6 symbols shim
 	var global = __webpack_require__(16);
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var DESCRIPTORS = __webpack_require__(25);
 	var $export = __webpack_require__(15);
-	var redefine = __webpack_require__(30);
+	var redefine = __webpack_require__(31);
 	var META = __webpack_require__(61).KEY;
 	var $fails = __webpack_require__(26);
 	var shared = __webpack_require__(45);
@@ -1672,6 +1681,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var enumKeys = __webpack_require__(63);
 	var isArray = __webpack_require__(66);
 	var anObject = __webpack_require__(22);
+	var isObject = __webpack_require__(23);
 	var toIObject = __webpack_require__(38);
 	var toPrimitive = __webpack_require__(28);
 	var createDesc = __webpack_require__(29);
@@ -1864,15 +1874,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return _stringify([S]) != '[null]' || _stringify({ a: S }) != '{}' || _stringify(Object(S)) != '{}';
 	})), 'JSON', {
 	  stringify: function stringify(it) {
-	    if (it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
 	    var args = [it];
 	    var i = 1;
 	    var replacer, $replacer;
 	    while (arguments.length > i) args.push(arguments[i++]);
-	    replacer = args[1];
-	    if (typeof replacer == 'function') $replacer = replacer;
-	    if ($replacer || !isArray(replacer)) replacer = function (key, value) {
-	      if ($replacer) value = $replacer.call(this, key, value);
+	    $replacer = replacer = args[1];
+	    if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+	    if (!isArray(replacer)) replacer = function (key, value) {
+	      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
 	      if (!isSymbol(value)) return value;
 	    };
 	    args[1] = replacer;
@@ -1896,7 +1905,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var META = __webpack_require__(46)('meta');
 	var isObject = __webpack_require__(23);
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var setDesc = __webpack_require__(21).f;
 	var id = 0;
 	var isExtensible = Object.isExtensible || function () {
@@ -2056,7 +2065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var createDesc = __webpack_require__(29);
 	var toIObject = __webpack_require__(38);
 	var toPrimitive = __webpack_require__(28);
-	var has = __webpack_require__(31);
+	var has = __webpack_require__(30);
 	var IE8_DOM_DEFINE = __webpack_require__(24);
 	var gOPD = Object.getOwnPropertyDescriptor;
 	
@@ -2463,7 +2472,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var isTest = false;
 	var bodyPaddingRight = void 0;
 	var bodyOverflow = void 0;
 	
@@ -2514,7 +2522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function onDrag() {
 	      (0, _util.css)(document.body, { overflow: 'hidden' });
 	      var barWidth = (0, _util.getScrollBarWidth)();
-	      this.dragger.dragging = true;
+	      console.log(barWidth, 'barWidth');
 	      if (barWidth) {
 	        (0, _util.css)(document.body, { 'padding-right': barWidth + bodyPaddingRight + 'px' });
 	      }
@@ -2563,9 +2571,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      (0, _util.remove)(document, 'mouseup', this.destroy);
 	      this.el.parentElement.classList.remove(_classes2.default.dragging);
-	      if (!isTest) {
-	        this.el.parentElement.removeChild(this.el);
-	      }
+	      this.el.parentElement.removeChild(this.el);
 	      setTimeout(function () {
 	        _this2.drake.destroy();
 	      }, 0);
@@ -2596,9 +2602,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	      (0, _util.insertBeforeSibling)({ target: el, origin: originEl });
 	
-	      var s = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
+	      var spacing = window.getComputedStyle(originEl).getPropertyValue('border-spacing').split(' ')[0];
 	      var attr = mode === 'column' ? 'margin-right' : 'margin-bottom';
-	      var l = el.children.length;
+	      var length = el.children.length;
 	      (0, _from2.default)(el.children).forEach(function (li, dex) {
 	        var table = li && li.querySelector('table');
 	        if (_this3.options.onlyBody && mode === 'row' && !(0, _from2.default)(table.children).some(function (o) {
@@ -2607,8 +2613,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          li.classList.add(_classes2.default.static);
 	        }
 	
-	        if (s && dex < l - 1) {
-	          li.style[attr] = '-' + s;
+	        if (spacing && dex < length - 1) {
+	          li.style[attr] = '-' + spacing;
 	        }
 	      });
 	
@@ -3583,15 +3589,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+	            (typeof self !== "undefined" && self) ||
+	            window;
 	var apply = Function.prototype.apply;
 	
 	// DOM APIs, for completeness
 	
 	exports.setTimeout = function() {
-	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+	  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
 	};
 	exports.setInterval = function() {
-	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+	  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
 	};
 	exports.clearTimeout =
 	exports.clearInterval = function(timeout) {
@@ -3606,7 +3615,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
 	Timeout.prototype.close = function() {
-	  this._clearFn.call(window, this._id);
+	  this._clearFn.call(scope, this._id);
 	};
 	
 	// Does not start the time, just sets up the members needed.
@@ -3634,9 +3643,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// setimmediate attaches itself to the global object
 	__webpack_require__(101);
-	exports.setImmediate = setImmediate;
-	exports.clearImmediate = clearImmediate;
-
+	// On some exotic environments, it's not clear which object `setimmediate` was
+	// able to install onto.  Search each possibility in the same order as the
+	// `setimmediate` library.
+	exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+	                       (typeof global !== "undefined" && global.setImmediate) ||
+	                       (this && this.setImmediate);
+	exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+	                         (typeof global !== "undefined" && global.clearImmediate) ||
+	                         (this && this.clearImmediate);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
 /* 101 */
@@ -4310,16 +4327,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        view: window
 	      });
 	    }
-	  }
-	  if (document.createEvent) {
-	    event = document.createEvent("MouseEvent");
-	    event.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	  } else if (global.navigator.msPointerEnabled) {
+	    event = document.createEvent("msPointerEvent");
+	    event.initMouseEvent("MSPointerDown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 	  } else {
-	    event = new MouseEvent('mousedown', {
-	      'view': window,
-	      'bubbles': true,
-	      'cancelable': true
-	    });
+	    if (document.createEvent) {
+	      console.log('getTouchyEvent document.createEvent if');
+	      event = document.createEvent("MouseEvent");
+	      event.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	    } else {
+	      console.log('getTouchyEvent document.createEvent else');
+	      event = new MouseEvent('mousedown', {
+	        'view': window,
+	        'bubbles': true,
+	        'cancelable': true
+	      });
+	    }
 	  }
 	  return event;
 	};
