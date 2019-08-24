@@ -1,7 +1,7 @@
 # table-dragger
 
 [![Build Status](https://travis-ci.org/sindu12jun/table-dragger.svg?branch=master)](https://travis-ci.org/sindu12jun/table-dragger)
-[![Coverage Status](https://coveralls.io/repos/github/sindu12jun/table-dragger/badge.svg?branch=master)](https://coveralls.io/github/sindu12jun/table-dragger?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/sindu12jun/table-dragger/badge.svg?branch=develop)](https://coveralls.io/github/sindu12jun/table-dragger?branch=master)
 [![Downloads](https://img.shields.io/npm/dw/table-dragger)](https://npmcharts.com/compare/table-dragger?minimal=true)
 [![Npm version](https://img.shields.io/github/package-json/v/sindu12jun/table-dragger)](https://www.npmjs.com/package/table-dragger)
 
