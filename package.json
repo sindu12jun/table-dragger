@@ -2,7 +2,7 @@
   "name": "table-dragger",
   "version": "1.0.4",
   "description": "Drag and sort columns and rows of table",
-  "author": "sindu12jun <imgonnalovetheworld@gmail.com>",
+  "author": "sindu12jun <imleelijun@gmail.com>",
   "main": "dist/table-dragger.js",
   "repository": {
     "type": "git",
