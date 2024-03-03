@@ -1,12 +1,12 @@
 {
   "name": "table-dragger",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Drag and sort columns and rows of table",
   "author": "sindu12jun <imgonnalovetheworld@gmail.com>",
   "main": "dist/table-dragger.js",
   "repository": {
     "type": "git",
-    "url": "sindu12jun/SortableTable"
+    "url": "sindu12jun/table-dragger"
   },
   "homepage": "https://sindu12jun.github.io/table-dragger/",
   "directories": {
