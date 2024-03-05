@@ -6,9 +6,9 @@
   "main": "dist/table-dragger.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sindu12jun/table-dragger.git"
+    "url": "https://github.com/sindu12jun/table-dragger"
   },
-  "homepage": "https://sindu12jun.github.io/table-dragger/",
+  "homepage": "https://sindu12jun.github.io/table-dragger",
   "directories": {
     "src": "src/"
   },
